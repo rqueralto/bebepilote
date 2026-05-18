@@ -181,6 +181,11 @@ a{color:#2D4A8A}
 .chip-btn:hover,.chip-btn:active{background:#ECE9E2;border-color:#C4BFB8;color:#1A1918}
 .chip-template{background:#EBF0FA;color:#2D4A8A;border-color:#C8D6F0}
 .chip-template:hover{background:#D8E5F7;border-color:#8FADD8}
+/* ── Chat full-screen ── */
+.chat-fs{position:fixed;inset:0;background:#F2F0EB;display:flex;flex-direction:column;z-index:40;max-width:430px;left:50%;transform:translateX(-50%)}
+.chat-fs .chat-msgs-area{flex:1;height:auto;min-height:0}
+/* ── Suggestions select ── */
+.suggest-select{width:100%;border:none;border-top:1px solid #F0EDE8;background:#FAFAF8;color:#5C5752;font-family:inherit;font-size:13px;padding:10px 14px;outline:none;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23B0A89E' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;cursor:pointer}
 
 /* ── Share button ── */
 .share-btn{padding:5px 10px;border-radius:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.92);font-size:12px;font-weight:600;display:flex;align-items:center;gap:5px;transition:background .15s;letter-spacing:.02em;flex-shrink:0}
@@ -1226,23 +1231,25 @@ function renderChat(child,data){
     {label:`Gérer les pleurs`,q:`Comment gérer les pleurs de ${child.firstName} à ${ageLabel} ?`,full:true},
   ];
 
-  return`<div style="padding:16px">
-<h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500;margin-bottom:2px">Chat avec Zoé</h2>
-<p class="t-caption" style="margin-bottom:14px">Votre assistante développement bébé</p>
-<div class="chat-wrap">
-  <div class="chat-head" style="justify-content:space-between">
-    <div style="display:flex;align-items:center;gap:12px">
-      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/><path d="M5 3v3M3 5h3M19 18v3M18 19h3"/></svg>
+  return`<div class="chat-fs">
+  <!-- Header -->
+  <div class="chat-head" style="justify-content:space-between;padding-top:max(13px,env(safe-area-inset-top))">
+    <div style="display:flex;align-items:center;gap:10px">
+      <button id="chat-back" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/><path d="M5 3v3M3 5h3M19 18v3M18 19h3"/></svg>
       <div>
         <p style="font-size:15px;font-weight:600;color:#fff">Zoé</p>
-        <p style="font-size:12px;color:rgba(255,255,255,.65)">Assistante développement de ${e(child.firstName)}</p>
+        <p style="font-size:12px;color:rgba(255,255,255,.65)">${e(child.firstName)} · ${e(ageLabel)}</p>
       </div>
     </div>
-    <button id="btn-saved-chats" style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.9);font-size:12px;font-weight:600" title="Réponses sauvegardées">
-      <svg viewBox="0 0 24 24" width="13" height="13" fill="${getSavedChats().length?'rgba(255,255,255,.9)':'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+    <button id="btn-saved-chats" style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.9);font-size:12px;font-weight:600">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="${getSavedChats().filter(x=>x.childName===child.firstName).length?'rgba(255,255,255,.9)':'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
       ${getSavedChats().filter(x=>x.childName===child.firstName).length||''}
     </button>
   </div>
+  <!-- Messages -->
   <div class="chat-msgs-area scroll-h" id="chat-msgs">
     ${empty?`<div style="text-align:center;color:#B0A89E;font-size:14px;margin:auto;padding:20px 0">
       <div style="margin-bottom:8px"><svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#C4BFB8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/><path d="M5 3v3M3 5h3M19 18v3M18 19h3"/></svg></div>
@@ -1255,14 +1262,16 @@ function renderChat(child,data){
     </div>`:''}
     <div id="chat-end"></div>
   </div>
-  <div class="quick-chips scroll-h">
-    ${chips.map(c=>`<button class="chip-btn${c.template?' chip-template':''}" data-q="${e(c.q||c.label)}"${c.template?' data-tpl="1"':''}>${e(c.label)}</button>`).join('')}
-  </div>
-  <div class="chat-input-row">
+  <!-- Suggestions dropdown -->
+  <select class="suggest-select" id="chat-suggestions">
+    <option value="">💡 Suggestions pour ${e(child.firstName)}…</option>
+    ${chips.map(c=>`<option value="${e(c.q||c.label)}"${c.template?' data-tpl="1"':''}>${e(c.label)}</option>`).join('')}
+  </select>
+  <!-- Input -->
+  <div class="chat-input-row" style="padding-bottom:max(11px,env(safe-area-inset-bottom))">
     <input id="chat-in" class="chat-field" type="text" placeholder="${S.apiKey?`Question sur ${child.firstName}…`:'Configurez votre clé API d\'abord…'}" ${loading?'disabled':''}/>
     <button class="chat-send" id="chat-send" ${loading?'disabled':''}>→</button>
   </div>
-</div>
 </div>`;
 }
 
@@ -1672,10 +1681,16 @@ function render(){
   const streak=getStreak();
 
   const tabs=[{id:'today',label:"Aujourd'hui"},{id:'history',label:'Historique'},{id:'chat',label:'Chat'},{id:'profile',label:'Profil'}];
+  // Chat = vue plein écran indépendante
+  if(S.tab==='chat'){
+    app.innerHTML=renderChat(child,data);
+    bind(child,data);
+    return;
+  }
+
   let tabHTML='';
   if(S.tab==='today')tabHTML=renderToday(child,data,S.childIdx);
   else if(S.tab==='history')tabHTML=renderHistory(child);
-  else if(S.tab==='chat')tabHTML=renderChat(child,data);
   else if(S.tab==='profile')tabHTML=renderProfile();
 
   let modalHTML='';
@@ -1729,6 +1744,15 @@ function bind(child,data){
   document.querySelector('[data-caroline]')?.addEventListener('click',()=>{S.modal='caroline';render();});
   document.getElementById('btn-conseil')?.addEventListener('click',()=>{S.modal='conseil';render();});
   document.getElementById('btn-zoe')?.addEventListener('click',()=>{S.tab='chat';render();});
+  document.getElementById('chat-back')?.addEventListener('click',()=>{S.tab='today';render();});
+  document.getElementById('chat-suggestions')?.addEventListener('change',ev=>{
+    const val=ev.target.value;if(!val)return;
+    const opt=ev.target.selectedOptions[0];
+    const inp=document.getElementById('chat-in');
+    if(opt?.dataset?.tpl){if(inp){inp.value=val;inp.focus();}}
+    else{sendMsg(val,child,data);}
+    ev.target.value='';
+  });
   document.getElementById('btn-share')?.addEventListener('click',()=>shareHighlight(child,data));
   document.querySelectorAll('[data-section]').forEach(b=>b.addEventListener('click',()=>{S.modal='section';S.modalSection=b.dataset.section;render();}));
   // Section like (dans le modal)
