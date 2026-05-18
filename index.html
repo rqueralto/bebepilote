@@ -326,6 +326,7 @@ activite:[
 
 const _sw='stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
 const _ico=(path,extra='')=>`<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" ${_sw} ${extra}>${path}</svg>`;
+const VERSION='1.0.1';
 const ALL_SECTIONS=[
   {id:'langage',  label:'Langage & Communication',  icon:_ico('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/>'),colorBg:'acc-blue',  colorText:'acc-blue'},
   {id:'motricite',label:'La Motricité',              icon:_ico('<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>'),colorBg:'acc-green', colorText:'acc-green'},
@@ -990,9 +991,10 @@ ${bornSiblings.length?`</div>
 <div class="section-card">${siblingRows}`:''}
 </div>
 
-<p style="text-align:center;font-size:12px;color:#C4BFB8;padding:12px 0 8px;text-transform:capitalize">
+<p style="text-align:center;font-size:12px;color:#C4BFB8;padding:12px 0 4px;text-transform:capitalize">
   ${new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}
 </p>
+<p style="text-align:center;font-size:10px;color:#D4D0CA;padding:0 0 12px;letter-spacing:.04em">v${VERSION}</p>
 </div>`;
 }
 
@@ -1115,9 +1117,10 @@ ${(()=>{
 <div class="section-card">${rows}</div>`;
 })()}
 
-<p style="text-align:center;font-size:12px;color:#C4BFB8;padding:12px 0 8px;text-transform:capitalize">
+<p style="text-align:center;font-size:12px;color:#C4BFB8;padding:12px 0 4px;text-transform:capitalize">
   ${new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}
 </p>
+<p style="text-align:center;font-size:10px;color:#D4D0CA;padding:0 0 12px;letter-spacing:.04em">v${VERSION}</p>
 </div>`;
 }
 
