@@ -106,34 +106,45 @@ a{color:#2D4A8A}
 .hist-row{width:100%;display:flex;align-items:center;justify-content:space-between;padding:13px 16px;transition:background .12s}
 .hist-row:hover{background:var(--c-bg2)}
 
-/* ── Chat ── */
-.chat-wrap{background:var(--c-card);border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.1)}
-.chat-head{background:#3D5570;padding:13px 18px;display:flex;align-items:center;gap:12px}
-.chat-msgs-area{flex:1;min-height:0;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--c-bg)}
-.msg-me{align-self:flex-end;background:var(--c-ink);color:var(--c-bg);border-radius:14px 14px 3px 14px;padding:9px 13px;max-width:82%;font-size:14px;line-height:1.55}
-.msg-bot{align-self:flex-start;background:var(--c-bg3);color:var(--c-ink);border-radius:14px 14px 14px 3px;padding:9px 13px;max-width:82%;font-size:14px;line-height:1.55}
-.chat-input-row{display:flex;gap:8px;padding:11px 14px;border-top:1px solid var(--c-bd)}
-.chat-field{flex:1;border:1.5px solid var(--c-fbd);border-radius:10px;padding:9px 13px;font-size:14px;outline:none;transition:border-color .15s;background:var(--c-card);color:var(--c-ink)}
-.chat-field:focus{border-color:#2D4A8A}
-.chat-send{background:var(--c-ink);color:var(--c-bg);border-radius:9px;padding:9px 13px;font-size:16px;transition:opacity .15s}
-.chat-send:disabled{opacity:.4}
-.suggest-btn{text-align:left;font-size:13px;color:var(--c-t2);background:var(--c-bg3);border-radius:10px;padding:9px 12px;width:100%;border:none;transition:background .12s}
-.suggest-btn:hover{background:var(--c-bd3)}
-.dot{width:7px;height:7px;background:var(--c-t4);border-radius:50%;animation:blink 1.3s infinite}
-.dot:nth-child(2){animation-delay:.2s}
-.dot:nth-child(3){animation-delay:.4s}
-@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
-/* ── Message actions ── */
-.msg-block{display:flex;flex-direction:column;align-items:flex-start;gap:4px;max-width:90%}
-.msg-actions{display:flex;gap:2px;padding-left:3px}
+/* ── Chat (Claude iOS style) ── */
+.chat-zoe-head{background:var(--c-card);border-bottom:1px solid var(--c-bd);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.chat-zoe-av{width:34px;height:34px;border-radius:50%;background:#3D5570;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.chat-msgs-area{flex:1;min-height:0;overflow-y:auto;padding:18px 16px 10px;display:flex;flex-direction:column;gap:16px;background:var(--c-bg)}
+/* User bubble — right aligned */
+.msg-me{align-self:flex-end;background:var(--c-ink);color:var(--c-bg);border-radius:18px 18px 4px 18px;padding:11px 15px;max-width:80%;font-size:15px;line-height:1.55;word-break:break-word}
+/* Bot response — no bubble, plain text */
+.msg-block{display:flex;flex-direction:column;align-items:flex-start;gap:6px;max-width:94%;align-self:flex-start}
+.msg-bot{color:var(--c-ink);font-size:15px;line-height:1.72;word-break:break-word}
+.msg-actions{display:flex;gap:2px;margin-top:2px}
 .msg-act{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--c-t4);transition:background .12s,color .12s}
 .msg-act:hover{background:var(--c-bg3);color:var(--c-t2)}
 .msg-act.on{color:#E05A5A}
 .msg-act.saved-on{color:#3D5570}
 .msg-act.copied-flash{color:#3D7050}
-.msg-refs{display:flex;flex-direction:column;gap:5px;padding-left:3px;width:100%}
-.msg-ref-link{display:flex;align-items:center;gap:6px;font-size:11px;color:#3A5E38;text-decoration:none;padding:5px 9px;background:#EAF0E8;border-radius:8px;line-height:1.4;transition:background .12s}
-.msg-ref-link:hover{background:#D8EAD4}
+.msg-refs{display:flex;flex-direction:column;gap:5px;margin-top:4px;width:100%}
+.msg-ref-link{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--c-t2);text-decoration:none;padding:7px 11px;background:var(--c-card);border:1px solid var(--c-bd2);border-radius:10px;line-height:1.4;transition:background .12s}
+.msg-ref-link:hover{background:var(--c-bg2)}
+/* Empty state */
+.chat-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 16px 8px;gap:20px}
+.chat-prompt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
+.chat-prompt-card{background:var(--c-card);border:1px solid var(--c-bd2);border-radius:16px;padding:14px 13px;text-align:left;font-size:13px;line-height:1.5;color:var(--c-t2);transition:background .12s,transform .1s;cursor:pointer;display:flex;flex-direction:column;gap:7px}
+.chat-prompt-card:hover,.chat-prompt-card:active{background:var(--c-bg2);transform:scale(.98)}
+.chat-prompt-cat{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t4)}
+/* Input pill */
+.chat-pill-wrap{padding:10px 12px;padding-bottom:max(68px,calc(56px + env(safe-area-inset-bottom)));background:var(--c-bg);flex-shrink:0}
+.chat-pill{display:flex;align-items:center;gap:8px;border-radius:28px;border:1.5px solid var(--c-bd2);background:var(--c-card);padding:8px 8px 8px 16px;transition:border-color .15s}
+.chat-pill:focus-within{border-color:#3D5570}
+.chat-pill-in{flex:1;background:none;border:none;outline:none;font-size:15px;color:var(--c-ink);padding:3px 0;line-height:1.4;font-family:inherit}
+.chat-pill-in::placeholder{color:var(--c-t4)}
+.chat-pill-in:disabled{opacity:.5}
+.chat-pill-send{width:34px;height:34px;border-radius:50%;background:var(--c-ink);color:var(--c-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s,transform .1s}
+.chat-pill-send:active{transform:scale(.9)}
+.chat-pill-send:disabled{opacity:.28}
+/* Dots */
+.dot{width:6px;height:6px;background:var(--c-t4);border-radius:50%;animation:blink 1.3s infinite}
+.dot:nth-child(2){animation-delay:.22s}
+.dot:nth-child(3){animation-delay:.44s}
+@keyframes blink{0%,80%,100%{opacity:.2}40%{opacity:1}}
 /* ── Section row action buttons ── */
 .s-row{cursor:pointer}
 .s-row-acts{display:flex;gap:2px;align-items:center;flex-shrink:0;margin-right:2px}
@@ -211,25 +222,51 @@ a{color:#2D4A8A}
 .badge-coming{display:inline-flex;align-items:center;gap:4px;background:#E6F4F1;color:#1B7060;border-radius:99px;padding:2px 8px;font-size:11px;font-weight:600;margin-left:6px}
 .badge-sibling{display:inline-flex;align-items:center;gap:4px;background:#F0EBFB;color:#5A3A8A;border-radius:99px;padding:2px 8px;font-size:11px;font-weight:600;margin-left:6px}
 
-/* ── Dark mode inline-style overrides ── */
+/* ── Dark mode — accent colors (muted tinted darks) ── */
+[data-theme="dark"] .acc-blue  {background:#1A2840;color:#8AAAD8}
+[data-theme="dark"] .acc-green {background:#1A2E20;color:#6DAA7A}
+[data-theme="dark"] .acc-honey {background:#2A2010;color:#C88A40}
+[data-theme="dark"] .acc-rose  {background:#2A1820;color:#C07090}
+[data-theme="dark"] .acc-purple{background:#201828;color:#9A7AB8}
+[data-theme="dark"] .acc-amber {background:#2A2010;color:#C88A40}
+[data-theme="dark"] .acc-teal  {background:#142820;color:#5AB090}
+[data-theme="dark"] .acc-coral {background:#2A1810;color:#C06848}
+[data-theme="dark"] .acc-sage  {background:#1A2A1C;color:#6AAA78}
+/* ── Dark mode — inline-style background overrides ── */
 [data-theme="dark"] [style*="background:#F2F0EB"]{background:var(--c-bg)!important}
 [data-theme="dark"] [style*="background:#FAFAF8"]{background:var(--c-bg2)!important}
 [data-theme="dark"] [style*="background:#F5F4F0"]{background:var(--c-bg3)!important}
 [data-theme="dark"] [style*="background:#fff;"],[data-theme="dark"] [style$="background:#fff"]{background:var(--c-card)!important}
-[data-theme="dark"] [style*="background:#FFF0F0"]{background:#3D2424!important}
+[data-theme="dark"] [style*="background:#FFF0F0"]{background:#3A2222!important}
+[data-theme="dark"] [style*="background:#FBF8F3"]{background:#282420!important;border-color:var(--c-bd2)!important}
+[data-theme="dark"] [style*="background:#F5F0E8"]{background:var(--c-bg3)!important}
+[data-theme="dark"] [style*="background:#FBF3E5"]{background:#281E10!important}
+[data-theme="dark"] [style*="background:#FBF4E5"]{background:#281E10!important}
+/* ── Dark mode — inline-style text color overrides ── */
 [data-theme="dark"] [style*="color:#1A1918"]{color:var(--c-ink)!important}
+[data-theme="dark"] [style*="color:#3A3835"]{color:var(--c-ink)!important}
+[data-theme="dark"] [style*="color:#2A3A2A"]{color:var(--c-t2)!important}
 [data-theme="dark"] [style*="color:#5C5752"]{color:var(--c-t2)!important}
+[data-theme="dark"] [style*="color:#5C4A2A"]{color:var(--c-t2)!important}
+[data-theme="dark"] [style*="color:#3A2A0A"]{color:var(--c-t2)!important}
 [data-theme="dark"] [style*="color:#7A7570"]{color:var(--c-t3)!important}
 [data-theme="dark"] [style*="color:#B0A89E"]{color:var(--c-t4)!important}
 [data-theme="dark"] [style*="color:#9C9790"]{color:var(--c-t5)!important}
+[data-theme="dark"] [style*="color:#3A5E38"]{color:#6AAA78!important}
+[data-theme="dark"] [style*="color:#3D5A8A"]{color:#7BAAD4!important}
+[data-theme="dark"] [style*="color:#A06C2A"]{color:#C88A40!important}
+[data-theme="dark"] [style*="color:#3D5570"]{color:#7B9AAA!important}
+/* ── Dark mode — inline-style border & stroke overrides ── */
 [data-theme="dark"] [style*="border-bottom:1px solid #F0EDE8"]{border-bottom-color:var(--c-bd)!important}
 [data-theme="dark"] [style*="border-top:1px solid #F0EDE8"]{border-top-color:var(--c-bd)!important}
 [data-theme="dark"] [style*="border:1px solid #EAE7E2"]{border-color:var(--c-bd2)!important}
+[data-theme="dark"] [style*="border:1px solid #EDE5D8"]{border-color:var(--c-bd2)!important}
 [data-theme="dark"] [style*="border:1px solid #F0EDE8"]{border-color:var(--c-bd)!important}
 [data-theme="dark"] [style*="stroke:#7A7570"]{stroke:var(--c-t3)!important}
 [data-theme="dark"] [style*="stroke:#B0A89E"]{stroke:var(--c-t4)!important}
 [data-theme="dark"] [style*="stroke:#1A1918"]{stroke:var(--c-ink)!important}
 [data-theme="dark"] [style*="stroke:#5C5752"]{stroke:var(--c-t2)!important}
+[data-theme="dark"] [style*="stroke:#3A5E38"]{stroke:#6AAA78!important}
 [data-theme="dark"] [style*="fill:#1A1918"]{fill:var(--c-ink)!important}
 
 /* ── Scrollbar hide ── */
@@ -615,25 +652,27 @@ function addSavedChat(entry){const s=getSavedChats();s.unshift(entry);localStora
 function deleteSavedChat(id){const s=getSavedChats().filter(x=>x.id!==id);localStorage.setItem('bebeSavedChats',JSON.stringify(s));}
 function getLikedExamples(){return getSavedChats().filter(x=>x.liked).slice(0,3);}
 
-// ── Message block renderer (copy/like/save/refs) ──
+// ── Message block renderer ──
 function renderMsgBlock(m,idx,child,data){
   if(m.role==='user')return`<div class="msg-me">${e(m.content)}</div>`;
   const refs=m.refs||[];
-  const question=(S.chat.msgs[idx-1]||{}).content||'';
+  const sw='stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"';
   return`<div class="msg-block">
-  <div class="msg-bot">${e(m.content)}</div>
+  <p class="msg-bot">${e(m.content)}</p>
   <div class="msg-actions">
     <button class="msg-act${m.copied?' copied-flash':''}" data-msg-copy="${idx}" title="Copier">
-      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" ${sw}><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
     </button>
-    <button class="msg-act${m.liked?' on':''}" data-msg-like="${idx}" title="${m.liked?'Retirer le like':'Bonne réponse'}">
-      <svg viewBox="0 0 24 24" width="13" height="13" fill="${m.liked?'#E05A5A':'none'}" stroke="${m.liked?'#E05A5A':'currentColor'}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    <button class="msg-act${m.liked?' on':''}" data-msg-like="${idx}" title="${m.liked?'Retirer':'Bonne réponse'}">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="${m.liked?'#E05A5A':'none'}" stroke="${m.liked?'#E05A5A':'currentColor'}" ${sw}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
     </button>
     <button class="msg-act${m.saved?' saved-on':''}" data-msg-save="${idx}" title="${m.saved?'Sauvegardé':'Sauvegarder'}">
-      <svg viewBox="0 0 24 24" width="13" height="13" fill="${m.saved?'#3D5570':'none'}" stroke="${m.saved?'#3D5570':'currentColor'}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="${m.saved?'#3D5570':'none'}" stroke="${m.saved?'#3D5570':'currentColor'}" ${sw}><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
     </button>
   </div>
-  ${refs.length?`<div class="msg-refs">${refs.map(r=>`<a href="https://www.google.com/search?q=${encodeURIComponent(r)}" target="_blank" rel="noopener" class="msg-ref-link"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>${e(r)}</a>`).join('')}</div>`:''}
+  ${refs.length?`<div class="msg-refs">${refs.map(r=>`<a href="https://www.google.com/search?q=${encodeURIComponent(r)}" target="_blank" rel="noopener" class="msg-ref-link">
+    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    ${e(r)}</a>`).join('')}</div>`:''}
 </div>`;
 }
 
@@ -1265,66 +1304,93 @@ ${entries.map(({s,entry})=>`<div style="display:flex;align-items:center;gap:12px
 
 // ═══════════════════════ CHAT ═══════════════════════
 function renderChat(child,data){
-  const{milestone,ageLabel}=data,{msgs,stream,loading}=S.chat,empty=!msgs.length&&!loading;
+  const{milestone,ageLabel}=data,{msgs,stream,loading}=S.chat;
+  const empty=!msgs.length&&!loading&&!stream;
+  const sw='stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
+  const sparkleIcon=`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="rgba(255,255,255,.92)" ${sw}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/><path d="M5 3v3M3 5h3M19 18v3M18 19h3"/></svg>`;
 
-  // Quick chips — contextual + general, always visible
   const chips=[
     ...(milestone?[
-      {label:`Comment encourager : "${milestone.fact.substring(0,45)}${milestone.fact.length>45?'…':''}" ?`,full:true},
-      {label:`Est-ce normal si ${child.firstName} ne fait pas encore ça à ${ageLabel} ?`,full:true},
+      {label:`Comment encourager : "${milestone.fact.substring(0,45)}${milestone.fact.length>45?'…':''}" ?`,cat:'Étape du jour'},
+      {label:`Est-ce normal si ${child.firstName} ne fait pas encore ça à ${ageLabel} ?`,cat:'Étape du jour'},
     ]:[]),
-    {label:`Quand dois-je m'inquiéter pour le développement de ${child.firstName} à ${ageLabel} ?`,template:true},
-    {label:`Quelle activité créative ou sensorielle proposer à ${child.firstName} (${ageLabel}) aujourd'hui ?`,full:true},
-    {label:`Comment optimiser le sommeil de ${child.firstName} à ${ageLabel} ?`,full:true},
-    {label:`Quels aliments et habitudes alimentaires sont adaptés à ${ageLabel} ?`,full:true},
-    {label:`Comment favoriser le développement du langage de ${child.firstName} à ${ageLabel} ?`,full:true},
-    {label:`Comment gérer les pleurs de ${child.firstName} à ${ageLabel} ?`,full:true},
+    {label:`Quand dois-je m'inquiéter pour le développement de ${child.firstName} à ${ageLabel} ?`,cat:'Santé',template:true},
+    {label:`Quelle activité créative ou sensorielle proposer à ${child.firstName} (${ageLabel}) aujourd'hui ?`,cat:'Activité'},
+    {label:`Comment optimiser le sommeil de ${child.firstName} à ${ageLabel} ?`,cat:'Sommeil'},
+    {label:`Quels aliments et habitudes alimentaires sont adaptés à ${ageLabel} ?`,cat:'Alimentation'},
+    {label:`Comment favoriser le développement du langage de ${child.firstName} à ${ageLabel} ?`,cat:'Langage'},
+    {label:`Comment gérer les pleurs de ${child.firstName} à ${ageLabel} ?`,cat:'Émotions'},
   ];
   const lastMsg=msgs.length?msgs[msgs.length-1]:null;
   const showFollowups=lastMsg?.role==='assistant'&&!loading&&!stream;
-  const followups=['Peux-tu développer ce point ?','Donne-moi un exemple concret','Comment mettre ça en pratique ?','Quelles erreurs faut-il éviter ?'];
+  const followups=['Développe ce point','Donne un exemple concret','Comment le mettre en pratique ?','Quelles erreurs éviter ?'];
+  const savedCount=getSavedChats().filter(x=>x.childName===child.firstName).length;
 
   return`<div style="display:flex;flex-direction:column;flex:1;overflow:hidden">
-  <!-- Zoé header -->
-  <div class="chat-head" style="justify-content:space-between">
+
+  <!-- Header épuré -->
+  <div class="chat-zoe-head">
     <div style="display:flex;align-items:center;gap:10px">
-      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/><path d="M5 3v3M3 5h3M19 18v3M18 19h3"/></svg>
+      <div class="chat-zoe-av">${sparkleIcon}</div>
       <div>
-        <p style="font-size:15px;font-weight:600;color:#fff">Zoé</p>
-        <p style="font-size:12px;color:rgba(255,255,255,.65)">${e(child.firstName)} · ${e(ageLabel)}</p>
+        <p style="font-size:15px;font-weight:600;color:var(--c-ink)">Zoé</p>
+        <p style="font-size:12px;color:var(--c-t3)">${e(child.firstName)} · ${e(ageLabel)}</p>
       </div>
     </div>
-    <button id="btn-saved-chats" style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.9);font-size:12px;font-weight:600">
-      <svg viewBox="0 0 24 24" width="13" height="13" fill="${getSavedChats().filter(x=>x.childName===child.firstName).length?'rgba(255,255,255,.9)':'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-      ${getSavedChats().filter(x=>x.childName===child.firstName).length||''}
+    <button id="btn-saved-chats" style="display:flex;align-items:center;gap:5px;padding:6px 10px;border-radius:10px;background:var(--c-bg3);border:1px solid var(--c-bd2);color:var(--c-t2);font-size:12px;font-weight:600">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="${savedCount?'currentColor':'none'}" stroke="currentColor" stroke-width="2" ${sw}><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      ${savedCount||''}
     </button>
   </div>
-  <!-- Messages -->
-  <div class="chat-msgs-area scroll-h" id="chat-msgs" style="flex:1;height:auto;overflow-y:auto">
-    ${empty?`<div style="text-align:center;color:#B0A89E;font-size:14px;margin:auto;padding:20px 0">
-      <div style="margin-bottom:8px"><svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#C4BFB8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/><path d="M5 3v3M3 5h3M19 18v3M18 19h3"/></svg></div>
-      Bonjour ! Je suis Zoé.<br>Posez-moi une question sur ${e(child.firstName)} !
-    </div>`:''}
+
+  <!-- Zone messages / État vide -->
+  <div class="chat-msgs-area scroll-h" id="chat-msgs">
+    ${empty?`
+    <div class="chat-empty">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
+        <div style="width:56px;height:56px;border-radius:50%;background:#3D5570;display:flex;align-items:center;justify-content:center">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="rgba(255,255,255,.92)" ${sw}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/><path d="M5 3v3M3 5h3M19 18v3M18 19h3"/></svg>
+        </div>
+        <div style="text-align:center">
+          <p style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:500;color:var(--c-ink);margin-bottom:6px">Bonjour, je suis Zoé</p>
+          <p style="font-size:13px;color:var(--c-t3);line-height:1.55">Votre assistante parentale —<br>comment puis-je aider pour <strong style="color:var(--c-ink);font-weight:600">${e(child.firstName)}</strong> ?</p>
+        </div>
+      </div>
+      <div class="chat-prompt-grid">
+        ${chips.slice(0,4).map(c=>`<button class="chat-prompt-card" data-q="${e(c.label)}"${c.template?' data-tpl="1"':''}><span class="chat-prompt-cat">${e(c.cat)}</span><span>${e(c.label)}</span></button>`).join('')}
+      </div>
+      ${chips.length>4?`<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:0 4px">
+        ${chips.slice(4).map(c=>`<button class="chip-btn" data-q="${e(c.label)}" style="font-size:12px">${e(c.cat)}</button>`).join('')}
+      </div>`:''}
+    </div>`:`
     ${msgs.map((m,i)=>renderMsgBlock(m,i,child,data)).join('')}
-    ${loading||stream?`<div style="display:flex;gap:8px;align-items:flex-end">
-      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#9C9790" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg>
-      <div class="msg-bot">${stream?e(stream):`<div style="display:flex;gap:5px;padding:2px 0"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>`}</div>
+    ${loading||stream?`<div class="msg-block">
+      ${stream
+        ?`<p class="msg-bot">${e(stream)}</p>`
+        :`<div style="display:flex;gap:5px;padding:8px 0;align-items:center"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>`}
     </div>`:''}
-    ${showFollowups?`<div style="display:flex;flex-wrap:wrap;gap:6px;padding:6px 0 2px">
-      ${followups.map(q=>`<button class="chip-btn" data-q="${e(q)}" style="font-size:11.5px;padding:5px 10px;color:#6B5F8A;background:#F3F0F8;border-color:#DDD8EC">${e(q)}</button>`).join('')}
+    ${showFollowups?`<div style="display:flex;flex-wrap:wrap;gap:6px;padding:2px 0 4px">
+      ${followups.map(q=>`<button class="chip-btn" data-q="${e(q)}" style="font-size:12px;background:var(--c-card);border-color:var(--c-bd2);color:var(--c-t3)">${e(q)}</button>`).join('')}
     </div>`:''}
-    <div id="chat-end"></div>
+    <div id="chat-end"></div>`}
   </div>
-  <!-- Suggestions dropdown -->
-  <select class="suggest-select" id="chat-suggestions">
-    <option value="">💡 Suggestions pour ${e(child.firstName)}…</option>
-    ${chips.map(c=>`<option value="${e(c.label)}"${c.template?' data-tpl="1"':''}>${e(c.label)}</option>`).join('')}
-  </select>
+
   <!-- Input -->
-  <div class="chat-input-row" style="padding-bottom:max(72px,calc(56px + env(safe-area-inset-bottom)))">
-    <input id="chat-in" class="chat-field" type="text" placeholder="${S.apiKey?`Question sur ${child.firstName}…`:'Configurez votre clé API d\'abord…'}" ${loading?'disabled':''}/>
-    <button class="chat-send" id="chat-send" ${loading?'disabled':''}>→</button>
+  <div class="chat-pill-wrap">
+    ${!empty?`<select class="suggest-select" id="chat-suggestions" style="border-radius:12px;border:1px solid var(--c-bd2);margin-bottom:8px">
+      <option value="">💡 Suggestions pour ${e(child.firstName)}…</option>
+      ${chips.map(c=>`<option value="${e(c.label)}"${c.template?' data-tpl="1"':''}>${e(c.label)}</option>`).join('')}
+    </select>`:''}
+    <div class="chat-pill">
+      <input id="chat-in" class="chat-pill-in" type="text"
+        placeholder="${S.apiKey?`Message à Zoé…`:'Configurez d\'abord votre clé API…'}"
+        ${loading?'disabled':''}/>
+      <button class="chat-pill-send" id="chat-send" ${loading?'disabled':''}>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+      </button>
+    </div>
   </div>
+
 </div>`;
 }
 
@@ -1359,11 +1425,17 @@ ${S.children.map((c,i)=>{
   <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t5);margin-bottom:10px">Apparence</p>
   <div style="background:var(--c-card);border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.08)">
     <div style="display:flex;gap:8px">
-      ${['light','auto','dark'].map(m=>{
+      ${(()=>{
         const saved=localStorage.getItem('bebe_theme')||'auto';
-        const labels={light:'☀️ Clair',auto:'⚙️ Système',dark:'🌙 Sombre'};
-        return`<button class="theme-opt${saved===m?' active':''}" data-theme-val="${m}">${labels[m]}</button>`;
-      }).join('')}
+        const sw='stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"';
+        const icons={
+          light:`<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" ${sw}><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/></svg>`,
+          dark:`<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" ${sw}><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
+          auto:`<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" ${sw}><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"/></svg>`,
+        };
+        const labels={light:'Clair',auto:'Système',dark:'Sombre'};
+        return['light','auto','dark'].map(m=>`<button class="theme-opt${saved===m?' active':''}" data-theme-val="${m}" style="display:flex;align-items:center;justify-content:center;gap:5px">${icons[m]}${labels[m]}</button>`).join('');
+      })()}
     </div>
   </div>
 </div>
