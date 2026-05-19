@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content"/>
 <title>BébéPilote</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
@@ -140,6 +140,21 @@ a{color:#2D4A8A}
 .chat-pill-send{width:34px;height:34px;border-radius:50%;background:var(--c-ink);color:var(--c-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s,transform .1s}
 .chat-pill-send:active{transform:scale(.9)}
 .chat-pill-send:disabled{opacity:.28}
+/* Suggestion button inside pill */
+.chat-pill-sugg{width:30px;height:30px;border-radius:50%;background:none;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--c-t4);transition:color .15s,background .15s}
+.chat-pill-sugg.active{color:#3D5570;background:rgba(61,85,112,.1)}
+.chat-pill-sugg:active{opacity:.7}
+/* Suggestion panel above input */
+.chat-sugg-panel{background:var(--c-card);border:1px solid var(--c-bd2);border-radius:20px;padding:14px 14px 10px;margin-bottom:10px;box-shadow:0 4px 20px rgba(0,0,0,.1)}
+.chat-sugg-panel-title{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--c-t4);margin-bottom:10px;padding-left:2px}
+.chat-sugg-list{display:flex;flex-direction:column;gap:2px;max-height:220px;overflow-y:auto}
+.chat-sugg-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:12px;text-align:left;background:none;transition:background .12s}
+.chat-sugg-item:active,.chat-sugg-item:hover{background:var(--c-bg3)}
+.chat-sugg-cat{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--c-t4);flex-shrink:0;width:64px}
+.chat-sugg-label{font-size:13px;color:var(--c-ink);line-height:1.4;flex:1}
+/* Keyboard awareness */
+.keyboard-open .bottom-nav{display:none}
+.keyboard-open .chat-pill-wrap{padding-bottom:max(10px,env(safe-area-inset-bottom))!important}
 /* Dots */
 .dot{width:6px;height:6px;background:var(--c-t4);border-radius:50%;animation:blink 1.3s infinite}
 .dot:nth-child(2){animation-delay:.22s}
@@ -865,7 +880,7 @@ const S={
   favCatExp:{},
   savedExp:{},
   ob:{step:1,name:'',date:'',gender:'',apiKey:'',errs:{}},
-  chat:{msgs:[],stream:'',loading:false},
+  chat:{msgs:[],stream:'',loading:false,showSugg:false},
 };
 function saveKids(){localStorage.setItem('bebeChildren',JSON.stringify(S.children));}
 function saveKey(k){S.apiKey=k;localStorage.setItem('bebeApiKey',k);}
@@ -1377,11 +1392,19 @@ function renderChat(child,data){
 
   <!-- Input -->
   <div class="chat-pill-wrap">
-    ${!empty?`<select class="suggest-select" id="chat-suggestions" style="border-radius:12px;border:1px solid var(--c-bd2);margin-bottom:8px">
-      <option value="">💡 Suggestions pour ${e(child.firstName)}…</option>
-      ${chips.map(c=>`<option value="${e(c.label)}"${c.template?' data-tpl="1"':''}>${e(c.label)}</option>`).join('')}
-    </select>`:''}
+    ${S.chat.showSugg?`<div class="chat-sugg-panel" id="chat-sugg-panel">
+      <p class="chat-sugg-panel-title">Suggestions pour ${e(child.firstName)}</p>
+      <div class="chat-sugg-list">
+        ${chips.map(c=>`<button class="chat-sugg-item" data-q="${e(c.label)}"${c.template?' data-tpl="1"':''}>
+          <span class="chat-sugg-cat">${e(c.cat)}</span>
+          <span class="chat-sugg-label">${e(c.label)}</span>
+        </button>`).join('')}
+      </div>
+    </div>`:''}
     <div class="chat-pill">
+      <button class="chat-pill-sugg${S.chat.showSugg?' active':''}" id="chat-sugg-btn" title="Suggestions" type="button">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg>
+      </button>
       <input id="chat-in" class="chat-pill-in" type="text"
         placeholder="${S.apiKey?`Message à Zoé…`:'Configurez d\'abord votre clé API…'}"
         ${loading?'disabled':''}/>
@@ -2034,15 +2057,23 @@ function bindMsgActions(child){
 function bindChat(child,data){
   const inp=document.getElementById('chat-in');
   document.querySelectorAll('[data-q]').forEach(b=>b.addEventListener('click',()=>{
+    S.chat.showSugg=false;
     if(b.dataset.tpl){
       if(inp){inp.value=b.dataset.q;inp.focus();}
     }else{
       sendMsg(b.dataset.q,child,data);
     }
   }));
-  document.getElementById('chat-send')?.addEventListener('click',()=>sendMsg(inp?.value||'',child,data));
-  inp?.addEventListener('keydown',ev=>{if(ev.key==='Enter')sendMsg(inp.value,child,data);});
+  document.getElementById('chat-send')?.addEventListener('click',()=>{S.chat.showSugg=false;sendMsg(inp?.value||'',child,data);});
+  inp?.addEventListener('keydown',ev=>{if(ev.key==='Enter'){S.chat.showSugg=false;sendMsg(inp.value,child,data);}});
   document.getElementById('btn-saved-chats')?.addEventListener('click',()=>{S.modal='savedChats';render();});
+  // Suggestions panel toggle
+  document.getElementById('chat-sugg-btn')?.addEventListener('click',()=>{
+    S.chat.showSugg=!S.chat.showSugg;
+    render();
+    // Keep focus on input after panel open
+    setTimeout(()=>document.getElementById('chat-in')?.focus(),50);
+  });
   bindMsgActions(child);
 }
 
@@ -2244,7 +2275,20 @@ async function shareHighlight(child,data){
 }
 
 initTheme();
+initKeyboardAwareness();
 render();
+
+function initKeyboardAwareness(){
+  if(!window.visualViewport)return;
+  let lastH=window.visualViewport.height;
+  window.visualViewport.addEventListener('resize',()=>{
+    const h=window.visualViewport.height;
+    // Keyboard considered open when viewport shrinks more than 20%
+    const keyboardOpen=h<window.screen.height*0.75;
+    document.documentElement.classList.toggle('keyboard-open',keyboardOpen);
+    lastH=h;
+  });
+}
 </script>
 </body>
 </html>
