@@ -348,7 +348,7 @@ fr:{
   prenatal_anatomy:'Anatomie & taille',prenatal_anatomy_sub:'Organes, poids, taille',
   prenatal_prep:'Préparer la venue',prenatal_zoe:'Questions sur la grossesse, le bébé, la fratrie…',
   prenatal_fratrie_title:'Préparer la fratrie',prenatal_fratrie_sub:'Comment aider vos autres enfants à accueillir ce bébé',
-  hist_title:'Historique',hist_sub:'Chat et favoris sauvegardés',
+  hist_title:'Favoris',hist_sub:'Chat et favoris sauvegardés',
   hist_favs:'Sauvegardés',hist_saved_zoe:'Chat',hist_activities:'Activités par jour',
   fav_empty:'Aucun favori — appuyez sur ♥ dans une section.',
   saved_empty:'Aucune réponse — utilisez 🔖 sous une réponse de Zoé.',
@@ -426,7 +426,7 @@ en:{
   prenatal_anatomy:'Anatomy & size',prenatal_anatomy_sub:'Organs, weight, size',
   prenatal_prep:'Preparing the arrival',prenatal_zoe:'Questions about pregnancy, the baby, siblings…',
   prenatal_fratrie_title:'Preparing siblings',prenatal_fratrie_sub:'How to help your other children welcome this baby',
-  hist_title:'History',hist_sub:'Chat and saved favourites',
+  hist_title:'Favourites',hist_sub:'Chat and saved favourites',
   hist_favs:'Saved',hist_saved_zoe:'Chat',hist_activities:'Activities by day',
   fav_empty:'No favourites — tap ♥ in any section.',
   saved_empty:'No responses — use 🔖 under a Zoé response.',
@@ -1458,31 +1458,7 @@ ${renderFavorites(child)}
 ${renderSavedSection(child)}
 </div>
 
-<div style="padding:0 16px 20px">
-<p class="t-caption" style="margin-bottom:10px;padding-top:4px">${t('hist_activities')}</p>
-  ${dates.map(ds=>{
-  const exp=!!S.histExp[ds];
-  const d=new Date(ds+'T12:00:00');
-  const birth=new Date(child.birthDate+'T12:00:00');
-  const months=Math.max(0,Math.floor((d-birth)/(86400000*30.44)));
-  const doy=getDayOfYear(d);
-  const entries=ALL_SECTIONS.map(s=>({s,entry:getDailySectionEntry(s.id,months,doy)}));
-  return`<div class="hist-card">
-<button class="hist-row" data-hist="${e(ds)}">
-  <span style="font-size:14px;font-weight:600;color:#1A1918;text-transform:capitalize">${fmtDate(ds)}</span>
-  ${chev(exp)}
-</button>
-${exp?`<div style="border-top:1px solid #F5F3EF">
-${entries.map(({s,entry})=>`<div style="display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid #FAFAF8">
-  <div class="s-icon ${s.colorBg}" style="width:32px;height:32px;font-size:15px">${s.icon}</div>
-  <div style="flex:1;min-width:0">
-    <p style="font-size:12px;font-weight:600;color:#1A1918">${e(S.lang==='en'?(s.label_en||s.label):s.label)}</p>
-    <p style="font-size:12px;color:#9C9790;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(S.lang==='en'?(entry?.title_en||entry?.title||'—'):(entry?.title||'—'))}</p>
-  </div>
-</div>`).join('')}
-</div>`:''}
-</div>`;}).join('')}
-</div>`;
+`;
 }
 
 // ═══════════════════════ CHAT ═══════════════════════
