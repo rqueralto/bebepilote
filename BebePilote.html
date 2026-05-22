@@ -77,7 +77,7 @@ a{color:#2D4A8A}
 
 /* ── Bottom nav ── */
 .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--c-card);display:flex;border-top:1px solid var(--c-bd2);z-index:20;padding-bottom:env(safe-area-inset-bottom)}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px 8px;font-size:11px;font-weight:600;color:var(--c-t4);transition:color .15s}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:14px 4px;font-size:11px;font-weight:600;color:var(--c-t4);transition:color .15s}
 .nav-btn.on{color:var(--c-ink)}
 .nav-btn svg{width:22px;height:22px;stroke:currentColor}
 
@@ -2084,7 +2084,7 @@ function render(){
   </div>
   <div style="flex:1;${S.tab==='chat'?'overflow:hidden;display:flex;flex-direction:column':'overflow-y:auto;padding-bottom:72px'}">${tabHTML}</div>
   <nav class="bottom-nav">
-    ${tabs.map(t=>`<button class="nav-btn${S.tab===t.id?' on':''}" data-tab="${t.id}">${navIcon(t.id,S.tab===t.id)}<span>${t.label}</span></button>`).join('')}
+    ${tabs.map(t=>`<button class="nav-btn${S.tab===t.id?' on':''}" data-tab="${t.id}" title="${t.label}">${navIcon(t.id,S.tab===t.id)}</button>`).join('')}
   </nav>
 </div>
 ${modalHTML}`;
