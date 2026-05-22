@@ -77,7 +77,7 @@ a{color:#2D4A8A}
 
 /* ── Bottom nav ── */
 .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--c-card);display:flex;border-top:1px solid var(--c-bd2);z-index:20;padding-bottom:env(safe-area-inset-bottom)}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px 8px;font-size:11px;font-weight:600;color:var(--c-t4);transition:color .15s}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:14px 4px;font-size:11px;font-weight:600;color:var(--c-t4);transition:color .15s}
 .nav-btn.on{color:var(--c-ink)}
 .nav-btn svg{width:22px;height:22px;stroke:currentColor}
 
@@ -330,7 +330,7 @@ em{font-style:italic}
 // ═══════════════════════ I18N ═══════════════════════
 const TEXTS={
 fr:{
-  tab_today:"Aujourd'hui",tab_history:'Historique',tab_chat:'Chat',tab_profile:'Profil',
+  tab_today:"Aujourd'hui",tab_history:'Favoris',tab_chat:'Chat',tab_profile:'Profil',
   today_highlight:'Highlight du jour',today_conseil:'Conseil du jour',
   today_dev:'Le développement de',today_updated:'Actualisé chaque jour',
   today_connections:'connexions neuronales aujourd\'hui',
@@ -348,8 +348,8 @@ fr:{
   prenatal_anatomy:'Anatomie & taille',prenatal_anatomy_sub:'Organes, poids, taille',
   prenatal_prep:'Préparer la venue',prenatal_zoe:'Questions sur la grossesse, le bébé, la fratrie…',
   prenatal_fratrie_title:'Préparer la fratrie',prenatal_fratrie_sub:'Comment aider vos autres enfants à accueillir ce bébé',
-  hist_title:'Historique',hist_sub:'Favoris, réponses et activités',
-  hist_favs:'Favoris',hist_saved_zoe:'Réponses de Zoé',hist_activities:'Activités par jour',
+  hist_title:'Favoris',hist_sub:'Chat et favoris sauvegardés',
+  hist_favs:'Sauvegardés',hist_saved_zoe:'Chat',hist_activities:'Activités par jour',
   fav_empty:'Aucun favori — appuyez sur ♥ dans une section.',
   saved_empty:'Aucune réponse — utilisez 🔖 sous une réponse de Zoé.',
   hist_empty:'Aucun événement enregistré',
@@ -408,7 +408,7 @@ fr:{
   ageUnit_month:'mois',ageUnit_year:'an',ageUnit_years:'ans',ageUnit_and:'et',
 },
 en:{
-  tab_today:'Today',tab_history:'History',tab_chat:'Chat',tab_profile:'Profile',
+  tab_today:'Today',tab_history:'Favourites',tab_chat:'Chat',tab_profile:'Profile',
   today_highlight:'Highlight of the day',today_conseil:'Tip of the day',
   today_dev:'Development of',today_updated:'Updated daily',
   today_connections:'neural connections today',
@@ -426,8 +426,8 @@ en:{
   prenatal_anatomy:'Anatomy & size',prenatal_anatomy_sub:'Organs, weight, size',
   prenatal_prep:'Preparing the arrival',prenatal_zoe:'Questions about pregnancy, the baby, siblings…',
   prenatal_fratrie_title:'Preparing siblings',prenatal_fratrie_sub:'How to help your other children welcome this baby',
-  hist_title:'History',hist_sub:'Favourites, responses and activities',
-  hist_favs:'Favourites',hist_saved_zoe:'Zoé\'s responses',hist_activities:'Activities by day',
+  hist_title:'Favourites',hist_sub:'Chat and saved favourites',
+  hist_favs:'Saved',hist_saved_zoe:'Chat',hist_activities:'Activities by day',
   fav_empty:'No favourites — tap ♥ in any section.',
   saved_empty:'No responses — use 🔖 under a Zoé response.',
   hist_empty:'No events recorded',
@@ -1094,6 +1094,7 @@ const S={
   chat:{msgs:[],stream:'',loading:false,showSugg:false},
   lang:'fr',
   childMenu:false,
+  profileSettings:false,
 };
 function saveKids(){localStorage.setItem('bebeChildren',JSON.stringify(S.children));}
 function saveKey(k){S.apiKey=k;localStorage.setItem('bebeApiKey',k);}
@@ -1110,7 +1111,7 @@ function navIcon(id,on){
   const sw='stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
   const icons={
     today:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
-    history:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+    history:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
     chat:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
     profile:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
   };
@@ -1304,7 +1305,6 @@ ${bornSiblings.length?`</div>
 <div class="section-card">${siblingRows}`:''}
 </div>
 
-<p style="text-align:center;font-size:10px;color:#D4D0CA;padding:12px 0 12px;letter-spacing:.04em">v${VERSION}</p>
 </div>`;
 }
 
@@ -1312,29 +1312,6 @@ function renderToday(child,data,childIdx){
   if(data.unborn)return renderPrenatal(child,childIdx??S.childIdx);
   const {milestone,neuron,ageLabel,ageInDays,sections}=data;
   return`<div style="padding-top:16px">
-<!-- Neuron card -->
-<div class="neuron-wrap">
-  <div class="neuron-head" style="justify-content:space-between">
-    <div style="display:flex;align-items:center;gap:8px">
-      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 1 5 5c0 1-.3 2-.8 2.7A4 4 0 0 1 20 13a4 4 0 0 1-4 4h-1v3H9v-3H8a4 4 0 0 1-4-4 4 4 0 0 1 3.8-3.3A5 5 0 0 1 7 7a5 5 0 0 1 5-5z"/><line x1="12" y1="9" x2="12" y2="12"/></svg>
-      <span style="color:#fff;font-size:13px;font-weight:600;letter-spacing:.03em">${t('today_highlight')}</span>
-    </div>
-    <button class="share-btn" id="btn-share" title="Partager">
-      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-    </button>
-  </div>
-  <div class="neuron-body">
-    <div style="display:flex;gap:14px;align-items:flex-start">
-      <svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="#3D5570" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px"><circle cx="12" cy="5" r="3.5"/><path d="M9 22l3-9.5 3 9.5"/><path d="M5.5 11.5l6.5-2 6.5 2"/></svg>
-      <p style="font-size:14px;color:#3A3835;line-height:1.65">
-        ${S.lang==='en'?'Today':'Aujourd\'hui'} <strong style="color:#1A1918">${e(child.firstName)}</strong> ${S.lang==='en'?'developed':'a développé'}
-        <strong style="color:#2D4A8A">+${fmt(neuron.daily)}</strong> ${t('today_connections')},
-        ${S.lang==='en'?'bringing their total to':'portant son total à'} <strong style="color:#2D4A8A">${fmt(neuron.total)}</strong>.
-      </p>
-    </div>
-  </div>
-</div>
-
 <!-- Conseil du jour -->
 ${milestone?.tip?`
 <button class="conseil-btn" id="btn-conseil">
@@ -1414,7 +1391,6 @@ ${(()=>{
 <div class="section-card">${rows}</div>`;
 })()}
 
-<p style="text-align:center;font-size:10px;color:#D4D0CA;padding:12px 0 12px;letter-spacing:.04em">v${VERSION}</p>
 </div>`;
 }
 
@@ -1480,31 +1456,7 @@ ${renderFavorites(child)}
 ${renderSavedSection(child)}
 </div>
 
-<div style="padding:0 16px 20px">
-<p class="t-caption" style="margin-bottom:10px;padding-top:4px">${t('hist_activities')}</p>
-  ${dates.map(ds=>{
-  const exp=!!S.histExp[ds];
-  const d=new Date(ds+'T12:00:00');
-  const birth=new Date(child.birthDate+'T12:00:00');
-  const months=Math.max(0,Math.floor((d-birth)/(86400000*30.44)));
-  const doy=getDayOfYear(d);
-  const entries=ALL_SECTIONS.map(s=>({s,entry:getDailySectionEntry(s.id,months,doy)}));
-  return`<div class="hist-card">
-<button class="hist-row" data-hist="${e(ds)}">
-  <span style="font-size:14px;font-weight:600;color:#1A1918;text-transform:capitalize">${fmtDate(ds)}</span>
-  ${chev(exp)}
-</button>
-${exp?`<div style="border-top:1px solid #F5F3EF">
-${entries.map(({s,entry})=>`<div style="display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid #FAFAF8">
-  <div class="s-icon ${s.colorBg}" style="width:32px;height:32px;font-size:15px">${s.icon}</div>
-  <div style="flex:1;min-width:0">
-    <p style="font-size:12px;font-weight:600;color:#1A1918">${e(S.lang==='en'?(s.label_en||s.label):s.label)}</p>
-    <p style="font-size:12px;color:#9C9790;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(S.lang==='en'?(entry?.title_en||entry?.title||'—'):(entry?.title||'—'))}</p>
-  </div>
-</div>`).join('')}
-</div>`:''}
-</div>`;}).join('')}
-</div>`;
+`;
 }
 
 // ═══════════════════════ CHAT ═══════════════════════
@@ -1594,49 +1546,22 @@ function renderChat(child,data){
 }
 
 // ═══════════════════════ PROFILE ═══════════════════════
-function renderProfile(){
-  const locale=S.lang==='en'?'en-GB':'fr-FR';
+function renderProfileSettings(){
+  const sw='stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"';
+  const themeIcons={
+    light:`<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" ${sw}><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/></svg>`,
+    dark:`<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" ${sw}><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
+    auto:`<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" ${sw}><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"/></svg>`,
+  };
+  const saved=localStorage.getItem('bebe_theme')||'auto';
+  const themeLabels={light:t('profile_theme_light'),auto:t('profile_theme_auto'),dark:t('profile_theme_dark')};
   return`<div style="padding:20px 16px">
-<h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500;margin-bottom:16px">${t('profile_title')}</h2>
-${S.children.map((c,i)=>{
-  const unb=isUnborn(c);
-  const dateLabel=unb
-    ?(S.lang==='en'?`Due on ${new Date(c.birthDate+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}`:`Terme prévu le ${new Date(c.birthDate+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}`)
-    :new Date(c.birthDate+'T12:00:00').toLocaleDateString(locale,{day:'numeric',month:'long',year:'numeric'});
-  return`<button class="profile-row${i===S.childIdx?' active-p':''}" data-edit="${i}">
-  <div style="display:flex;align-items:center;gap:12px">
-    <div class="child-bubble">${unb?`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#1B7060" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="10" rx="5" ry="6"/><path d="M7 16c0 2.5 2.2 5 5 5s5-2.5 5-5"/><path d="M9 10c.5-1.5 3.5-1.5 4 0"/></svg>`:`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#7A7570" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 21a6 6 0 0 1 12 0"/></svg>`}</div>
-    <div style="text-align:left">
-      <div style="display:flex;align-items:center;gap:6px">
-        <p style="font-weight:700;font-size:16px;color:#1A1918">${e(c.firstName)}</p>
-        ${unb?`<span class="badge-coming"><svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg>${t('badge_coming')}</span>`:''}
-        ${S.children.length>1?`<span class="badge-sibling">${i===0?t('badge_eldest'):t('badge_youngest')}</span>`:''}
-      </div>
-      <p style="font-size:13px;color:#9C9790;margin-top:1px">${dateLabel}</p>
-    </div>
-  </div>
-  ${chev()}
-</button>`;
-}).join('')}
-<button id="btn-add-child" class="dashed-add">
-  ${t('profile_add_child')}
-</button>
 <div style="margin-bottom:20px">
   <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t5);margin-bottom:10px">${t('profile_appearance')}</p>
   <div style="background:var(--c-card);border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.08)">
     <p style="font-size:11px;font-weight:600;color:var(--c-t3);margin-bottom:8px;letter-spacing:.03em">${t('profile_theme')}</p>
     <div style="display:flex;gap:8px;margin-bottom:16px">
-      ${(()=>{
-        const saved=localStorage.getItem('bebe_theme')||'auto';
-        const sw='stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"';
-        const icons={
-          light:`<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" ${sw}><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/></svg>`,
-          dark:`<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" ${sw}><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
-          auto:`<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" ${sw}><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"/></svg>`,
-        };
-        const labels={light:t('profile_theme_light'),auto:t('profile_theme_auto'),dark:t('profile_theme_dark')};
-        return['light','auto','dark'].map(m=>`<button class="theme-opt${saved===m?' active':''}" data-theme-val="${m}" style="display:flex;align-items:center;justify-content:center;gap:5px">${icons[m]}${labels[m]}</button>`).join('');
-      })()}
+      ${['light','auto','dark'].map(m=>`<button class="theme-opt${saved===m?' active':''}" data-theme-val="${m}" style="display:flex;align-items:center;justify-content:center;gap:5px">${themeIcons[m]}${themeLabels[m]}</button>`).join('')}
     </div>
     <p style="font-size:11px;font-weight:600;color:var(--c-t3);margin-bottom:8px;letter-spacing:.03em">${t('profile_language')}</p>
     <div style="display:flex;gap:8px">
@@ -1658,8 +1583,94 @@ ${S.children.map((c,i)=>{
     ${chev()}
   </button>
 </div>
+<p style="text-align:center;font-size:10px;color:var(--c-t5);padding:16px 0 4px;letter-spacing:.04em">BébéPilote v${VERSION}</p>
 </div>`;
 }
+
+function renderProfile(){
+  if(S.profileSettings)return renderProfileSettings();
+  const locale=S.lang==='en'?'en-GB':'fr-FR';
+  return`<div style="padding:20px 16px">
+${S.children.map((c,i)=>{
+  const unb=isUnborn(c);
+  const dateLabel=unb
+    ?(S.lang==='en'?`Due on ${new Date(c.birthDate+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}`:`Terme prévu le ${new Date(c.birthDate+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}`)
+    :new Date(c.birthDate+'T12:00:00').toLocaleDateString(locale,{day:'numeric',month:'long',year:'numeric'});
+  // ── stats block (born or unborn) ──────────────────────────────
+  const statsBlock=(()=>{
+    const sep=`<div style="height:1px;background:var(--c-bd);margin:14px 0"></div>`;
+    if(unb){
+      const dtu=getDaysUntilDue(c);
+      const gw=Math.max(5,getGestWeeks(c));
+      let countdown;
+      if(dtu<=0){
+        countdown=S.lang==='en'?"Any day now!":"C'est imminent !";
+      } else {
+        const mo=Math.floor(dtu/30),dy=dtu%30;
+        if(S.lang==='en'){
+          if(mo===0) countdown=`${dtu} ${dtu>1?'days':'day'}`;
+          else if(dy===0) countdown=`${mo} ${mo>1?'months':'month'}`;
+          else countdown=`${mo} ${mo>1?'months':'month'} ${dy} ${dy>1?'days':'day'}`;
+        } else {
+          if(mo===0) countdown=`${dtu} jour${dtu>1?'s':''}`;
+          else if(dy===0) countdown=`${mo} mois`;
+          else countdown=`${mo} mois et ${dy} jour${dy>1?'s':''}`;
+        }
+      }
+      return sep+`
+      <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px">
+        <span style="font-size:12px;color:var(--c-t3);font-weight:500">${S.lang==='en'?'Arrives in':'Arrive dans'}</span>
+        <span style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--c-ink)">${countdown}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:7px;background:rgba(27,112,96,.08);border-radius:10px;padding:8px 11px">
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#1B7060" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        <span style="font-size:11px;color:#1B7060;font-weight:500">${S.lang==='en'?`W${gw}`:`SA ${gw}`} &nbsp;·&nbsp; ${S.lang==='en'?'Due':'Terme'} ${new Date(c.birthDate+'T12:00:00').toLocaleDateString(S.lang==='en'?'en-GB':'fr-FR',{day:'numeric',month:'short',year:'numeric'})}</span>
+      </div>`;
+    }
+    const d=Math.floor((new Date()-new Date(c.birthDate+'T12:00:00'))/86400000);
+    if(d<0)return'';
+    const ageLbl=getAgeLabel(d,c.birthDate);
+    const ns=getNeuronStats(d,c.birthDate);
+    return sep+`
+    <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px">
+      <span style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--c-ink)">${e(ageLbl)}</span>
+      <span style="font-size:12px;color:var(--c-t4)">·</span>
+      <span style="font-size:12px;color:var(--c-t3);font-weight:500">${t('today_day')} ${d}</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:7px;background:rgba(61,85,112,.07);border-radius:10px;padding:8px 11px">
+      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#3D5570" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="17" r="2"/><circle cx="19" cy="17" r="2"/><line x1="12" y1="7" x2="5" y2="15"/><line x1="12" y1="7" x2="19" y2="15"/><line x1="5" y1="17" x2="19" y2="17"/></svg>
+      <span style="font-size:11px;color:#3D5570;font-weight:500">${S.lang==='en'?'Today':'Aujourd\'hui'} <strong>+${fmt(ns.daily)}</strong> &nbsp;·&nbsp; Total <strong>${fmt(ns.total)}</strong></span>
+    </div>`;
+  })();
+  // ── avatar ─────────────────────────────────────────────────────
+  const avatarBg=unb?'rgba(27,112,96,.1)':'var(--c-fbd)';
+  const avatarContent=unb
+    ?`<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#1B7060" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="10" rx="5" ry="6"/><path d="M7 16c0 2.5 2.2 5 5 5s5-2.5 5-5"/><path d="M9 10c.5-1.5 3.5-1.5 4 0"/></svg>`
+    :`<span style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--c-t2);line-height:1">${e(c.firstName.charAt(0).toUpperCase())}</span>`;
+  return`<button class="profile-row${i===S.childIdx?' active-p':''}" data-edit="${i}" style="display:block;padding:18px 18px 16px">
+  <div style="display:flex;align-items:center;gap:14px">
+    <div style="width:54px;height:54px;border-radius:16px;background:${avatarBg};display:flex;align-items:center;justify-content:center;flex-shrink:0">${avatarContent}</div>
+    <div style="flex:1;min-width:0;text-align:left">
+      <p style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--c-ink);line-height:1.15">${e(c.firstName)}</p>
+      <div style="display:flex;align-items:center;gap:5px;margin-top:4px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:4px">
+          <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="var(--c-t4)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M2 21h20"/><line x1="12" y1="6" x2="12" y2="11"/><path d="M10 6c0-1 1-2.5 2-3 1 .5 2 2 2 3"/></svg>
+          <span style="font-size:12px;color:var(--c-t3)">${dateLabel}</span>
+        </div>
+        ${S.children.length>1?`<span class="badge-sibling">${i===0?t('badge_eldest'):t('badge_youngest')}</span>`:''}
+      </div>
+    </div>
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--c-t4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M9 18l6-6-6-6"/></svg>
+  </div>
+  ${statsBlock}
+</button>`;
+}).join('')}
+<button id="btn-add-child" class="dashed-add">
+  ${t('profile_add_child')}
+</button>
+</div>`;
+}
+
 
 // ═══════════════════════ MODALS ═══════════════════════
 // ═══════════════════════ FRATRIE / PRENATAL MODALS ═══════════════════════
@@ -2023,7 +2034,7 @@ function render(){
   const data=childData(child);
   const streak=getStreak();
 
-  const tabs=[{id:'today',label:t('tab_today')},{id:'history',label:t('tab_history')},{id:'chat',label:t('tab_chat')},{id:'profile',label:t('tab_profile')}];
+  const tabs=[{id:'today',label:t('tab_today')},{id:'chat',label:t('tab_chat')},{id:'history',label:t('tab_history')},{id:'profile',label:t('tab_profile')}];
 
   let tabHTML='';
   if(S.tab==='today')tabHTML=renderToday(child,data,S.childIdx);
@@ -2059,7 +2070,7 @@ function render(){
     </button>`;
   }).join('');
 
-  // Topbar age pills (hidden for unborn)
+  // Topbar — different layout for Profile tab
   const topbarPills=!data.unborn?`
     <div class="topbar-pills">
       <span class="topbar-pill">${e(data.ageLabel)}</span>
@@ -2068,10 +2079,16 @@ function render(){
     </div>`:'';
 
   const chevDir=S.childMenu?'M18 15l-6-6-6 6':'M6 9l6 6 6-6';
-
-  app.innerHTML=`
-<div style="height:100dvh;display:flex;flex-direction:column">
-  <div class="topbar">
+  const todayLabel=new Date().toLocaleDateString(S.lang==='en'?'en-GB':'fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  const isProfile=S.tab==='profile';
+  const topbarHTML=isProfile?`
+    <span style="font-size:14px;font-weight:600;color:var(--c-ink);text-transform:capitalize">${todayLabel}</span>
+    <button id="btn-profile-settings" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;color:var(--c-t3);transition:background .15s" title="${S.profileSettings?(S.lang==='en'?'Back':'Retour'):(S.lang==='en'?'Settings':'Paramètres')}">
+      ${S.profileSettings
+        ?`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>`
+        :`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`
+      }
+    </button>`:`
     <div class="child-switcher">
       <button id="btn-child-switcher" style="display:flex;align-items:center;gap:5px">
         <span class="child-name">${e(child.firstName)}</span>
@@ -2080,11 +2097,16 @@ function render(){
       </button>
       ${S.childMenu&&S.children.length>1?`<div class="child-drop">${childDropItems}</div>`:''}
     </div>
-    ${topbarPills}
+    ${topbarPills}`;
+
+  app.innerHTML=`
+<div style="height:100dvh;display:flex;flex-direction:column">
+  <div class="topbar">
+    ${topbarHTML}
   </div>
   <div style="flex:1;${S.tab==='chat'?'overflow:hidden;display:flex;flex-direction:column':'overflow-y:auto;padding-bottom:72px'}">${tabHTML}</div>
   <nav class="bottom-nav">
-    ${tabs.map(t=>`<button class="nav-btn${S.tab===t.id?' on':''}" data-tab="${t.id}">${navIcon(t.id,S.tab===t.id)}<span>${t.label}</span></button>`).join('')}
+    ${tabs.map(t=>`<button class="nav-btn${S.tab===t.id?' on':''}" data-tab="${t.id}" title="${t.label}">${navIcon(t.id,S.tab===t.id)}</button>`).join('')}
   </nav>
 </div>
 ${modalHTML}`;
@@ -2093,7 +2115,7 @@ ${modalHTML}`;
 
 // ═══════════════════════ BINDINGS ═══════════════════════
 function bind(child,data){
-  document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{S.tab=b.dataset.tab;render();}));
+  document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{S.tab=b.dataset.tab;if(b.dataset.tab!=='profile')S.profileSettings=false;render();}));
   document.querySelectorAll('[data-switch]').forEach(b=>b.addEventListener('click',()=>{S.childIdx=+b.dataset.switch;S.childMenu=false;render();}));
   // Child switcher toggle
   document.getElementById('btn-child-switcher')?.addEventListener('click',ev=>{
@@ -2189,6 +2211,7 @@ function bind(child,data){
   document.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>{S.childIdx=+b.dataset.edit;S.modal='editChild';S.modalChildIdx=+b.dataset.edit;render();}));
   document.getElementById('btn-add-child')?.addEventListener('click',()=>{S.modal='addChild';render();});
   document.getElementById('btn-apikey')?.addEventListener('click',()=>{S.modal='apikey';render();});
+  document.getElementById('btn-profile-settings')?.addEventListener('click',()=>{S.profileSettings=!S.profileSettings;render();});
   document.querySelectorAll('[data-theme-val]').forEach(b=>b.addEventListener('click',()=>setTheme(b.dataset.themeVal)));
   document.querySelectorAll('[data-lang-val]').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.langVal)));
   document.getElementById('modal-close')?.addEventListener('click',()=>{S.modal=null;render();});
