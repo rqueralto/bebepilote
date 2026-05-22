@@ -1589,7 +1589,20 @@ ${S.children.map((c,i)=>{
         ${unb?`<span class="badge-coming"><svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg>${t('badge_coming')}</span>`:''}
         ${S.children.length>1?`<span class="badge-sibling">${i===0?t('badge_eldest'):t('badge_youngest')}</span>`:''}
       </div>
-      <p style="font-size:13px;color:#9C9790;margin-top:1px">${dateLabel}</p>
+      <div style="display:flex;align-items:center;gap:4px;margin-top:1px">
+        ${!unb?`<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="#9C9790" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M2 21h20"/><line x1="12" y1="6" x2="12" y2="11"/><path d="M10 6c0-1 1-2.5 2-3 1 .5 2 2 2 3"/></svg>`:''}
+        <p style="font-size:13px;color:#9C9790">${dateLabel}</p>
+      </div>
+      ${(()=>{
+        if(unb||!c.birthDate)return'';
+        const d=Math.floor((new Date()-new Date(c.birthDate+'T12:00:00'))/86400000);
+        if(d<0)return'';
+        const ns=getNeuronStats(d,c.birthDate);
+        return`<div style="display:flex;align-items:center;gap:4px;margin-top:3px">
+          <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="#9C9790" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="17" r="2"/><circle cx="19" cy="17" r="2"/><line x1="12" y1="7" x2="5" y2="15"/><line x1="12" y1="7" x2="19" y2="15"/><line x1="5" y1="17" x2="19" y2="17"/></svg>
+          <p style="font-size:11px;color:#9C9790">+${fmt(ns.daily)} · ${fmt(ns.total)}</p>
+        </div>`;
+      })()}
     </div>
   </div>
   ${chev()}
@@ -1972,23 +1985,9 @@ function renderChildModal(idx){
     <input id="cf-name" class="field" type="text" placeholder="Emma, Lucas…" value="${e(c.firstName)}"/>
   </div>
   <div style="margin-bottom:14px">
-    <p class="t-label" style="margin-bottom:6px;display:flex;align-items:center;gap:5px" id="cf-date-label">
-      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M2 21h20"/><path d="M12 3c0 1.5-1 3-1 3h2s-1-1.5-1-3z"/><line x1="12" y1="6" x2="12" y2="11"/></svg>
-      ${t('modal_child_birthdate')}
-    </p>
+    <p class="t-label" style="margin-bottom:6px" id="cf-date-label">${t('modal_child_birthdate')}</p>
     <input id="cf-date" class="field" type="date" value="${c.birthDate}"/>
     <p style="font-size:11px;color:#9C9790;margin-top:5px">${t('modal_child_future')}</p>
-    ${(()=>{
-      if(!isEdit||!c.birthDate)return'';
-      const bd=new Date(c.birthDate+'T12:00:00');
-      if(bd>new Date())return'';
-      const d=Math.floor((new Date()-bd)/86400000);
-      const ns=getNeuronStats(d,c.birthDate);
-      return`<div style="display:flex;align-items:center;gap:7px;margin-top:10px;padding:8px 10px;background:var(--c-bg3);border-radius:10px">
-        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#3D5570" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="17" r="2"/><circle cx="19" cy="17" r="2"/><line x1="12" y1="7" x2="5" y2="15"/><line x1="12" y1="7" x2="19" y2="15"/><line x1="5" y1="17" x2="19" y2="17"/></svg>
-        <p style="font-size:12px;color:var(--c-t2);line-height:1.4">${S.lang==='en'?'Neural connections':'Connexions neuronales'} <strong style="color:#3D5570">+${fmt(ns.daily)}</strong> · ${S.lang==='en'?'Total':'Total'} <strong style="color:#3D5570">${fmt(ns.total)}</strong></p>
-      </div>`;
-    })()}
   </div>
   <div style="margin-bottom:22px">
     <p class="t-label" style="margin-bottom:8px">${t('modal_child_gender')}</p>
