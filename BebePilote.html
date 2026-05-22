@@ -1597,14 +1597,42 @@ ${S.children.map((c,i)=>{
   const dateLabel=unb
     ?(S.lang==='en'?`Due on ${new Date(c.birthDate+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}`:`Terme prévu le ${new Date(c.birthDate+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}`)
     :new Date(c.birthDate+'T12:00:00').toLocaleDateString(locale,{day:'numeric',month:'long',year:'numeric'});
-  const bornStats=(()=>{
-    if(unb||!c.birthDate)return'';
+  // ── stats block (born or unborn) ──────────────────────────────
+  const statsBlock=(()=>{
+    const sep=`<div style="height:1px;background:var(--c-bd);margin:14px 0"></div>`;
+    if(unb){
+      const dtu=getDaysUntilDue(c);
+      const gw=Math.max(5,getGestWeeks(c));
+      let countdown;
+      if(dtu<=0){
+        countdown=S.lang==='en'?"Any day now!":"C'est imminent !";
+      } else {
+        const mo=Math.floor(dtu/30),dy=dtu%30;
+        if(S.lang==='en'){
+          if(mo===0) countdown=`${dtu} ${dtu>1?'days':'day'}`;
+          else if(dy===0) countdown=`${mo} ${mo>1?'months':'month'}`;
+          else countdown=`${mo} ${mo>1?'months':'month'} ${dy} ${dy>1?'days':'day'}`;
+        } else {
+          if(mo===0) countdown=`${dtu} jour${dtu>1?'s':''}`;
+          else if(dy===0) countdown=`${mo} mois`;
+          else countdown=`${mo} mois et ${dy} jour${dy>1?'s':''}`;
+        }
+      }
+      return sep+`
+      <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px">
+        <span style="font-size:12px;color:var(--c-t3);font-weight:500">${S.lang==='en'?'Arrives in':'Arrive dans'}</span>
+        <span style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--c-ink)">${countdown}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:7px;background:rgba(27,112,96,.08);border-radius:10px;padding:8px 11px">
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#1B7060" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        <span style="font-size:11px;color:#1B7060;font-weight:500">${S.lang==='en'?`W${gw}`:`SA ${gw}`} &nbsp;·&nbsp; ${S.lang==='en'?'Due':'Terme'} ${new Date(c.birthDate+'T12:00:00').toLocaleDateString(S.lang==='en'?'en-GB':'fr-FR',{day:'numeric',month:'short',year:'numeric'})}</span>
+      </div>`;
+    }
     const d=Math.floor((new Date()-new Date(c.birthDate+'T12:00:00'))/86400000);
     if(d<0)return'';
     const ageLbl=getAgeLabel(d,c.birthDate);
     const ns=getNeuronStats(d,c.birthDate);
-    return`
-    <div style="height:1px;background:var(--c-bd);margin:14px 0"></div>
+    return sep+`
     <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px">
       <span style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--c-ink)">${e(ageLbl)}</span>
       <span style="font-size:12px;color:var(--c-t4)">·</span>
@@ -1612,12 +1640,13 @@ ${S.children.map((c,i)=>{
     </div>
     <div style="display:flex;align-items:center;gap:7px;background:rgba(61,85,112,.07);border-radius:10px;padding:8px 11px">
       <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#3D5570" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="17" r="2"/><circle cx="19" cy="17" r="2"/><line x1="12" y1="7" x2="5" y2="15"/><line x1="12" y1="7" x2="19" y2="15"/><line x1="5" y1="17" x2="19" y2="17"/></svg>
-      <span style="font-size:11px;color:#3D5570;font-weight:500">${S.lang==='en'?'Today':'Aujourd\'hui'} <strong>+${fmt(ns.daily)}</strong> &nbsp;·&nbsp; ${S.lang==='en'?'Total':'Total'} <strong>${fmt(ns.total)}</strong></span>
+      <span style="font-size:11px;color:#3D5570;font-weight:500">${S.lang==='en'?'Today':'Aujourd\'hui'} <strong>+${fmt(ns.daily)}</strong> &nbsp;·&nbsp; Total <strong>${fmt(ns.total)}</strong></span>
     </div>`;
   })();
-  const avatarBg=unb?'#E8F3F0':'var(--c-fbd)';
+  // ── avatar ─────────────────────────────────────────────────────
+  const avatarBg=unb?'rgba(27,112,96,.1)':'var(--c-fbd)';
   const avatarContent=unb
-    ?`<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#1B7060" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="10" rx="5" ry="6"/><path d="M7 16c0 2.5 2.2 5 5 5s5-2.5 5-5"/><path d="M9 10c.5-1.5 3.5-1.5 4 0"/></svg>`
+    ?`<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#1B7060" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="10" rx="5" ry="6"/><path d="M7 16c0 2.5 2.2 5 5 5s5-2.5 5-5"/><path d="M9 10c.5-1.5 3.5-1.5 4 0"/></svg>`
     :`<span style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--c-t2);line-height:1">${e(c.firstName.charAt(0).toUpperCase())}</span>`;
   return`<button class="profile-row${i===S.childIdx?' active-p':''}" data-edit="${i}" style="display:block;padding:18px 18px 16px">
   <div style="display:flex;align-items:center;gap:14px">
@@ -1626,7 +1655,7 @@ ${S.children.map((c,i)=>{
       <p style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--c-ink);line-height:1.15">${e(c.firstName)}</p>
       <div style="display:flex;align-items:center;gap:5px;margin-top:4px;flex-wrap:wrap">
         <div style="display:flex;align-items:center;gap:4px">
-          ${!unb?`<svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="var(--c-t4)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M2 21h20"/><line x1="12" y1="6" x2="12" y2="11"/><path d="M10 6c0-1 1-2.5 2-3 1 .5 2 2 2 3"/></svg>`:''}
+          <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="var(--c-t4)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M2 21h20"/><line x1="12" y1="6" x2="12" y2="11"/><path d="M10 6c0-1 1-2.5 2-3 1 .5 2 2 2 3"/></svg>
           <span style="font-size:12px;color:var(--c-t3)">${dateLabel}</span>
         </div>
         ${unb?`<span class="badge-coming"><svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg>${t('badge_coming')}</span>`:''}
@@ -1635,7 +1664,7 @@ ${S.children.map((c,i)=>{
     </div>
     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--c-t4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M9 18l6-6-6-6"/></svg>
   </div>
-  ${bornStats}
+  ${statsBlock}
 </button>`;
 }).join('')}
 <button id="btn-add-child" class="dashed-add">
