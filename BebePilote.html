@@ -1094,6 +1094,7 @@ const S={
   chat:{msgs:[],stream:'',loading:false,showSugg:false},
   lang:'fr',
   childMenu:false,
+  profileSettings:false,
 };
 function saveKids(){localStorage.setItem('bebeChildren',JSON.stringify(S.children));}
 function saveKey(k){S.apiKey=k;localStorage.setItem('bebeApiKey',k);}
@@ -1571,62 +1572,22 @@ function renderChat(child,data){
 }
 
 // ═══════════════════════ PROFILE ═══════════════════════
-function renderProfile(){
-  const locale=S.lang==='en'?'en-GB':'fr-FR';
+function renderProfileSettings(){
+  const sw='stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"';
+  const themeIcons={
+    light:`<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" ${sw}><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/></svg>`,
+    dark:`<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" ${sw}><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
+    auto:`<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" ${sw}><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"/></svg>`,
+  };
+  const saved=localStorage.getItem('bebe_theme')||'auto';
+  const themeLabels={light:t('profile_theme_light'),auto:t('profile_theme_auto'),dark:t('profile_theme_dark')};
   return`<div style="padding:20px 16px">
-<h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500;margin-bottom:16px">${t('profile_title')}</h2>
-${S.children.map((c,i)=>{
-  const unb=isUnborn(c);
-  const dateLabel=unb
-    ?(S.lang==='en'?`Due on ${new Date(c.birthDate+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}`:`Terme prévu le ${new Date(c.birthDate+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}`)
-    :new Date(c.birthDate+'T12:00:00').toLocaleDateString(locale,{day:'numeric',month:'long',year:'numeric'});
-  return`<button class="profile-row${i===S.childIdx?' active-p':''}" data-edit="${i}">
-  <div style="display:flex;align-items:center;gap:12px">
-    <div class="child-bubble">${unb?`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#1B7060" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="10" rx="5" ry="6"/><path d="M7 16c0 2.5 2.2 5 5 5s5-2.5 5-5"/><path d="M9 10c.5-1.5 3.5-1.5 4 0"/></svg>`:`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#7A7570" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 21a6 6 0 0 1 12 0"/></svg>`}</div>
-    <div style="text-align:left">
-      <div style="display:flex;align-items:center;gap:6px">
-        <p style="font-weight:700;font-size:16px;color:#1A1918">${e(c.firstName)}</p>
-        ${unb?`<span class="badge-coming"><svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg>${t('badge_coming')}</span>`:''}
-        ${S.children.length>1?`<span class="badge-sibling">${i===0?t('badge_eldest'):t('badge_youngest')}</span>`:''}
-      </div>
-      <div style="display:flex;align-items:center;gap:4px;margin-top:1px">
-        ${!unb?`<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="#9C9790" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M2 21h20"/><line x1="12" y1="6" x2="12" y2="11"/><path d="M10 6c0-1 1-2.5 2-3 1 .5 2 2 2 3"/></svg>`:''}
-        <p style="font-size:13px;color:#9C9790">${dateLabel}</p>
-      </div>
-      ${(()=>{
-        if(unb||!c.birthDate)return'';
-        const d=Math.floor((new Date()-new Date(c.birthDate+'T12:00:00'))/86400000);
-        if(d<0)return'';
-        const ns=getNeuronStats(d,c.birthDate);
-        return`<div style="display:flex;align-items:center;gap:4px;margin-top:3px">
-          <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="#9C9790" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="17" r="2"/><circle cx="19" cy="17" r="2"/><line x1="12" y1="7" x2="5" y2="15"/><line x1="12" y1="7" x2="19" y2="15"/><line x1="5" y1="17" x2="19" y2="17"/></svg>
-          <p style="font-size:11px;color:#9C9790">${S.lang==='en'?'Today':'Aujourd\'hui'} +${fmt(ns.daily)} · ${fmt(ns.total)}</p>
-        </div>`;
-      })()}
-    </div>
-  </div>
-  ${chev()}
-</button>`;
-}).join('')}
-<button id="btn-add-child" class="dashed-add">
-  ${t('profile_add_child')}
-</button>
 <div style="margin-bottom:20px">
   <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t5);margin-bottom:10px">${t('profile_appearance')}</p>
   <div style="background:var(--c-card);border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.08)">
     <p style="font-size:11px;font-weight:600;color:var(--c-t3);margin-bottom:8px;letter-spacing:.03em">${t('profile_theme')}</p>
     <div style="display:flex;gap:8px;margin-bottom:16px">
-      ${(()=>{
-        const saved=localStorage.getItem('bebe_theme')||'auto';
-        const sw='stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"';
-        const icons={
-          light:`<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" ${sw}><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/></svg>`,
-          dark:`<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" ${sw}><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
-          auto:`<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" ${sw}><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"/></svg>`,
-        };
-        const labels={light:t('profile_theme_light'),auto:t('profile_theme_auto'),dark:t('profile_theme_dark')};
-        return['light','auto','dark'].map(m=>`<button class="theme-opt${saved===m?' active':''}" data-theme-val="${m}" style="display:flex;align-items:center;justify-content:center;gap:5px">${icons[m]}${labels[m]}</button>`).join('');
-      })()}
+      ${['light','auto','dark'].map(m=>`<button class="theme-opt${saved===m?' active':''}" data-theme-val="${m}" style="display:flex;align-items:center;justify-content:center;gap:5px">${themeIcons[m]}${themeLabels[m]}</button>`).join('')}
     </div>
     <p style="font-size:11px;font-weight:600;color:var(--c-t3);margin-bottom:8px;letter-spacing:.03em">${t('profile_language')}</p>
     <div style="display:flex;gap:8px">
@@ -1650,6 +1611,57 @@ ${S.children.map((c,i)=>{
 </div>
 </div>`;
 }
+
+function renderProfile(){
+  if(S.profileSettings)return renderProfileSettings();
+  const locale=S.lang==='en'?'en-GB':'fr-FR';
+  return`<div style="padding:20px 16px">
+${S.children.map((c,i)=>{
+  const unb=isUnborn(c);
+  const dateLabel=unb
+    ?(S.lang==='en'?`Due on ${new Date(c.birthDate+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}`:`Terme prévu le ${new Date(c.birthDate+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}`)
+    :new Date(c.birthDate+'T12:00:00').toLocaleDateString(locale,{day:'numeric',month:'long',year:'numeric'});
+  const agePills=(()=>{
+    if(unb||!c.birthDate)return'';
+    const d=Math.floor((new Date()-new Date(c.birthDate+'T12:00:00'))/86400000);
+    if(d<0)return'';
+    const ageLbl=getAgeLabel(d,c.birthDate);
+    const ns=getNeuronStats(d,c.birthDate);
+    return`
+      <div style="display:flex;align-items:center;gap:6px;margin-top:5px;flex-wrap:wrap">
+        <span style="font-size:11px;font-weight:600;padding:2px 7px;border-radius:99px;background:var(--c-bg3);color:var(--c-t3)">${e(ageLbl)}</span>
+        <span style="font-size:11px;font-weight:600;padding:2px 7px;border-radius:99px;background:var(--c-bg3);color:var(--c-t3)">${t('today_day')} ${d}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;margin-top:5px">
+        <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="#9C9790" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="17" r="2"/><circle cx="19" cy="17" r="2"/><line x1="12" y1="7" x2="5" y2="15"/><line x1="12" y1="7" x2="19" y2="15"/><line x1="5" y1="17" x2="19" y2="17"/></svg>
+        <p style="font-size:11px;color:#9C9790">${S.lang==='en'?'Today':'Aujourd\'hui'} +${fmt(ns.daily)} · ${fmt(ns.total)}</p>
+      </div>`;
+  })();
+  return`<button class="profile-row${i===S.childIdx?' active-p':''}" data-edit="${i}">
+  <div style="display:flex;align-items:center;gap:12px">
+    <div class="child-bubble">${unb?`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#1B7060" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="10" rx="5" ry="6"/><path d="M7 16c0 2.5 2.2 5 5 5s5-2.5 5-5"/><path d="M9 10c.5-1.5 3.5-1.5 4 0"/></svg>`:`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#7A7570" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 21a6 6 0 0 1 12 0"/></svg>`}</div>
+    <div style="text-align:left">
+      <div style="display:flex;align-items:center;gap:6px">
+        <p style="font-weight:700;font-size:16px;color:#1A1918">${e(c.firstName)}</p>
+        ${unb?`<span class="badge-coming"><svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg>${t('badge_coming')}</span>`:''}
+        ${S.children.length>1?`<span class="badge-sibling">${i===0?t('badge_eldest'):t('badge_youngest')}</span>`:''}
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;margin-top:2px">
+        ${!unb?`<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="#9C9790" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M2 21h20"/><line x1="12" y1="6" x2="12" y2="11"/><path d="M10 6c0-1 1-2.5 2-3 1 .5 2 2 2 3"/></svg>`:''}
+        <p style="font-size:13px;color:#9C9790">${dateLabel}</p>
+      </div>
+      ${agePills}
+    </div>
+  </div>
+  ${chev()}
+</button>`;
+}).join('')}
+<button id="btn-add-child" class="dashed-add">
+  ${t('profile_add_child')}
+</button>
+</div>`;
+}
+
 
 // ═══════════════════════ MODALS ═══════════════════════
 // ═══════════════════════ FRATRIE / PRENATAL MODALS ═══════════════════════
@@ -2049,7 +2061,7 @@ function render(){
     </button>`;
   }).join('');
 
-  // Topbar age pills (hidden for unborn)
+  // Topbar — different layout for Profile tab
   const topbarPills=!data.unborn?`
     <div class="topbar-pills">
       <span class="topbar-pill">${e(data.ageLabel)}</span>
@@ -2058,10 +2070,16 @@ function render(){
     </div>`:'';
 
   const chevDir=S.childMenu?'M18 15l-6-6-6 6':'M6 9l6 6 6-6';
-
-  app.innerHTML=`
-<div style="height:100dvh;display:flex;flex-direction:column">
-  <div class="topbar">
+  const todayLabel=new Date().toLocaleDateString(S.lang==='en'?'en-GB':'fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  const isProfile=S.tab==='profile';
+  const topbarHTML=isProfile?`
+    <span style="font-size:14px;font-weight:600;color:var(--c-ink);text-transform:capitalize">${todayLabel}</span>
+    <button id="btn-profile-settings" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;color:var(--c-t3);transition:background .15s" title="${S.profileSettings?(S.lang==='en'?'Back':'Retour'):(S.lang==='en'?'Settings':'Paramètres')}">
+      ${S.profileSettings
+        ?`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>`
+        :`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`
+      }
+    </button>`:`
     <div class="child-switcher">
       <button id="btn-child-switcher" style="display:flex;align-items:center;gap:5px">
         <span class="child-name">${e(child.firstName)}</span>
@@ -2070,7 +2088,12 @@ function render(){
       </button>
       ${S.childMenu&&S.children.length>1?`<div class="child-drop">${childDropItems}</div>`:''}
     </div>
-    ${topbarPills}
+    ${topbarPills}`;
+
+  app.innerHTML=`
+<div style="height:100dvh;display:flex;flex-direction:column">
+  <div class="topbar">
+    ${topbarHTML}
   </div>
   <div style="flex:1;${S.tab==='chat'?'overflow:hidden;display:flex;flex-direction:column':'overflow-y:auto;padding-bottom:72px'}">${tabHTML}</div>
   <nav class="bottom-nav">
@@ -2083,7 +2106,7 @@ ${modalHTML}`;
 
 // ═══════════════════════ BINDINGS ═══════════════════════
 function bind(child,data){
-  document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{S.tab=b.dataset.tab;render();}));
+  document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{S.tab=b.dataset.tab;if(b.dataset.tab!=='profile')S.profileSettings=false;render();}));
   document.querySelectorAll('[data-switch]').forEach(b=>b.addEventListener('click',()=>{S.childIdx=+b.dataset.switch;S.childMenu=false;render();}));
   // Child switcher toggle
   document.getElementById('btn-child-switcher')?.addEventListener('click',ev=>{
@@ -2179,6 +2202,7 @@ function bind(child,data){
   document.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>{S.childIdx=+b.dataset.edit;S.modal='editChild';S.modalChildIdx=+b.dataset.edit;render();}));
   document.getElementById('btn-add-child')?.addEventListener('click',()=>{S.modal='addChild';render();});
   document.getElementById('btn-apikey')?.addEventListener('click',()=>{S.modal='apikey';render();});
+  document.getElementById('btn-profile-settings')?.addEventListener('click',()=>{S.profileSettings=!S.profileSettings;render();});
   document.querySelectorAll('[data-theme-val]').forEach(b=>b.addEventListener('click',()=>setTheme(b.dataset.themeVal)));
   document.querySelectorAll('[data-lang-val]').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.langVal)));
   document.getElementById('modal-close')?.addEventListener('click',()=>{S.modal=null;render();});
