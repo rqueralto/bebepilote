@@ -330,7 +330,7 @@ em{font-style:italic}
 // ═══════════════════════ I18N ═══════════════════════
 const TEXTS={
 fr:{
-  tab_today:"Aujourd'hui",tab_history:'Historique',tab_chat:'Chat',tab_profile:'Profil',
+  tab_today:"Aujourd'hui",tab_history:'Favoris',tab_chat:'Chat',tab_profile:'Profil',
   today_highlight:'Highlight du jour',today_conseil:'Conseil du jour',
   today_dev:'Le développement de',today_updated:'Actualisé chaque jour',
   today_connections:'connexions neuronales aujourd\'hui',
@@ -348,8 +348,8 @@ fr:{
   prenatal_anatomy:'Anatomie & taille',prenatal_anatomy_sub:'Organes, poids, taille',
   prenatal_prep:'Préparer la venue',prenatal_zoe:'Questions sur la grossesse, le bébé, la fratrie…',
   prenatal_fratrie_title:'Préparer la fratrie',prenatal_fratrie_sub:'Comment aider vos autres enfants à accueillir ce bébé',
-  hist_title:'Historique',hist_sub:'Favoris, réponses et activités',
-  hist_favs:'Favoris',hist_saved_zoe:'Réponses de Zoé',hist_activities:'Activités par jour',
+  hist_title:'Historique',hist_sub:'Chat et favoris sauvegardés',
+  hist_favs:'Sauvegardés',hist_saved_zoe:'Chat',hist_activities:'Activités par jour',
   fav_empty:'Aucun favori — appuyez sur ♥ dans une section.',
   saved_empty:'Aucune réponse — utilisez 🔖 sous une réponse de Zoé.',
   hist_empty:'Aucun événement enregistré',
@@ -408,7 +408,7 @@ fr:{
   ageUnit_month:'mois',ageUnit_year:'an',ageUnit_years:'ans',ageUnit_and:'et',
 },
 en:{
-  tab_today:'Today',tab_history:'History',tab_chat:'Chat',tab_profile:'Profile',
+  tab_today:'Today',tab_history:'Favourites',tab_chat:'Chat',tab_profile:'Profile',
   today_highlight:'Highlight of the day',today_conseil:'Tip of the day',
   today_dev:'Development of',today_updated:'Updated daily',
   today_connections:'neural connections today',
@@ -426,8 +426,8 @@ en:{
   prenatal_anatomy:'Anatomy & size',prenatal_anatomy_sub:'Organs, weight, size',
   prenatal_prep:'Preparing the arrival',prenatal_zoe:'Questions about pregnancy, the baby, siblings…',
   prenatal_fratrie_title:'Preparing siblings',prenatal_fratrie_sub:'How to help your other children welcome this baby',
-  hist_title:'History',hist_sub:'Favourites, responses and activities',
-  hist_favs:'Favourites',hist_saved_zoe:'Zoé\'s responses',hist_activities:'Activities by day',
+  hist_title:'History',hist_sub:'Chat and saved favourites',
+  hist_favs:'Saved',hist_saved_zoe:'Chat',hist_activities:'Activities by day',
   fav_empty:'No favourites — tap ♥ in any section.',
   saved_empty:'No responses — use 🔖 under a Zoé response.',
   hist_empty:'No events recorded',
@@ -1110,7 +1110,7 @@ function navIcon(id,on){
   const sw='stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
   const icons={
     today:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
-    history:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+    history:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
     chat:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
     profile:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
   };
@@ -2023,7 +2023,7 @@ function render(){
   const data=childData(child);
   const streak=getStreak();
 
-  const tabs=[{id:'today',label:t('tab_today')},{id:'history',label:t('tab_history')},{id:'chat',label:t('tab_chat')},{id:'profile',label:t('tab_profile')}];
+  const tabs=[{id:'today',label:t('tab_today')},{id:'chat',label:t('tab_chat')},{id:'history',label:t('tab_history')},{id:'profile',label:t('tab_profile')}];
 
   let tabHTML='';
   if(S.tab==='today')tabHTML=renderToday(child,data,S.childIdx);
