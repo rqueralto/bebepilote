@@ -1312,29 +1312,6 @@ function renderToday(child,data,childIdx){
   if(data.unborn)return renderPrenatal(child,childIdx??S.childIdx);
   const {milestone,neuron,ageLabel,ageInDays,sections}=data;
   return`<div style="padding-top:16px">
-<!-- Neuron card -->
-<div class="neuron-wrap">
-  <div class="neuron-head" style="justify-content:space-between">
-    <div style="display:flex;align-items:center;gap:8px">
-      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 1 5 5c0 1-.3 2-.8 2.7A4 4 0 0 1 20 13a4 4 0 0 1-4 4h-1v3H9v-3H8a4 4 0 0 1-4-4 4 4 0 0 1 3.8-3.3A5 5 0 0 1 7 7a5 5 0 0 1 5-5z"/><line x1="12" y1="9" x2="12" y2="12"/></svg>
-      <span style="color:#fff;font-size:13px;font-weight:600;letter-spacing:.03em">${t('today_highlight')}</span>
-    </div>
-    <button class="share-btn" id="btn-share" title="Partager">
-      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-    </button>
-  </div>
-  <div class="neuron-body">
-    <div style="display:flex;gap:14px;align-items:flex-start">
-      <svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="#3D5570" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px"><circle cx="12" cy="5" r="3.5"/><path d="M9 22l3-9.5 3 9.5"/><path d="M5.5 11.5l6.5-2 6.5 2"/></svg>
-      <p style="font-size:14px;color:#3A3835;line-height:1.65">
-        ${S.lang==='en'?'Today':'Aujourd\'hui'} <strong style="color:#1A1918">${e(child.firstName)}</strong> ${S.lang==='en'?'developed':'a développé'}
-        <strong style="color:#2D4A8A">+${fmt(neuron.daily)}</strong> ${t('today_connections')},
-        ${S.lang==='en'?'bringing their total to':'portant son total à'} <strong style="color:#2D4A8A">${fmt(neuron.total)}</strong>.
-      </p>
-    </div>
-  </div>
-</div>
-
 <!-- Conseil du jour -->
 ${milestone?.tip?`
 <button class="conseil-btn" id="btn-conseil">
@@ -1995,9 +1972,23 @@ function renderChildModal(idx){
     <input id="cf-name" class="field" type="text" placeholder="Emma, Lucas…" value="${e(c.firstName)}"/>
   </div>
   <div style="margin-bottom:14px">
-    <p class="t-label" style="margin-bottom:6px" id="cf-date-label">${t('modal_child_birthdate')}</p>
+    <p class="t-label" style="margin-bottom:6px;display:flex;align-items:center;gap:5px" id="cf-date-label">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M2 21h20"/><path d="M12 3c0 1.5-1 3-1 3h2s-1-1.5-1-3z"/><line x1="12" y1="6" x2="12" y2="11"/></svg>
+      ${t('modal_child_birthdate')}
+    </p>
     <input id="cf-date" class="field" type="date" value="${c.birthDate}"/>
     <p style="font-size:11px;color:#9C9790;margin-top:5px">${t('modal_child_future')}</p>
+    ${(()=>{
+      if(!isEdit||!c.birthDate)return'';
+      const bd=new Date(c.birthDate+'T12:00:00');
+      if(bd>new Date())return'';
+      const d=Math.floor((new Date()-bd)/86400000);
+      const ns=getNeuronStats(d,c.birthDate);
+      return`<div style="display:flex;align-items:center;gap:7px;margin-top:10px;padding:8px 10px;background:var(--c-bg3);border-radius:10px">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#3D5570" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="17" r="2"/><circle cx="19" cy="17" r="2"/><line x1="12" y1="7" x2="5" y2="15"/><line x1="12" y1="7" x2="19" y2="15"/><line x1="5" y1="17" x2="19" y2="17"/></svg>
+        <p style="font-size:12px;color:var(--c-t2);line-height:1.4">${S.lang==='en'?'Neural connections':'Connexions neuronales'} <strong style="color:#3D5570">+${fmt(ns.daily)}</strong> · ${S.lang==='en'?'Total':'Total'} <strong style="color:#3D5570">${fmt(ns.total)}</strong></p>
+      </div>`;
+    })()}
   </div>
   <div style="margin-bottom:22px">
     <p class="t-label" style="margin-bottom:8px">${t('modal_child_gender')}</p>
