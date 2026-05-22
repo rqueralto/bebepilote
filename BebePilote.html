@@ -1658,7 +1658,6 @@ ${S.children.map((c,i)=>{
           <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="var(--c-t4)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M2 21h20"/><line x1="12" y1="6" x2="12" y2="11"/><path d="M10 6c0-1 1-2.5 2-3 1 .5 2 2 2 3"/></svg>
           <span style="font-size:12px;color:var(--c-t3)">${dateLabel}</span>
         </div>
-        ${unb?`<span class="badge-coming"><svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg>${t('badge_coming')}</span>`:''}
         ${S.children.length>1?`<span class="badge-sibling">${i===0?t('badge_eldest'):t('badge_youngest')}</span>`:''}
       </div>
     </div>
