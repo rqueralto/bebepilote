@@ -1119,7 +1119,7 @@ function childData(c){
 
 // ═══════════════════════ CONTROVERSE DU JOUR (proto) ═══════════════════════
 function ctrvDateStr(){return new Date().toISOString().slice(0,10);}
-function ctrvCacheKey(c){return 'bebeCtrv_'+c.firstName+'_'+ctrvDateStr();}
+function ctrvCacheKey(c){return 'bebeCtrv_v2_'+c.firstName+'_'+ctrvDateStr();}
 function getCtrvHistory(){try{return JSON.parse(localStorage.getItem('bebeCtrvHistory')||'[]');}catch{return[];}}
 function upsertCtrvToday(obj){const h=getCtrvHistory();const today=ctrvDateStr();const ex=h.find(x=>x.date===today);if(ex){ex.topic=obj.topic;ex.question=obj.question;}else{h.unshift({date:today,topic:obj.topic,question:obj.question,signal:null});}localStorage.setItem('bebeCtrvHistory',JSON.stringify(h.slice(0,60)));}
 function setCtrvFeedback(signal){const h=getCtrvHistory();const it=h.find(x=>x.date===ctrvDateStr());if(it){it.signal=signal;localStorage.setItem('bebeCtrvHistory',JSON.stringify(h));}}
@@ -1151,13 +1151,39 @@ async function generateControverse(child,data,force){
   const liked=[...new Set(hist.filter(x=>x.signal==='learned').map(x=>x.topic))];
   const disliked=[...new Set(hist.filter(x=>x.signal==='skip').map(x=>x.topic))];
   const sibs=getSiblings(S.children.indexOf(child));
-  const sibCtx=sibs.length?`Cet enfant a ${sibs.length} frère(s)/sœur(s). Aborde la dynamique fraternelle quand c'est pertinent.`:'';
+  let sibCtx='';
+  if(sibs.length){
+    const childDate=new Date(child.birthDate+'T12:00:00');
+    const lines=sibs.map(sib=>{
+      const unborn=isUnborn(sib);
+      const sibDate=new Date(sib.birthDate+'T12:00:00');
+      const older=sibDate<childDate;
+      const rel=sib.gender==='girl'?(older?'grande sœur':'petite sœur'):(older?'grand frère':'petit frère');
+      if(unborn){
+        const dtu=getDaysUntilDue(sib);
+        const term=sibDate.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+        return `- ${sib.firstName} (futur·e ${rel} de ${child.firstName}) est à naître — terme le ${term}, dans ~${dtu} jours. ${child.firstName} va donc DEVENIR ${child.gender==='girl'?'grande sœur':'grand frère'} (ne l'est pas encore).`;
+      }
+      const gap=Math.abs(Math.round(getGapMonths(child,sib)));
+      return `- ${sib.firstName} (${rel} de ${child.firstName}) — ${gap} mois d'écart, déjà né·e.`;
+    });
+    const olderCount=sibs.filter(s=>new Date(s.birthDate+'T12:00:00')<childDate).length;
+    let position;
+    if(olderCount===0)position=`${child.firstName} est l'aîné·e de la fratrie (aucun grand frère ni grande sœur).`;
+    else if(olderCount===sibs.length)position=`${child.firstName} est le·la cadet·te de la fratrie.`;
+    else position=`${child.firstName} est au milieu de la fratrie.`;
+    sibCtx=`## Fratrie (RESPECTE SCRUPULEUSEMENT cet ordre de naissance)
+${position}
+${lines.join('\n')}
+N'invente JAMAIS un frère ou une sœur, ni un ordre de naissance différent de ces faits. Si un cadet est à naître, ${child.firstName} n'a pas encore ce statut de "petit" à gérer — c'est l'arrivée à venir qui compte.`;
+  }
   const sys=`Tu es l'éditeur intellectuel de "BébéPilote", une app qui remplace le doomscrolling par UNE idée utile par jour sur le développement de l'enfant. Ton lecteur est un parent universitaire exigeant : il déteste les généralités rassurantes, il aime le débat d'idées argumenté, les nuances et l'honnêteté épistémique.
 
 Tu produis "La controverse du jour" : une vraie question parentale qui divise, présentée de façon équilibrée et stimulante.
 
 ## Enfant
-${child.firstName}, ${child.gender==='girl'?'fille':'garçon'}, ${data.ageLabel} (jour ${data.ageInDays}). ${sibCtx}
+${child.firstName}, ${child.gender==='girl'?'fille':'garçon'}, ${data.ageLabel} (jour ${data.ageInDays}).
+${sibCtx}
 
 ## Règles de fond (NON négociables)
 - Choisis UNE controverse réelle, vivante, et pertinente pour CET âge précis.
