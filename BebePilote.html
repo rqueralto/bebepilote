@@ -1467,6 +1467,37 @@ function renderControverseDive(child,d,dv,data){
 function ctrvShareText(d){return `${d.why_now} — ${d.bridge}`;}
 function diveShareText(it){return (it.blocks||[]).map(b=>b.text).join(' ');}
 
+function ctrvFullText(d){
+  const L=['CONTROVERSE — '+d.topic,'',d.question,'',d.why_now,'','— LES CAMPS —'];
+  (d.camps||[]).forEach(c=>{
+    L.push('','▸ '+c.name,c.logic);
+    (c.pros||[]).forEach(p=>L.push('  + '+p));
+    (c.cons||[]).forEach(p=>L.push('  − '+p));
+  });
+  L.push('','— CE QU\'ON SAIT —',d.known,'','— CE QU\'ON CROIT (pas un fait) —',d.believed,'','— CE QU\'ON NE SAIT PAS —',d.unknown,'','— ET POUR BÉBÉ ? —',d.bridge,'','— BébéPilote');
+  return L.join('\n');
+}
+function diveFullText(it){
+  const labels={fait:'FAIT ÉTABLI',interp:'INTERPRÉTATION',position:'POSITION',safety:'SÉCURITÉ',plain:''};
+  const L=['CREUSER — '+it.q,''];
+  (it.blocks||[]).forEach(b=>{const lb=labels[b.type];if(lb)L.push('['+lb+']');L.push(b.text,'');});
+  if(it.sources&&it.sources.length){L.push('Sources :');it.sources.forEach(s=>L.push('- '+s.title+' '+s.uri));L.push('');}
+  L.push('— BébéPilote');
+  return L.join('\n');
+}
+function toast(msg){
+  const el=document.createElement('div');
+  el.textContent=msg;
+  el.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:rgba(20,18,16,.92);color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:500;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,.25);max-width:80%;text-align:center';
+  document.body.appendChild(el);
+  setTimeout(()=>{el.style.transition='opacity .3s';el.style.opacity='0';setTimeout(()=>el.remove(),300);},1600);
+}
+async function shareTextContent(title,text){
+  if(navigator.share){try{await navigator.share({title,text});return;}catch(err){if(err&&err.name==='AbortError')return;}}
+  try{await navigator.clipboard.writeText(text);toast('Texte copié dans le presse-papier');}
+  catch{toast('Impossible de copier');}
+}
+
 function renderCtrvFavBody(d){
   const cols=['#5B4690','#A06C2A','#3A5E38'];
   return`<p style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;color:var(--c-ink);line-height:1.25;margin-bottom:6px">${e(d.question)}</p>
@@ -2652,7 +2683,7 @@ function bind(child,data){
   });
   document.querySelector('[data-share-ctrv]')?.addEventListener('click',()=>{
     const d=S.controverse.data;if(!d)return;
-    shareCardCanvas(child,{headerBg:'#5B4690',accentColor:'#5B4690',categoryLabel:'Controverse · '+d.topic,title:d.question,body:ctrvShareText(d),ageLabel:data.ageLabel});
+    shareTextContent('Controverse — '+d.topic,ctrvFullText(d));
   });
   // Garder / Partager — creuser (par réponse)
   document.querySelectorAll('[data-fav-dive]').forEach(b=>b.addEventListener('click',()=>{
@@ -2661,8 +2692,8 @@ function bind(child,data){
     render();
   }));
   document.querySelectorAll('[data-share-dive]').forEach(b=>b.addEventListener('click',()=>{
-    const it=S.controverse.dive.items[+b.dataset.shareDive];if(!it)return;const d=S.controverse.data;
-    shareCardCanvas(child,{headerBg:'#5B4690',accentColor:'#5B4690',categoryLabel:'Creuser'+(d?.topic?' · '+d.topic:''),title:it.q,body:diveShareText(it),ageLabel:data.ageLabel});
+    const it=S.controverse.dive.items[+b.dataset.shareDive];if(!it)return;
+    shareTextContent('Creuser — '+it.q,diveFullText(it));
   }));
   document.getElementById('btn-zoe')?.addEventListener('click',()=>{S.tab='chat';render();});
   document.getElementById('chat-suggestions')?.addEventListener('change',ev=>{
@@ -2732,8 +2763,10 @@ function bind(child,data){
   // Partager depuis la section favoris
   document.querySelectorAll('[data-share-fav]').forEach(b=>b.addEventListener('click',()=>{
     const fav=getFavorites().find(f=>String(f.id)===b.dataset.shareFav);
-    if(!fav?.shareData)return;
-    shareCardCanvas(child,{...fav.shareData});
+    if(!fav)return;
+    if(fav.type==='controverse'&&fav.ctrv){shareTextContent('Controverse — '+fav.ctrv.topic,ctrvFullText(fav.ctrv));return;}
+    if(fav.type==='creuser'&&fav.blocks){shareTextContent('Creuser — '+fav.title,diveFullText({q:fav.title,blocks:fav.blocks,sources:fav.diveSources}));return;}
+    if(fav.shareData)shareCardCanvas(child,{...fav.shareData});
   }));
   document.querySelectorAll('[data-fratrie-prep]').forEach(b=>b.addEventListener('click',()=>{S.modal='fratriePrep';S.modalSection=+b.dataset.fratriePrep;render();}));
   document.querySelectorAll('[data-fratrie-bond]').forEach(b=>b.addEventListener('click',()=>{S.modal='fratrieBond';S.modalSection=+b.dataset.fratrieBond;render();}));
