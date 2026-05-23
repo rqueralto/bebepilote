@@ -122,6 +122,11 @@ a{color:#2D4A8A}
 .dive-ask input{flex:1;padding:11px 14px;border-radius:11px;border:1px solid var(--c-bd);background:var(--c-card);font-size:14px;color:var(--c-ink);outline:none}
 .dive-ask input:focus{border-color:#E8D5B0}
 .dive-send-btn{display:flex;align-items:center;justify-content:center;width:44px;border-radius:11px;background:#A06C2A;color:#fff;flex-shrink:0}
+/* ── Zoé camps (débat inline) ── */
+.zoe-camps-btn{display:inline-flex;align-items:center;gap:7px;margin-top:10px;padding:8px 13px;border-radius:10px;background:#FBF3E5;border:1px solid #F0E8D4;font-size:13px;font-weight:600;color:#A06C2A;transition:background .15s}
+.zoe-camps-btn:hover,.zoe-camps-btn:active{background:#F5EBD5}
+.zoe-camps-inline{margin-top:14px;padding-top:12px;border-top:1px solid var(--c-bd)}
+.zoe-camp-item{border-radius:0 9px 9px 0;padding:9px 12px;margin-bottom:7px}
 
 /* ── Neuron card ── */
 .neuron-wrap{margin:12px 16px;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.1)}
@@ -924,7 +929,54 @@ function renderMsgBlock(m,idx,child,data){
   ${refs.length?`<div class="msg-refs">${refs.map(r=>`<a href="https://www.google.com/search?q=${encodeURIComponent(r)}" target="_blank" rel="noopener" class="msg-ref-link">
     <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
     ${e(r)}</a>`).join('')}</div>`:''}
+  ${m.creuserLabel&&!m.camps&&!m.campLoading?`<button class="zoe-camps-btn" data-zoe-creuser="${idx}">
+    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
+    Les écoles divergent · ${e(m.creuserLabel)}</button>`:''}
+  ${m.campLoading?`<div class="zoe-camps-inline"><p style="font-size:12px;color:#C48A40;display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9" style="opacity:.25"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>Analyse des positions en cours…</p></div>`:''}
+  ${m.camps?renderZoeCampsInline(m):''}
 </div>`;
+}
+
+function renderZoeCampsInline(m){
+  const campCols=['#A06C2A','#3A5E38','#2D4A8A'];
+  const data=m.camps||{};
+  const camps=data.camps||[];
+  const unknown=data.unknown||'';
+  return`<div class="zoe-camps-inline">
+    <p style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#A06C2A;margin-bottom:10px">◆ ${e(m.creuserLabel)} — Les positions</p>
+    ${camps.map((c,i)=>`<div class="zoe-camp-item" style="background:var(--c-bg2);border-left:3px solid ${campCols[i%3]}">
+      <p style="font-size:11px;font-weight:700;color:${campCols[i%3]};margin-bottom:3px">${e(c.name)}</p>
+      <p style="font-size:13px;color:var(--c-t2);line-height:1.6">${e(c.logic)}</p>
+    </div>`).join('')}
+    ${unknown?`<p style="font-size:12px;color:#C48A40;margin-top:2px;line-height:1.5">○ Ce qu'on ne sait pas vraiment : ${e(unknown)}</p>`:''}
+  </div>`;
+}
+
+async function loadZoeCamps(idx){
+  const m=S.chat.msgs[idx];if(!m||m.campLoading||m.camps)return;
+  const prevMsg=S.chat.msgs[idx-1];
+  const question=prevMsg?.content||'';
+  if(!S.apiKey){S.modal='apikey';render();return;}
+  m.campLoading=true;patchChatMsgs();
+  const sys=`Tu es un analyste neutre en psychologie du développement de l'enfant. Ta mission : cartographier les grandes écoles de pensée sur un sujet parental contesté, de façon équilibrée et rigoureuse. Tu t'adresses à un parent universitaire francophone qui veut comprendre le débat, pas une réponse rassurante.`;
+  const prompt=`Sujet contesté : "${m.creuserLabel}"
+Question posée : "${question}"
+
+Génère une analyse structurée des 2 à 3 grandes positions ou écoles sur ce sujet. Chaque position doit avoir un nom clair (pas "Camp A") et une explication dense de 2-3 phrases (logique, arguments, courant ou auteurs représentatifs). Ajoute une phrase sur ce qui reste scientifiquement incertain.`;
+  const schema={type:'OBJECT',properties:{camps:{type:'ARRAY',minItems:2,maxItems:3,items:{type:'OBJECT',properties:{name:{type:'STRING'},logic:{type:'STRING'}},required:['name','logic']}},unknown:{type:'STRING'}},required:['camps','unknown']};
+  try{
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${S.apiKey}`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{responseMimeType:'application/json',responseSchema:schema,temperature:0.7}})
+    });
+    if(!res.ok){const err=await res.json();throw new Error(err.error?.message||`Erreur ${res.status}`);}
+    const json=await res.json();
+    const raw=json.candidates?.[0]?.content?.parts?.[0]?.text||'{}';
+    const parsed=JSON.parse(raw);
+    m.camps=parsed;m.campLoading=false;patchChatMsgs();
+  }catch(err){
+    m.campLoading=false;m.camps={camps:[{name:'Erreur',logic:err.message}],unknown:''};patchChatMsgs();
+  }
 }
 
 function getStreak(){const t=new Date().toISOString().split('T')[0],s=JSON.parse(localStorage.getItem('bebeStreak')||'{"date":"","count":0}');if(s.date===t)return s.count;const y=new Date(Date.now()-86400000).toISOString().split('T')[0],c=s.date===y?s.count+1:1;localStorage.setItem('bebeStreak',JSON.stringify({date:t,count:c}));return c;}
@@ -2894,6 +2946,10 @@ function bindMsgActions(child){
     }
     patchChatMsgs();
   }));
+  // Zoé camps — débat inline
+  document.querySelectorAll('[data-zoe-creuser]').forEach(b=>b.addEventListener('click',()=>{
+    loadZoeCamps(+b.dataset.zoeCreuser);
+  }));
   // Share saved (in modal)
   document.querySelectorAll('[data-share-saved]').forEach(b=>b.addEventListener('click',()=>{
     const entry=getSavedChats().find(x=>x.id===+b.dataset.shareSaved);
@@ -2987,7 +3043,11 @@ Today's Caroline Goldman tip: "${carolineTopic}" — ${carolineCtx.tip}
 Author, A. (Year). Title of the work or concept.
 (one reference per line — 1 to 3 max, only if directly relevant)
 ---FIN---
-No URLs. Only author + title + year if known.${(()=>{const ex=getLikedExamples();return ex.length?`\n\n## Examples of responses appreciated by this parent (few-shot)\n${ex.map(x=>`Q: ${x.question}\nA: ${x.answer}`).join('\n\n')}`:''})()}`;
+No URLs. Only author + title + year if known.
+- If the question touches a genuinely contested topic among experts or schools of thought — notably: cry-it-out / sleep training methods (Ferber, extinction, gentle), co-sleeping, baby-led weaning vs purees, extended breastfeeding, punishments vs natural consequences, screen time, educational screens, ADHD and medication, separation anxiety at nursery, spanking, homework before age 6 — add at the very end (after ---FIN--- if present):
+---CREUSER---
+<short label of the debate, max 8 words, e.g. "Sleep training: is cry-it-out harmful?">
+Only add this marker if the topic is genuinely debated among specialists. Do not add it for factual or normal development questions.${(()=>{const ex=getLikedExamples();return ex.length?`\n\n## Examples of responses appreciated by this parent (few-shot)\n${ex.map(x=>`Q: ${x.question}\nA: ${x.answer}`).join('\n\n')}`:''})()}`;
 
   const sys=S.lang==='en'?sysEn:`Tu es Zoé, assistante de parentalité. Tu réponds EXACTEMENT comme Caroline Goldman, psychologue clinicienne spécialisée dans le développement de l'enfant — pas comme une assistante générique bienveillante. Les parents qui t'utilisent connaissent et apprécient Caroline Goldman. Ils attendent ses positions, pas des généralités.
 
@@ -3042,7 +3102,11 @@ Conseil Caroline Goldman affiché aujourd'hui : "${carolineCtx.topic}" — ${car
 Auteur, A. (Année). Titre de l'œuvre ou du concept.
 (une référence par ligne — 1 à 3 max, uniquement si elles sont directement pertinentes)
 ---FIN---
-Ne mets pas de URLs. Uniquement auteur + titre + année si connue.${(()=>{const ex=getLikedExamples();return ex.length?`\n\n## Exemples de réponses appréciées par ce parent (few-shot)\n${ex.map(x=>`Q: ${x.question}\nR: ${x.answer}`).join('\n\n')}`:''})()}`;
+Ne mets pas de URLs. Uniquement auteur + titre + année si connue.
+- Si la question porte sur un sujet réellement contesté entre experts ou écoles de pensée — notamment : laisser pleurer / protocoles de sommeil (Ferber, extinction totale, méthode douce), cododo, diversification menée par l'enfant (DME) vs purées, allaitement prolongé, punitions vs conséquences naturelles, temps d'écran, écrans éducatifs, TDAH et médication, anxiété de séparation à la crèche, fessée, devoirs avant 6 ans — ajoute à la toute fin (après ---FIN--- si présent) :
+---CREUSER---
+<label court du débat, max 8 mots, ex : "Sommeil : faut-il laisser pleurer ?">
+Ne mets ce marker QUE si le sujet est réellement débattu entre spécialistes. Ne le mets pas pour des questions factuelles ou de développement normal.${(()=>{const ex=getLikedExamples();return ex.length?`\n\n## Exemples de réponses appréciées par ce parent (few-shot)\n${ex.map(x=>`Q: ${x.question}\nR: ${x.answer}`).join('\n\n')}`:''})()}`;
   // Build contents without refs markers (clean text only for conversation history)
   const contents=S.chat.msgs.map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]}));
   try{
@@ -3060,8 +3124,8 @@ Ne mets pas de URLs. Uniquement auteur + titre + année si connue.${(()=>{const 
       for(const l of lines){
         if(l.startsWith('data: ')){const d=l.slice(6).trim();if(!d||d==='[DONE]')continue;
           try{const p=JSON.parse(d),c=p.candidates?.[0]?.content?.parts?.[0]?.text;if(c){full+=c;
-            // During streaming show content before refs marker only
-            S.chat.stream=full.split('---REFS---')[0].trim();
+            // During streaming show content before refs/creuser markers only
+            S.chat.stream=full.split('---REFS---')[0].split('---CREUSER---')[0].trim();
             patchChatMsgs();
           }}catch{}
         }
@@ -3070,8 +3134,11 @@ Ne mets pas de URLs. Uniquement auteur + titre + année si connue.${(()=>{const 
     // Parse refs from completed response
     const refMatch=full.match(/---REFS---([\s\S]*?)---FIN---/);
     const refs=refMatch?refMatch[1].trim().split('\n').map(l=>l.replace(/^[-•]\s*/,'').trim()).filter(Boolean):[];
-    const content=full.split('---REFS---')[0].trim();
-    S.chat.msgs.push({role:'assistant',content,refs,liked:false,saved:false});
+    // Parse CREUSER marker
+    const creuserMatch=full.match(/---CREUSER---\s*\n?(.+)/);
+    const creuserLabel=creuserMatch?creuserMatch[1].trim():null;
+    const content=full.split('---REFS---')[0].split('---CREUSER---')[0].trim();
+    S.chat.msgs.push({role:'assistant',content,refs,liked:false,saved:false,creuserLabel,camps:null,campLoading:false});
     S.chat.stream='';S.chat.loading=false;render();
   }catch(err){
     S.chat.msgs.push({role:'assistant',content:`Oups, une erreur s'est produite : ${err.message}`,refs:[],liked:false,saved:false});
