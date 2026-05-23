@@ -2612,7 +2612,6 @@ function render(){
     <div class="topbar-pills">
       <span class="topbar-pill">${e(data.ageLabel)}</span>
       <span class="topbar-pill">${t('today_day')} ${data.ageInDays}</span>
-      <span class="topbar-pill" style="text-transform:capitalize">${new Date().toLocaleDateString(S.lang==='en'?'en-GB':'fr-FR',{day:'numeric',month:'short'})}</span>
     </div>`:'';
 
   const chevDir=S.childMenu?'M18 15l-6-6-6 6':'M6 9l6 6 6-6';
