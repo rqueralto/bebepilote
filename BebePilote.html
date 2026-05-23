@@ -1295,14 +1295,11 @@ Structure ta réponse en 2 à 5 blocs. Chaque bloc commence sur une NOUVELLE LIG
 - Sers-toi de la recherche web pour fonder chaque ◆FAIT. N'invente JAMAIS d'étude, de chiffre ni de date.
 - Si tu ne trouves pas de source fiable, n'utilise PAS ◆FAIT — bascule en ◇INTERPRÉTATION.
 - Français, dense, sans remplissage. Ne commence pas par "Bien sûr" ni "Absolument".`;
-  try{
+  const callDive=async(grounded)=>{
+    const body={systemInstruction:{parts:[{text:sys}]},contents:[{role:'user',parts:[{text:q.trim()}]}]};
+    if(grounded)body.tools=[{google_search:{}}];
     const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${S.apiKey}`,{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        systemInstruction:{parts:[{text:sys}]},
-        contents:[{role:'user',parts:[{text:q.trim()}]}],
-        tools:[{google_search:{}}]
-      })
+      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)
     });
     if(!res.ok){const err=await res.json();throw new Error(err.error?.message||`Erreur ${res.status}`);}
     const j=await res.json();
@@ -1310,14 +1307,23 @@ Structure ta réponse en 2 à 5 blocs. Chaque bloc commence sur une NOUVELLE LIG
     const txt=(cand?.content?.parts||[]).map(p=>p.text||'').join('');
     if(!txt)throw new Error('Réponse vide du modèle');
     const blocks=parseDiveAnswer(txt);
-    const chunks=cand?.groundingMetadata?.groundingChunks||[];
-    const seen=new Set();
-    const sources=chunks.filter(c=>c.web?.uri).map(c=>({uri:c.web.uri,title:c.web.title||c.web.uri})).filter(s=>{if(seen.has(s.uri))return false;seen.add(s.uri);return true;}).slice(0,6);
-    S.controverse.dive.items.push({q:q.trim(),blocks,sources});
-    S.controverse.dive.loading=false;render();
-  }catch(err){
-    S.controverse.dive.loading=false;S.controverse.dive.error=err.message;render();
+    let sources=[];
+    if(grounded){
+      const chunks=cand?.groundingMetadata?.groundingChunks||[];
+      const seen=new Set();
+      sources=chunks.filter(c=>c.web?.uri).map(c=>({uri:c.web.uri,title:c.web.title||c.web.uri})).filter(s=>{if(seen.has(s.uri))return false;seen.add(s.uri);return true;}).slice(0,6);
+    }
+    return {blocks,sources,grounded};
+  };
+  let result=null;
+  try{result=await callDive(true);}
+  catch(err){
+    // Grounding indisponible (quota séparé sur tier gratuit, ou outil non supporté) → repli sans recherche web
+    try{result=await callDive(false);}
+    catch(err2){S.controverse.dive.loading=false;S.controverse.dive.error=err2.message;render();return;}
   }
+  S.controverse.dive.items.push({q:q.trim(),...result});
+  S.controverse.dive.loading=false;render();
 }
 
 function renderDiveBlock(b){
@@ -1346,6 +1352,7 @@ function renderDiveItem(it){
       <p style="font-size:14px;font-weight:600;color:var(--c-ink);line-height:1.4">${e(it.q)}</p>
     </div>
     ${it.blocks.map(renderDiveBlock).join('')}
+    ${it.grounded===false?`<p style="font-size:11px;color:#B0A89E;font-style:italic;margin-top:4px">Réponse sans recherche web (mode prudent — sans citation chiffrée). Le grounding s'activera avec un quota Google Search.</p>`:''}
     ${it.sources&&it.sources.length?`<div style="margin-top:12px;padding-top:10px;border-top:1px dashed var(--c-bd)">
       <p style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#9C9790;margin-bottom:7px">Sources</p>
       ${it.sources.map(s=>`<a href="${e(s.uri)}" target="_blank" rel="noopener" class="msg-ref-link"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>${e(s.title)}</a>`).join('')}
