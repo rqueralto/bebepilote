@@ -89,6 +89,21 @@ a{color:#2D4A8A}
 .drawer-item:hover,.drawer-item:active{background:var(--c-bg3)}
 .drawer-item.active{background:var(--c-bg3);color:var(--c-ink);font-weight:600}
 .drawer-item svg{width:20px;height:20px;flex-shrink:0;stroke:currentColor}
+.drawer-section-label{padding:10px 14px 4px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t4)}
+.drawer-conv-item{display:flex;align-items:center;padding:8px 14px;border-radius:10px;width:100%;text-align:left;transition:background .12s;cursor:pointer;gap:0}
+.drawer-conv-item:hover,.drawer-conv-item:active{background:var(--c-bg3)}
+.drawer-conv-item.active{background:var(--c-bg3)}
+.drawer-conv-title{flex:1;font-size:14px;color:var(--c-t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.35}
+.drawer-conv-item.active .drawer-conv-title{color:var(--c-ink);font-weight:500}
+.drawer-all-convs{display:flex;align-items:center;padding:7px 14px;font-size:13px;font-weight:500;color:var(--c-t3);width:100%;text-align:left;border-radius:10px;transition:background .12s}
+.drawer-all-convs:hover,.drawer-all-convs:active{background:var(--c-bg3)}
+/* ── Context menu ── */
+.ctx-menu{position:fixed;background:var(--c-card);border:1px solid var(--c-bd2);border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.18);z-index:300;min-width:190px;padding:5px;animation:fadeIn .1s}
+.ctx-menu-item{display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;font-size:15px;font-weight:500;text-align:left;border-radius:10px;color:var(--c-t2);transition:background .1s}
+.ctx-menu-item:hover,.ctx-menu-item:active{background:var(--c-bg3)}
+.ctx-menu-item.danger{color:#C45A5A}
+.ctx-menu-sep{height:1px;background:var(--c-bd);margin:3px 0}
+@keyframes fadeIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
 
 /* ── Section rows ── */
 .section-card{background:var(--c-card);border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.08);margin:0 16px 8px}
@@ -907,6 +922,48 @@ function getSavedChats(){return JSON.parse(localStorage.getItem('bebeSavedChats'
 function addSavedChat(entry){const s=getSavedChats();s.unshift(entry);localStorage.setItem('bebeSavedChats',JSON.stringify(s.slice(0,100)));}
 function deleteSavedChat(id){const s=getSavedChats().filter(x=>x.id!==id);localStorage.setItem('bebeSavedChats',JSON.stringify(s));}
 function getLikedExamples(){return getSavedChats().filter(x=>x.liked).slice(0,3);}
+// ── Conversations (historique chat) ──
+function getConversations(){return JSON.parse(localStorage.getItem('bebeConversations')||'[]');}
+function saveConversations(convs){localStorage.setItem('bebeConversations',JSON.stringify(convs.slice(0,200)));}
+function serializeMsgs(msgs){return msgs.map(m=>({role:m.role,content:m.content,refs:m.refs||[],liked:m.liked||false,saved:m.saved||false,creuserLabel:m.creuserLabel||null}));}
+function autoSaveConv(child){
+  if(!child||!S.chat.msgs.length)return;
+  const userFirst=S.chat.msgs.find(m=>m.role==='user');
+  if(!userFirst)return;
+  const title=userFirst.content.slice(0,55)+(userFirst.content.length>55?'…':'');
+  const serialized=serializeMsgs(S.chat.msgs);
+  const convs=getConversations();
+  if(S.chat.currentConvId){
+    const idx=convs.findIndex(c=>c.id===S.chat.currentConvId);
+    if(idx>=0){convs[idx].msgs=serialized;convs[idx].updatedAt=new Date().toISOString();convs[idx].title=title;convs.unshift(convs.splice(idx,1)[0]);}
+    else{S.chat.currentConvId=null;}
+  }
+  if(!S.chat.currentConvId){
+    const nc={id:Date.now(),title,childName:child.firstName,msgs:serialized,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
+    S.chat.currentConvId=nc.id;convs.unshift(nc);
+  }
+  saveConversations(convs);
+}
+function loadConv(id){
+  const conv=getConversations().find(c=>c.id===id);if(!conv)return;
+  S.chat.msgs=conv.msgs.map(m=>({...m,camps:null,campLoading:false}));
+  S.chat.currentConvId=id;S.tab='chat';S.drawer=false;render();
+}
+function newConv(){S.chat.msgs=[];S.chat.currentConvId=null;S.tab='chat';S.drawer=false;render();}
+function deleteConv(id){
+  const convs=getConversations().filter(c=>c.id!==id);saveConversations(convs);
+  if(S.chat.currentConvId===id){S.chat.msgs=[];S.chat.currentConvId=null;}
+  S.ctxMenu={open:false,convId:null,x:0,y:0};render();
+}
+function renameConvById(id,title){
+  const convs=getConversations();const idx=convs.findIndex(c=>c.id===id);
+  if(idx>=0){convs[idx].title=title;saveConversations(convs);}
+}
+function convDateGroup(iso){
+  const d=new Date(iso),now=new Date(),diff=Math.floor((now-d)/86400000);
+  if(diff===0)return"Aujourd'hui";if(diff===1)return'Hier';
+  if(diff<7)return'7 derniers jours';if(diff<30)return'Ce mois';return'Plus ancien';
+}
 
 // ── Message block renderer ──
 function renderMsgBlock(m,idx,child,data){
@@ -1247,7 +1304,9 @@ const S={
   favCatExp:{},
   savedExp:{},
   ob:{step:1,name:'',date:'',gender:'',apiKey:'',errs:{}},
-  chat:{msgs:[],stream:'',loading:false,showSugg:false},
+  chat:{msgs:[],stream:'',loading:false,showSugg:false,currentConvId:null},
+  ctxMenu:{open:false,convId:null,x:0,y:0},
+  renameConv:{id:null,title:''},
   lang:'fr',
   childMenu:false,
   drawer:false,
@@ -2237,6 +2296,50 @@ function renderProfileSettings(){
 </div>`;
 }
 
+function renderRenameConvModal(){
+  return`<div class="overlay" id="modal-overlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-head">
+      <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+        <div class="s-icon" style="background:var(--c-bg3);width:34px;height:34px;flex-shrink:0;border-radius:10px;display:flex;align-items:center;justify-content:center">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </div>
+        <span style="font-weight:600;font-size:14px">${S.lang==='en'?'Rename conversation':'Renommer la conversation'}</span>
+      </div>
+      ${xBtn()}
+    </div>
+    <div class="sheet-body" style="padding:20px 16px 24px">
+      <input id="rename-conv-input" class="field" value="${e(S.renameConv.title)}" placeholder="${S.lang==='en'?'Conversation name':'Nom de la conversation'}" maxlength="80" style="margin-bottom:12px">
+      <button id="btn-rename-confirm" class="btn btn-dark" style="width:100%;padding:13px">${S.lang==='en'?'Save':'Enregistrer'}</button>
+    </div>
+  </div></div>`;
+}
+function renderAllConvsModal(child){
+  const convs=getConversations().filter(c=>c.childName===child.firstName);
+  const groups={};
+  convs.forEach(c=>{const g=convDateGroup(c.updatedAt);if(!groups[g])groups[g]=[];groups[g].push(c);});
+  const order=["Aujourd'hui","Hier","7 derniers jours","Ce mois","Plus ancien"];
+  const rows=order.filter(g=>groups[g]?.length).map(g=>`
+    <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t4);padding:12px 16px 4px">${g}</p>
+    ${groups[g].map(c=>`<button class="drawer-conv-item${S.chat.currentConvId===c.id?' active':''}" data-conv-id="${c.id}" style="border-radius:0;padding:10px 16px;border-bottom:1px solid var(--c-bg3)">
+      <span class="drawer-conv-title" style="font-size:14px">${e(c.title)}</span>
+    </button>`).join('')}`).join('');
+  return`<div class="overlay" id="modal-overlay">
+  <div class="sheet" style="max-height:90dvh">
+    <div class="sheet-handle"></div>
+    <div class="sheet-head">
+      <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+        <span style="font-weight:600;font-size:14px">${S.lang==='en'?'All conversations':'Toutes les conversations'}</span>
+        <span style="font-size:12px;color:var(--c-t4)">${convs.length}</span>
+      </div>
+      ${xBtn()}
+    </div>
+    <div class="sheet-body" style="padding:0;overflow-y:auto">
+      ${convs.length?rows:`<p style="padding:24px 16px;color:var(--c-t4);font-size:14px">${S.lang==='en'?'No conversations yet.':'Aucune conversation.'}</p>`}
+    </div>
+  </div></div>`;
+}
 function renderSettingsModal(){
   return`<div class="overlay" id="modal-overlay">
 <div class="sheet">
@@ -2720,6 +2823,8 @@ function render(){
   else if(S.modal==='prenatalSection')modalHTML=renderPrenatalSectionModal(S.modalSection,child);
   else if(S.modal==='controverse')modalHTML=renderControverseModal(child,data);
   else if(S.modal==='settings')modalHTML=renderSettingsModal();
+  else if(S.modal==='renameConv')modalHTML=renderRenameConvModal();
+  else if(S.modal==='allConversations')modalHTML=renderAllConvsModal(child);
 
   // Child dropdown entries
   const childDropItems=S.children.map((c,i)=>{
@@ -2775,26 +2880,56 @@ function render(){
     {id:'history',label:t('tab_history')},
     {id:'profile',label:t('tab_profile')},
   ];
+  const childConvs=getConversations().filter(c=>c.childName===child.firstName);
+  const recentConvs=childConvs.slice(0,10);
+  const hasMore=childConvs.length>10;
   const drawerHTML=`
 <div class="drawer-overlay${S.drawer?' open':''}" id="drawer-overlay"></div>
 <div class="drawer${S.drawer?' open':''}" id="main-drawer">
   <div class="drawer-head">
-    <div style="display:flex;align-items:center;gap:10px">
-      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--c-ink);transform:rotate(35deg)"><path d="M10 5V3a2 2 0 0 1 4 0v2"/><path d="M9 5h6v2H9z"/><path d="M7 7h10v12a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V7z"/><line x1="7" y1="13" x2="17" y2="13"/></svg>
-      <span style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--c-ink)">BébéPilote</span>
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:10px">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--c-ink);transform:rotate(35deg)"><path d="M10 5V3a2 2 0 0 1 4 0v2"/><path d="M9 5h6v2H9z"/><path d="M7 7h10v12a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V7z"/><line x1="7" y1="13" x2="17" y2="13"/></svg>
+        <span style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--c-ink)">BébéPilote</span>
+      </div>
+      <button id="btn-new-conv" title="Nouvelle conversation" style="width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--c-t2);background:var(--c-bg3);flex-shrink:0;transition:background .15s">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      </button>
     </div>
   </div>
   <div class="drawer-body">
-    ${navItems.map(item=>`<button class="drawer-item${S.tab===item.id?' active':''}" data-tab="${item.id}">
+    ${navItems.map(item=>`<button class="drawer-item${S.tab===item.id&&!S.chat.currentConvId&&item.id==='chat'?' active':S.tab===item.id&&item.id!=='chat'?' active':''}" data-tab="${item.id}">
       ${drawerIcons[item.id]}<span>${item.label}</span>
     </button>`).join('')}
+    ${recentConvs.length?`
+    <div class="drawer-section-label">${S.lang==='en'?'Recent':'Récents'}</div>
+    ${recentConvs.map(c=>`<button class="drawer-conv-item${S.chat.currentConvId===c.id?' active':''}" data-conv-id="${c.id}">
+      <span class="drawer-conv-title">${e(c.title)}</span>
+    </button>`).join('')}
+    ${hasMore?`<button class="drawer-all-convs" id="btn-all-convs">
+      ${S.lang==='en'?'All conversations':'Toutes les conversations'} <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:4px"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>`:''}
+    `:''}
   </div>
   <div class="drawer-foot">
     <button class="drawer-item" id="btn-drawer-settings">
       ${drawerIcons.settings}<span>${S.lang==='en'?'Settings':'Paramètres'}</span>
     </button>
   </div>
-</div>`;
+</div>
+${S.ctxMenu.open?`<div id="ctx-backdrop" style="position:fixed;inset:0;z-index:299"></div>
+<div class="ctx-menu" id="ctx-menu" style="left:${Math.min(S.ctxMenu.x,window.innerWidth-210)}px;top:${Math.min(S.ctxMenu.y,window.innerHeight-120)}px">
+  <button class="ctx-menu-item" id="ctx-rename">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+    ${S.lang==='en'?'Rename':'Renommer'}
+  </button>
+  <div class="ctx-menu-sep"></div>
+  <button class="ctx-menu-item danger" id="ctx-delete">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+    ${S.lang==='en'?'Delete':'Supprimer'}
+  </button>
+</div>`:''}
+`;
 
   app.innerHTML=`
 <div style="height:100dvh;display:flex;flex-direction:column">
@@ -2957,6 +3092,41 @@ function bind(child,data){
   document.querySelectorAll('#main-drawer [data-tab]').forEach(b=>b.addEventListener('click',()=>{S.tab=b.dataset.tab;S.drawer=false;render();}));
   // Drawer settings → modal overlay
   document.getElementById('btn-drawer-settings')?.addEventListener('click',()=>{S.modal='settings';S.drawer=false;render();});
+  // Nouvelle conversation
+  document.getElementById('btn-new-conv')?.addEventListener('click',()=>newConv());
+  // Toutes les conversations
+  document.getElementById('btn-all-convs')?.addEventListener('click',()=>{S.modal='allConversations';S.drawer=false;render();});
+  // Charger une conversation (drawer + modal)
+  let longPressTimer=null;
+  document.querySelectorAll('[data-conv-id]').forEach(el=>{
+    const id=+el.dataset.convId;
+    const showCtx=(x,y)=>{S.ctxMenu={open:true,convId:id,x,y};render();};
+    el.addEventListener('click',()=>{if(!S.ctxMenu.open)loadConv(id);});
+    el.addEventListener('touchstart',ev=>{const t=ev.touches[0];longPressTimer=setTimeout(()=>showCtx(t.clientX,t.clientY),500);},{passive:true});
+    el.addEventListener('touchend',()=>clearTimeout(longPressTimer));
+    el.addEventListener('touchmove',()=>clearTimeout(longPressTimer));
+    el.addEventListener('contextmenu',ev=>{ev.preventDefault();showCtx(ev.clientX,ev.clientY);});
+  });
+  // Fermer le ctx menu
+  document.getElementById('ctx-backdrop')?.addEventListener('click',()=>{S.ctxMenu={open:false,convId:null,x:0,y:0};render();});
+  // Renommer depuis ctx menu
+  document.getElementById('ctx-rename')?.addEventListener('click',()=>{
+    const conv=getConversations().find(c=>c.id===S.ctxMenu.convId);
+    S.renameConv={id:S.ctxMenu.convId,title:conv?.title||''};
+    S.ctxMenu={open:false,convId:null,x:0,y:0};
+    S.modal='renameConv';render();
+  });
+  // Supprimer depuis ctx menu
+  document.getElementById('ctx-delete')?.addEventListener('click',()=>{deleteConv(S.ctxMenu.convId);});
+  // Confirmer le renommage
+  document.getElementById('btn-rename-confirm')?.addEventListener('click',()=>{
+    const input=document.getElementById('rename-conv-input');
+    const title=(input?.value||'').trim();
+    if(title){renameConvById(S.renameConv.id,title);S.modal=null;render();}
+  });
+  document.getElementById('rename-conv-input')?.addEventListener('keydown',ev=>{
+    if(ev.key==='Enter'){const title=ev.target.value.trim();if(title){renameConvById(S.renameConv.id,title);S.modal=null;render();}}
+  });
   document.querySelectorAll('[data-theme-val]').forEach(b=>b.addEventListener('click',()=>setTheme(b.dataset.themeVal)));
   document.querySelectorAll('[data-lang-val]').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.langVal)));
   document.querySelectorAll('[data-prov]').forEach(b=>b.addEventListener('click',()=>{saveProvider(b.dataset.prov);render();}));
@@ -3240,7 +3410,7 @@ Ne mets ce marker QUE si le sujet est réellement débattu entre spécialistes. 
     const creuserLabel=creuserMatch?creuserMatch[1].trim():null;
     const content=full.split('---REFS---')[0].split('---CREUSER---')[0].trim();
     S.chat.msgs.push({role:'assistant',content,refs,liked:false,saved:false,creuserLabel,camps:null,campLoading:false});
-    S.chat.stream='';S.chat.loading=false;render();
+    S.chat.stream='';S.chat.loading=false;autoSaveConv(child);render();
   }catch(err){
     S.chat.msgs.push({role:'assistant',content:`Oups, une erreur s'est produite : ${err.message}`,refs:[],liked:false,saved:false});
     S.chat.stream='';S.chat.loading=false;render();
