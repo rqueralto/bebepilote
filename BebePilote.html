@@ -2108,8 +2108,22 @@ function renderProfileSettings(){
 </div>`;
 }
 
+function renderSettingsModal(){
+  return`<div class="overlay" id="modal-overlay">
+<div class="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head">
+    <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+      <div class="s-icon" style="background:var(--c-bg3);width:34px;height:34px;flex-shrink:0"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+      <span style="font-weight:600;font-size:14px">${S.lang==='en'?'Settings':'Paramètres'}</span>
+    </div>
+    ${xBtn()}
+  </div>
+  <div class="sheet-body" style="padding:0">${renderProfileSettings()}</div>
+</div></div>`;
+}
+
 function renderProfile(){
-  if(S.profileSettings)return renderProfileSettings();
   const locale=S.lang==='en'?'en-GB':'fr-FR';
   return`<div style="padding:20px 16px">
 ${S.children.map((c,i)=>{
@@ -2576,6 +2590,7 @@ function render(){
   else if(S.modal==='prenatalDetail')modalHTML=renderPrenatalDetailModal(child);
   else if(S.modal==='prenatalSection')modalHTML=renderPrenatalSectionModal(S.modalSection,child);
   else if(S.modal==='controverse')modalHTML=renderControverseModal(child,data);
+  else if(S.modal==='settings')modalHTML=renderSettingsModal();
 
   // Child dropdown entries
   const childDropItems=S.children.map((c,i)=>{
@@ -2605,13 +2620,7 @@ function render(){
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   </button>`;
 
-  const topbarHTML=S.profileSettings?`
-    <button id="btn-profile-settings" style="display:flex;align-items:center;gap:6px;color:var(--c-t2);font-size:14px;font-weight:500">
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
-      ${S.lang==='en'?'Back':'Retour'}
-    </button>
-    <span style="font-size:15px;font-weight:600;color:var(--c-ink)">${S.lang==='en'?'Settings':'Paramètres'}</span>
-    <div style="width:34px"></div>`:`
+  const topbarHTML=`
     ${hamburgerBtn}
     <div class="child-switcher" style="flex:1;padding:0 8px">
       <button id="btn-child-switcher" style="display:flex;align-items:center;gap:5px">
@@ -2648,12 +2657,12 @@ function render(){
     </div>
   </div>
   <div class="drawer-body">
-    ${navItems.map(item=>`<button class="drawer-item${S.tab===item.id&&!S.profileSettings?' active':''}" data-tab="${item.id}">
+    ${navItems.map(item=>`<button class="drawer-item${S.tab===item.id?' active':''}" data-tab="${item.id}">
       ${drawerIcons[item.id]}<span>${item.label}</span>
     </button>`).join('')}
   </div>
   <div class="drawer-foot">
-    <button class="drawer-item${S.profileSettings?' active':''}" id="btn-drawer-settings">
+    <button class="drawer-item" id="btn-drawer-settings">
       ${drawerIcons.settings}<span>${S.lang==='en'?'Settings':'Paramètres'}</span>
     </button>
   </div>
@@ -2812,15 +2821,13 @@ function bind(child,data){
   document.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>{S.childIdx=+b.dataset.edit;S.modal='editChild';S.modalChildIdx=+b.dataset.edit;render();}));
   document.getElementById('btn-add-child')?.addEventListener('click',()=>{S.modal='addChild';render();});
   document.getElementById('btn-apikey')?.addEventListener('click',()=>{S.modal='apikey';render();});
-  // Settings back button (topbar when settings open)
-  document.getElementById('btn-profile-settings')?.addEventListener('click',()=>{S.profileSettings=false;render();});
   // Drawer open/close
   document.getElementById('btn-drawer-open')?.addEventListener('click',ev=>{ev.stopPropagation();S.drawer=true;render();});
   document.getElementById('drawer-overlay')?.addEventListener('click',()=>{S.drawer=false;render();});
   // Drawer nav items
-  document.querySelectorAll('#main-drawer [data-tab]').forEach(b=>b.addEventListener('click',()=>{S.tab=b.dataset.tab;S.profileSettings=false;S.drawer=false;render();}));
-  // Drawer settings button
-  document.getElementById('btn-drawer-settings')?.addEventListener('click',()=>{S.tab='profile';S.profileSettings=true;S.drawer=false;render();});
+  document.querySelectorAll('#main-drawer [data-tab]').forEach(b=>b.addEventListener('click',()=>{S.tab=b.dataset.tab;S.drawer=false;render();}));
+  // Drawer settings → modal overlay
+  document.getElementById('btn-drawer-settings')?.addEventListener('click',()=>{S.modal='settings';S.drawer=false;render();});
   document.querySelectorAll('[data-theme-val]').forEach(b=>b.addEventListener('click',()=>setTheme(b.dataset.themeVal)));
   document.querySelectorAll('[data-lang-val]').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.langVal)));
   document.querySelectorAll('[data-prov]').forEach(b=>b.addEventListener('click',()=>{saveProvider(b.dataset.prov);render();}));
