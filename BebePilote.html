@@ -1015,7 +1015,7 @@ function renderFavorites(child){
   // Group by typeLabel
   const groups={};
   all.forEach(f=>{const k=f.typeLabel||f.type;if(!groups[k])groups[k]={label:k,type:f.type,colorBg:f.refsColorBg||'acc-blue',items:[]};groups[k].items.push(f);});
-  const colors={section:{bg:'#EBF0FA',color:'#2D4A8A'},conseil:{bg:'#FBF3E5',color:'#A06C2A'},caroline:{bg:'#EAF0E8',color:'#3A5E38'},highlight:{bg:'#EBF0FA',color:'#2D4A8A'}};
+  const colors={section:{bg:'#EBF0FA',color:'#2D4A8A'},conseil:{bg:'#FBF3E5',color:'#A06C2A'},caroline:{bg:'#EAF0E8',color:'#3A5E38'},highlight:{bg:'#EBF0FA',color:'#2D4A8A'},controverse:{bg:'#F0ECF7',color:'#5B4690'},creuser:{bg:'#F0ECF7',color:'#5B4690'}};
   return Object.values(groups).map(g=>{
     const exp=!!S.favCatExp[g.label];
     const c=colors[g.type]||colors.section;
@@ -1029,12 +1029,12 @@ function renderFavorites(child){
 </button>
 ${exp?`<div style="border-top:1px solid #F5F3EF">
 ${g.items.map((f,i)=>`<div style="padding:12px 16px;${i<g.items.length-1?'border-bottom:1px solid #FAFAF8':''}">
-  <p style="font-size:13px;font-weight:600;color:#1A1918;margin-bottom:5px;line-height:1.35">${e(f.title)}</p>
+  ${f.type==='controverse'&&f.ctrv?renderCtrvFavBody(f.ctrv):f.type==='creuser'&&f.blocks?renderDiveFavBody(f):`<p style="font-size:13px;font-weight:600;color:#1A1918;margin-bottom:5px;line-height:1.35">${e(f.title)}</p>
   <p style="font-size:13px;color:#5C5752;line-height:1.65;margin-bottom:${f.refsHtml?'12px':'0'}">${e(f.summary)}</p>
   ${f.refsHtml?`<div class="refs-block ${f.refsColorBg||'acc-blue'}">
     <p style="font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;opacity:.75">📖 Pour aller plus loin</p>
     ${f.refsHtml}
-  </div>`:''}
+  </div>`:''}`}
   <div style="display:flex;gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid #F5F3EF">
     <button class="msg-act fav-on" data-unfav="${f.id}" style="width:auto;padding:0 8px;font-size:12px;gap:5px">
       <svg viewBox="0 0 24 24" width="12" height="12" fill="#E05A5A" stroke="#E05A5A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
@@ -1411,7 +1411,8 @@ function renderDiveBlock(b){
   </div>`;
 }
 
-function renderDiveItem(it){
+function renderDiveItem(it,child,data,idx){
+  const faved=child?isFavorited(favId(child.firstName,'creuser',it.q)):false;
   return`<div style="margin-bottom:24px">
     <div style="display:flex;gap:7px;align-items:flex-start;margin-bottom:13px;padding-bottom:11px;border-bottom:1px solid var(--c-bd)">
       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#5B4690" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:3px"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
@@ -1423,10 +1424,11 @@ function renderDiveItem(it){
       <p style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#9C9790;margin-bottom:7px">Sources</p>
       ${it.sources.map(s=>`<a href="${e(s.uri)}" target="_blank" rel="noopener" class="msg-ref-link"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>${e(s.title)}</a>`).join('')}
     </div>`:''}
+    ${child?`<div style="display:flex;gap:6px;margin-top:12px;padding-top:8px;border-top:1px solid var(--c-bd)">${modalActBtns('data-fav-dive',idx,'data-share-dive',idx,faved)}</div>`:''}
   </div>`;
 }
 
-function renderControverseDive(child,d,dv){
+function renderControverseDive(child,d,dv,data){
   const sugg=(d.deep_questions&&d.deep_questions.length)?d.deep_questions.slice(0,3):[
     'Pourquoi les experts sont-ils en désaccord sur ce point ?',
     `Qu'est-ce qui change selon le tempérament de ${child.firstName} ?`,
@@ -1446,7 +1448,7 @@ function renderControverseDive(child,d,dv){
     <div style="background:var(--c-bg2);border-left:3px solid #5B4690;border-radius:0 10px 10px 0;padding:10px 14px;margin-bottom:20px">
       <p style="font-size:13px;color:#6B6480;font-weight:600;line-height:1.4">${e(d.question)}</p>
     </div>
-    ${dv.items.map(it=>renderDiveItem(it)).join('')}
+    ${dv.items.map((it,idx)=>renderDiveItem(it,child,data,idx)).join('')}
     ${dv.loading?`<div style="display:flex;align-items:center;gap:9px;color:#8479A8;font-size:13px;margin-bottom:18px"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9" style="opacity:.25"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>Recherche en cours…</div>`:''}
     ${dv.error?`<p style="font-size:13px;color:#A03828;margin-bottom:14px">${e(dv.error)}</p>`:''}
     ${!dv.loading?`
@@ -1460,6 +1462,32 @@ function renderControverseDive(child,d,dv){
     <div style="height:8px"></div>
   </div>
 </div></div>`;
+}
+
+function ctrvShareText(d){return `${d.why_now} — ${d.bridge}`;}
+function diveShareText(it){return (it.blocks||[]).map(b=>b.text).join(' ');}
+
+function renderCtrvFavBody(d){
+  const cols=['#5B4690','#A06C2A','#3A5E38'];
+  return`<p style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;color:var(--c-ink);line-height:1.25;margin-bottom:6px">${e(d.question)}</p>
+  <p style="font-size:12px;color:#6B6480;line-height:1.55;margin-bottom:12px">${e(d.why_now)}</p>
+  ${(d.camps||[]).map((cp,i)=>`<div style="border-left:3px solid ${cols[i%3]};padding-left:10px;margin-bottom:10px">
+    <p style="font-weight:700;font-size:13px;color:var(--c-ink);margin-bottom:4px">${e(cp.name)}</p>
+    ${(cp.pros||[]).map(p=>`<div style="display:flex;gap:6px;margin-bottom:3px"><span style="color:#3A5E38;font-weight:800">✓</span><span style="font-size:12px;color:#5C5752;line-height:1.45">${e(p)}</span></div>`).join('')}
+    ${(cp.cons||[]).map(p=>`<div style="display:flex;gap:6px;margin-bottom:3px"><span style="color:#A03828;font-weight:800">✗</span><span style="font-size:12px;color:#5C5752;line-height:1.45">${e(p)}</span></div>`).join('')}
+  </div>`).join('')}
+  <div style="background:var(--c-bg2);border-radius:10px;padding:11px;margin:10px 0">
+    <p style="font-size:10px;font-weight:700;text-transform:uppercase;color:#3A5E38;margin-bottom:2px">◆ Ce qu'on sait</p><p style="font-size:12px;color:#5C5752;line-height:1.5;margin-bottom:8px">${e(d.known)}</p>
+    <p style="font-size:10px;font-weight:700;text-transform:uppercase;color:#A06C2A;margin-bottom:2px">◇ Ce qu'on croit</p><p style="font-size:12px;color:#5C5752;line-height:1.5;margin-bottom:8px">${e(d.believed)}</p>
+    <p style="font-size:10px;font-weight:700;text-transform:uppercase;color:#8479A8;margin-bottom:2px">○ Ce qu'on ne sait pas</p><p style="font-size:12px;color:#5C5752;line-height:1.5">${e(d.unknown)}</p>
+  </div>
+  <div class="refs-block acc-plum"><p style="font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px">Et pour bébé ?</p><p style="font-size:13px;color:#5C5752;line-height:1.6">${e(d.bridge)}</p></div>`;
+}
+
+function renderDiveFavBody(f){
+  return`<p style="font-size:13px;font-weight:600;color:var(--c-ink);line-height:1.4;margin-bottom:10px">${e(f.title)}</p>
+  ${(f.blocks||[]).map(renderDiveBlock).join('')}
+  ${f.diveSources&&f.diveSources.length?`<div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--c-bd)"><p style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#9C9790;margin-bottom:6px">Sources</p>${f.diveSources.map(s=>`<a href="${e(s.uri)}" target="_blank" rel="noopener" class="msg-ref-link">${e(s.title)}</a>`).join('')}</div>`:''}`;
 }
 
 function renderControverseCard(child,data){
@@ -1493,20 +1521,24 @@ function renderControverseCard(child,data){
   </button>`;
 }
 
-function renderControverseModal(child){
+function renderControverseModal(child,data){
   const d=S.controverse.data;if(!d)return'';
-  if(S.controverse.dive.open)return renderControverseDive(child,d,S.controverse.dive);
+  if(S.controverse.dive.open)return renderControverseDive(child,d,S.controverse.dive,data);
   const fb=getCtrvFeedbackToday();
   const campCols=['#5B4690','#A06C2A','#3A5E38'];
+  const faved=isFavorited(favId(child.firstName,'controverse',d.topic));
   return`<div class="overlay" id="modal-overlay">
 <div class="sheet">
   <div class="sheet-handle"></div>
   <div class="sheet-head">
-    <div style="display:flex;align-items:center;gap:10px">
-      <div class="s-icon acc-plum" style="width:34px;height:34px"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="20" x2="6" y2="14"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="18" y1="20" x2="18" y2="10"/></svg></div>
+    <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+      <div class="s-icon acc-plum" style="width:34px;height:34px;flex-shrink:0"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="20" x2="6" y2="14"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="18" y1="20" x2="18" y2="10"/></svg></div>
       <span style="font-weight:600;font-size:14px">Controverse · ${e(d.topic)}</span>
     </div>
-    ${xBtn()}
+    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+      ${modalActBtns('data-fav-ctrv','1','data-share-ctrv','1',faved)}
+      ${xBtn()}
+    </div>
   </div>
   <div class="sheet-body">
     <h2 style="font-family:'Cormorant Garamond',serif;font-size:27px;font-weight:500;line-height:1.25;margin-bottom:12px">${e(d.question)}</h2>
@@ -2514,7 +2546,7 @@ function render(){
   else if(S.modal==='fratrieBond')modalHTML=renderFratrieBondModal(S.modalSection,child);
   else if(S.modal==='prenatalDetail')modalHTML=renderPrenatalDetailModal(child);
   else if(S.modal==='prenatalSection')modalHTML=renderPrenatalSectionModal(S.modalSection,child);
-  else if(S.modal==='controverse')modalHTML=renderControverseModal(child);
+  else if(S.modal==='controverse')modalHTML=renderControverseModal(child,data);
 
   // Child dropdown entries
   const childDropItems=S.children.map((c,i)=>{
@@ -2612,6 +2644,26 @@ function bind(child,data){
   document.querySelectorAll('[data-dive-q]').forEach(b=>b.addEventListener('click',()=>askDeepDive(child,data,b.dataset.diveQ)));
   document.getElementById('dive-send')?.addEventListener('click',()=>{const inp=document.getElementById('dive-input');const v=inp?.value.trim();if(v)askDeepDive(child,data,v);});
   document.getElementById('dive-input')?.addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();const v=ev.target.value.trim();if(v)askDeepDive(child,data,v);}});
+  // Garder / Partager — controverse
+  document.querySelector('[data-fav-ctrv]')?.addEventListener('click',()=>{
+    const d=S.controverse.data;if(!d)return;
+    toggleFavorite({id:favId(child.firstName,'controverse',d.topic),childName:child.firstName,childAge:data.ageLabel,type:'controverse',typeLabel:'Controverse',title:d.question,summary:d.why_now,ctrv:d,refsColorBg:'acc-plum',date:new Date().toISOString(),canShare:true,shareData:{headerBg:'#5B4690',accentColor:'#5B4690',categoryLabel:'Controverse · '+d.topic,title:d.question,body:ctrvShareText(d),ageLabel:data.ageLabel}});
+    render();
+  });
+  document.querySelector('[data-share-ctrv]')?.addEventListener('click',()=>{
+    const d=S.controverse.data;if(!d)return;
+    shareCardCanvas(child,{headerBg:'#5B4690',accentColor:'#5B4690',categoryLabel:'Controverse · '+d.topic,title:d.question,body:ctrvShareText(d),ageLabel:data.ageLabel});
+  });
+  // Garder / Partager — creuser (par réponse)
+  document.querySelectorAll('[data-fav-dive]').forEach(b=>b.addEventListener('click',()=>{
+    const it=S.controverse.dive.items[+b.dataset.favDive];if(!it)return;const d=S.controverse.data;
+    toggleFavorite({id:favId(child.firstName,'creuser',it.q),childName:child.firstName,childAge:data.ageLabel,type:'creuser',typeLabel:'Creuser',title:it.q,summary:'',blocks:it.blocks,diveSources:it.sources,refsColorBg:'acc-plum',date:new Date().toISOString(),canShare:true,shareData:{headerBg:'#5B4690',accentColor:'#5B4690',categoryLabel:'Creuser'+(d?.topic?' · '+d.topic:''),title:it.q,body:diveShareText(it),ageLabel:data.ageLabel}});
+    render();
+  }));
+  document.querySelectorAll('[data-share-dive]').forEach(b=>b.addEventListener('click',()=>{
+    const it=S.controverse.dive.items[+b.dataset.shareDive];if(!it)return;const d=S.controverse.data;
+    shareCardCanvas(child,{headerBg:'#5B4690',accentColor:'#5B4690',categoryLabel:'Creuser'+(d?.topic?' · '+d.topic:''),title:it.q,body:diveShareText(it),ageLabel:data.ageLabel});
+  }));
   document.getElementById('btn-zoe')?.addEventListener('click',()=>{S.tab='chat';render();});
   document.getElementById('chat-suggestions')?.addEventListener('change',ev=>{
     const val=ev.target.value;if(!val)return;
