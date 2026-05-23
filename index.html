@@ -75,11 +75,20 @@ a{color:#2D4A8A}
 .topbar-pills{display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end}
 .topbar-pill{font-size:11px;font-weight:600;padding:3px 8px;border-radius:99px;background:var(--c-bg3);color:var(--c-t3);letter-spacing:.01em;white-space:nowrap}
 
-/* ── Bottom nav ── */
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--c-card);display:flex;border-top:1px solid var(--c-bd2);z-index:20;padding-bottom:env(safe-area-inset-bottom)}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:14px 4px;font-size:11px;font-weight:600;color:var(--c-t4);transition:color .15s}
-.nav-btn.on{color:var(--c-ink)}
-.nav-btn svg{width:22px;height:22px;stroke:currentColor}
+/* ── Side drawer ── */
+.hamburger-btn{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:var(--c-bg3);color:var(--c-t2);transition:background .15s;flex-shrink:0}
+.hamburger-btn:hover,.hamburger-btn:active{background:var(--c-fbd)}
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:60;opacity:0;pointer-events:none;transition:opacity .22s}
+.drawer-overlay.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;left:0;top:0;height:100%;width:272px;max-width:82%;background:var(--c-card);z-index:61;transform:translateX(-100%);transition:transform .26s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:4px 0 32px rgba(0,0,0,.14)}
+.drawer.open{transform:translateX(0)}
+.drawer-head{padding:calc(16px + env(safe-area-inset-top)) 18px 12px;border-bottom:1px solid var(--c-bd);flex-shrink:0}
+.drawer-body{flex:1;overflow-y:auto;padding:10px 8px}
+.drawer-foot{border-top:1px solid var(--c-bd);padding:8px 8px calc(12px + env(safe-area-inset-bottom));flex-shrink:0}
+.drawer-item{display:flex;align-items:center;gap:13px;padding:11px 14px;border-radius:10px;width:100%;text-align:left;transition:background .12s;font-size:15px;font-weight:500;color:var(--c-t2)}
+.drawer-item:hover,.drawer-item:active{background:var(--c-bg3)}
+.drawer-item.active{background:var(--c-bg3);color:var(--c-ink);font-weight:600}
+.drawer-item svg{width:20px;height:20px;flex-shrink:0;stroke:currentColor}
 
 /* ── Section rows ── */
 .section-card{background:var(--c-card);border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.08);margin:0 16px 8px}
@@ -98,6 +107,21 @@ a{color:#2D4A8A}
 .acc-teal  {background:#E6F4F1;color:#1B7060}
 .acc-coral {background:#FFF0EB;color:#A03828}
 .acc-sage  {background:#EAF0E8;color:#3A5E38}
+.acc-plum  {background:#FBF3E5;color:#A06C2A}
+
+/* ── Controverse du jour (proto) ── */
+.ctrv-card{display:block;margin:0 16px 16px;width:calc(100% - 32px);padding:18px;border-radius:16px;text-align:left;transition:opacity .15s;background:#FBF3E5;border:1px solid #F0E8D4}
+.ctrv-card:hover{opacity:.92}
+.ctrv-fb{display:inline-flex;align-items:center;justify-content:center;padding:11px 8px;border-radius:11px;font-size:13px;font-weight:600;color:var(--c-t2);background:var(--c-bg2);border:1px solid var(--c-bd);transition:background .15s,border-color .15s,color .15s}
+.ctrv-fb.on{background:#FBF3E5;border-color:#E8D5B0;color:#A06C2A}
+.ctrv-creuser-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:13px;border-radius:12px;background:#A06C2A;color:#fff;font-size:14px;font-weight:600;margin-bottom:22px;transition:opacity .15s}
+.ctrv-creuser-btn:hover{opacity:.9}
+.dive-sugg{display:block;width:100%;text-align:left;padding:12px 14px;border-radius:11px;background:var(--c-bg2);border:1px solid var(--c-bd);font-size:13px;color:var(--c-ink);margin-bottom:8px;transition:background .15s}
+.dive-sugg:hover{background:var(--c-bg3)}
+.dive-ask{display:flex;gap:8px;margin-top:12px}
+.dive-ask input{flex:1;padding:11px 14px;border-radius:11px;border:1px solid var(--c-bd);background:var(--c-card);font-size:14px;color:var(--c-ink);outline:none}
+.dive-ask input:focus{border-color:#E8D5B0}
+.dive-send-btn{display:flex;align-items:center;justify-content:center;width:44px;border-radius:11px;background:#A06C2A;color:#fff;flex-shrink:0}
 
 /* ── Neuron card ── */
 .neuron-wrap{margin:12px 16px;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.1)}
@@ -161,7 +185,6 @@ a{color:#2D4A8A}
 .chat-sugg-cat{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--c-t4);flex-shrink:0;width:64px}
 .chat-sugg-label{font-size:13px;color:var(--c-ink);line-height:1.4;flex:1}
 /* Keyboard awareness */
-.keyboard-open .bottom-nav{display:none}
 .keyboard-open .chat-pill-wrap{padding-bottom:max(10px,env(safe-area-inset-bottom))!important}
 /* Dots */
 .dot{width:6px;height:6px;background:var(--c-t4);border-radius:50%;animation:blink 1.3s infinite}
@@ -258,6 +281,8 @@ a{color:#2D4A8A}
 [data-theme="dark"] .acc-teal  {background:#142820;color:#5AB090}
 [data-theme="dark"] .acc-coral {background:#2A1810;color:#C06848}
 [data-theme="dark"] .acc-sage  {background:#1A2A1C;color:#6AAA78}
+[data-theme="dark"] .acc-plum  {background:#211A33;color:#A98FD8}
+[data-theme="dark"] .ctrv-card {background:#2A1E0E;border-color:#3D2E18}
 /* ── Dark mode — inline-style background overrides ── */
 [data-theme="dark"] [style*="background:#F2F0EB"]{background:var(--c-bg)!important}
 [data-theme="dark"] [style*="background:#FAFAF8"]{background:var(--c-bg2)!important}
@@ -998,7 +1023,7 @@ function renderFavorites(child){
   // Group by typeLabel
   const groups={};
   all.forEach(f=>{const k=f.typeLabel||f.type;if(!groups[k])groups[k]={label:k,type:f.type,colorBg:f.refsColorBg||'acc-blue',items:[]};groups[k].items.push(f);});
-  const colors={section:{bg:'#EBF0FA',color:'#2D4A8A'},conseil:{bg:'#FBF3E5',color:'#A06C2A'},caroline:{bg:'#EAF0E8',color:'#3A5E38'},highlight:{bg:'#EBF0FA',color:'#2D4A8A'}};
+  const colors={section:{bg:'#EBF0FA',color:'#2D4A8A'},conseil:{bg:'#FBF3E5',color:'#A06C2A'},caroline:{bg:'#EAF0E8',color:'#3A5E38'},highlight:{bg:'#EBF0FA',color:'#2D4A8A'},controverse:{bg:'#FBF3E5',color:'#A06C2A'},creuser:{bg:'#FBF3E5',color:'#A06C2A'}};
   return Object.values(groups).map(g=>{
     const exp=!!S.favCatExp[g.label];
     const c=colors[g.type]||colors.section;
@@ -1012,12 +1037,12 @@ function renderFavorites(child){
 </button>
 ${exp?`<div style="border-top:1px solid #F5F3EF">
 ${g.items.map((f,i)=>`<div style="padding:12px 16px;${i<g.items.length-1?'border-bottom:1px solid #FAFAF8':''}">
-  <p style="font-size:13px;font-weight:600;color:#1A1918;margin-bottom:5px;line-height:1.35">${e(f.title)}</p>
+  ${f.type==='controverse'&&f.ctrv?renderCtrvFavBody(f.ctrv):f.type==='creuser'&&f.blocks?renderDiveFavBody(f):`<p style="font-size:13px;font-weight:600;color:#1A1918;margin-bottom:5px;line-height:1.35">${e(f.title)}</p>
   <p style="font-size:13px;color:#5C5752;line-height:1.65;margin-bottom:${f.refsHtml?'12px':'0'}">${e(f.summary)}</p>
   ${f.refsHtml?`<div class="refs-block ${f.refsColorBg||'acc-blue'}">
     <p style="font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;opacity:.75">📖 Pour aller plus loin</p>
     ${f.refsHtml}
-  </div>`:''}
+  </div>`:''}`}
   <div style="display:flex;gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid #F5F3EF">
     <button class="msg-act fav-on" data-unfav="${f.id}" style="width:auto;padding:0 8px;font-size:12px;gap:5px">
       <svg viewBox="0 0 24 24" width="12" height="12" fill="#E05A5A" stroke="#E05A5A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
@@ -1083,6 +1108,8 @@ const S={
   children:JSON.parse(localStorage.getItem('bebeChildren')||'[]'),
   childIdx:0,
   apiKey:localStorage.getItem('bebeApiKey')||'',
+  provider:localStorage.getItem('bebeProvider')||'gemini',
+  anthropicKey:localStorage.getItem('bebeAnthropicKey')||'',
   tab:'today',
   modal:null,        // 'conseil'|'section'|'apikey'|'editChild'|'addChild'
   modalSection:null,
@@ -1094,16 +1121,506 @@ const S={
   chat:{msgs:[],stream:'',loading:false,showSugg:false},
   lang:'fr',
   childMenu:false,
+  drawer:false,
   profileSettings:false,
+  flags:{controverse:true},
+  controverse:{loading:false,error:null,data:null,childKey:null,dive:{open:false,items:[],loading:false,error:null}},
 };
 function saveKids(){localStorage.setItem('bebeChildren',JSON.stringify(S.children));}
 function saveKey(k){S.apiKey=k;localStorage.setItem('bebeApiKey',k);}
+function saveProvider(p){S.provider=p;localStorage.setItem('bebeProvider',p);}
+function saveAnthropicKey(k){S.anthropicKey=k;localStorage.setItem('bebeAnthropicKey',k);}
+function ctrvProviderKey(){return S.provider==='anthropic'?S.anthropicKey:S.apiKey;}
+function ctrvIdent(child){return child.firstName+'|'+S.provider;}
 function childData(c){
   const b=new Date(c.birthDate+'T12:00:00'),n=new Date(),d=Math.floor((n-b)/86400000);
   const doy=getDayOfYear(n);
   if(d<0)return{ageInDays:d,ageInMonths:0,doy,milestone:null,neuron:null,ageLabel:null,sections:[],unborn:true};
   const m=Math.floor(d/30.44);
   return{ageInDays:d,ageInMonths:m,doy,milestone:getMilestoneForAge(d),neuron:getNeuronStats(d,c.birthDate),ageLabel:getAgeLabel(d,c.birthDate),sections:ALL_SECTIONS.map(s=>({s,entry:getDailySectionEntry(s.id,m,doy)})),unborn:false};
+}
+
+// ═══════════════════════ CONTROVERSE DU JOUR (proto) ═══════════════════════
+function ctrvDateStr(){return new Date().toISOString().slice(0,10);}
+function ctrvCacheKey(c){return 'bebeCtrv_v2_'+S.provider+'_'+c.firstName+'_'+ctrvDateStr();}
+function getCtrvHistory(){try{return JSON.parse(localStorage.getItem('bebeCtrvHistory')||'[]');}catch{return[];}}
+function upsertCtrvToday(obj){const h=getCtrvHistory();const today=ctrvDateStr();const ex=h.find(x=>x.date===today);if(ex){const changed=ex.topic!==obj.topic||ex.question!==obj.question;ex.topic=obj.topic;ex.question=obj.question;if(changed)ex.signal=null;}else{h.unshift({date:today,topic:obj.topic,question:obj.question,signal:null});}localStorage.setItem('bebeCtrvHistory',JSON.stringify(h.slice(0,60)));}
+function setCtrvFeedback(signal){const h=getCtrvHistory();const it=h.find(x=>x.date===ctrvDateStr());if(it){it.signal=signal;localStorage.setItem('bebeCtrvHistory',JSON.stringify(h));}}
+function getCtrvFeedbackToday(){return getCtrvHistory().find(x=>x.date===ctrvDateStr())?.signal||null;}
+
+const CTRV_SCHEMA={type:'OBJECT',properties:{
+  topic:{type:'STRING'},
+  question:{type:'STRING'},
+  why_now:{type:'STRING'},
+  camps:{type:'ARRAY',items:{type:'OBJECT',properties:{
+    name:{type:'STRING'},logic:{type:'STRING'},
+    pros:{type:'ARRAY',items:{type:'STRING'}},
+    cons:{type:'ARRAY',items:{type:'STRING'}}
+  },required:['name','logic','pros','cons']}},
+  known:{type:'STRING'},
+  believed:{type:'STRING'},
+  unknown:{type:'STRING'},
+  bridge:{type:'STRING'},
+  tomorrow_teaser:{type:'STRING'},
+  deep_questions:{type:'ARRAY',items:{type:'STRING'}}
+},required:['topic','question','why_now','camps','known','believed','unknown','bridge','tomorrow_teaser','deep_questions']};
+
+// JSON Schema standard (minuscules) pour le tool use Anthropic
+const CTRV_TOOL_SCHEMA={type:'object',properties:{
+  topic:{type:'string'},
+  question:{type:'string'},
+  why_now:{type:'string'},
+  camps:{type:'array',items:{type:'object',properties:{
+    name:{type:'string'},logic:{type:'string'},
+    pros:{type:'array',items:{type:'string'}},
+    cons:{type:'array',items:{type:'string'}}
+  },required:['name','logic','pros','cons']}},
+  known:{type:'string'},
+  believed:{type:'string'},
+  unknown:{type:'string'},
+  bridge:{type:'string'},
+  tomorrow_teaser:{type:'string'},
+  deep_questions:{type:'array',items:{type:'string'}}
+},required:['topic','question','why_now','camps','known','believed','unknown','bridge','tomorrow_teaser','deep_questions']};
+
+const ANTHROPIC_MODEL='claude-sonnet-4-6';
+function anthropicHeaders(){return{'content-type':'application/json','x-api-key':S.anthropicKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};}
+
+// Génère la controverse structurée selon le moteur choisi
+async function aiControverse(sys){
+  if(S.provider==='anthropic'){
+    if(!S.anthropicKey)throw new Error('Clé Claude manquante (Paramètres).');
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:anthropicHeaders(),
+      body:JSON.stringify({
+        model:ANTHROPIC_MODEL,max_tokens:2500,system:sys,
+        messages:[{role:'user',content:'Génère la controverse du jour.'}],
+        tools:[{name:'controverse',description:'Renvoie la controverse du jour, structurée.',input_schema:CTRV_TOOL_SCHEMA}],
+        tool_choice:{type:'tool',name:'controverse'}
+      })
+    });
+    if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`Erreur ${res.status}`);}
+    const j=await res.json();
+    const tu=(j.content||[]).find(b=>b.type==='tool_use');
+    if(!tu||!tu.input)throw new Error('Réponse Claude sans bloc structuré');
+    return tu.input;
+  }
+  if(!S.apiKey)throw new Error('Clé Gemini manquante (Paramètres).');
+  const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${S.apiKey}`,{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents:[{role:'user',parts:[{text:'Génère la controverse du jour.'}]}],generationConfig:{responseMimeType:'application/json',responseSchema:CTRV_SCHEMA,temperature:1.05}})
+  });
+  if(!res.ok){const err=await res.json();throw new Error(err.error?.message||`Erreur ${res.status}`);}
+  const j=await res.json();
+  const txt=j.candidates?.[0]?.content?.parts?.[0]?.text;
+  if(!txt)throw new Error('Réponse vide du modèle');
+  return JSON.parse(txt);
+}
+
+// Réponse de deep-dive (texte + sources) selon le moteur, avec ou sans recherche web
+async function aiDeepDive(sys,q,grounded){
+  if(S.provider==='anthropic'){
+    if(!S.anthropicKey)throw new Error('Clé Claude manquante (Paramètres).');
+    const body={model:ANTHROPIC_MODEL,max_tokens:1500,system:sys,messages:[{role:'user',content:q}]};
+    if(grounded)body.tools=[{type:'web_search_20250305',name:'web_search',max_uses:3}];
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:anthropicHeaders(),body:JSON.stringify(body)});
+    if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`Erreur ${res.status}`);}
+    const j=await res.json();
+    const text=(j.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n').trim();
+    let sources=[];
+    if(grounded){
+      const seen=new Set();
+      (j.content||[]).forEach(b=>{if(b.type==='web_search_tool_result'&&Array.isArray(b.content)){b.content.forEach(r=>{if(r.url&&!seen.has(r.url)){seen.add(r.url);sources.push({uri:r.url,title:r.title||r.url});}});}});
+      sources=sources.slice(0,6);
+    }
+    if(!text)throw new Error('Réponse vide du modèle');
+    return{text,sources};
+  }
+  const body={systemInstruction:{parts:[{text:sys}]},contents:[{role:'user',parts:[{text:q}]}]};
+  if(grounded)body.tools=[{google_search:{}}];
+  const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${S.apiKey}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!res.ok){const err=await res.json();throw new Error(err.error?.message||`Erreur ${res.status}`);}
+  const j=await res.json();const cand=j.candidates?.[0];
+  const text=(cand?.content?.parts||[]).map(p=>p.text||'').join('').trim();
+  if(!text)throw new Error('Réponse vide du modèle');
+  let sources=[];
+  if(grounded){const chunks=cand?.groundingMetadata?.groundingChunks||[];const seen=new Set();sources=chunks.filter(c=>c.web?.uri).map(c=>({uri:c.web.uri,title:c.web.title||c.web.uri})).filter(s=>{if(seen.has(s.uri))return false;seen.add(s.uri);return true;}).slice(0,6);}
+  return{text,sources};
+}
+
+async function generateControverse(child,data,force){
+  if(S.provider==='anthropic'){if(!S.anthropicKey){S.controverse.error='Ajoute ta clé Claude dans les Paramètres.';S.controverse.childKey=ctrvIdent(child);render();return;}}
+  else if(!S.apiKey){S.modal='apikey';render();return;}
+  S.controverse.dive={open:false,items:[],loading:false,error:null};
+  const ck=ctrvCacheKey(child);
+  if(!force){const cached=localStorage.getItem(ck);if(cached){try{S.controverse.data=JSON.parse(cached);S.controverse.childKey=ctrvIdent(child);S.controverse.error=null;render();return;}catch{}}}
+  S.controverse.loading=true;S.controverse.error=null;S.controverse.childKey=ctrvIdent(child);render();
+  const hist=getCtrvHistory();
+  const recent=[...new Set(hist.slice(0,20).map(x=>x.question))];
+  const liked=[...new Set(hist.filter(x=>x.signal==='learned').map(x=>x.topic))];
+  const disliked=[...new Set(hist.filter(x=>x.signal==='skip').map(x=>x.topic))];
+  const sibs=getSiblings(S.children.indexOf(child));
+  let sibCtx='';
+  if(sibs.length){
+    const childDate=new Date(child.birthDate+'T12:00:00');
+    const lines=sibs.map(sib=>{
+      const unborn=isUnborn(sib);
+      const sibDate=new Date(sib.birthDate+'T12:00:00');
+      const older=sibDate<childDate;
+      const rel=sib.gender==='girl'?(older?'grande sœur':'petite sœur'):(older?'grand frère':'petit frère');
+      if(unborn){
+        const dtu=getDaysUntilDue(sib);
+        const term=sibDate.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+        return `- ${sib.firstName} (futur·e ${rel} de ${child.firstName}) est à naître — terme le ${term}, dans ~${dtu} jours. ${child.firstName} va donc DEVENIR ${child.gender==='girl'?'grande sœur':'grand frère'} (ne l'est pas encore).`;
+      }
+      const gap=Math.abs(Math.round(getGapMonths(child,sib)));
+      return `- ${sib.firstName} (${rel} de ${child.firstName}) — ${gap} mois d'écart, déjà né·e.`;
+    });
+    const olderCount=sibs.filter(s=>new Date(s.birthDate+'T12:00:00')<childDate).length;
+    let position;
+    if(olderCount===0)position=`${child.firstName} est l'aîné·e de la fratrie (aucun grand frère ni grande sœur).`;
+    else if(olderCount===sibs.length)position=`${child.firstName} est le·la cadet·te de la fratrie.`;
+    else position=`${child.firstName} est au milieu de la fratrie.`;
+    sibCtx=`## Fratrie (RESPECTE SCRUPULEUSEMENT cet ordre de naissance)
+${position}
+${lines.join('\n')}
+N'invente JAMAIS un frère ou une sœur, ni un ordre de naissance différent de ces faits. Si un cadet est à naître, ${child.firstName} n'a pas encore ce statut de "petit" à gérer — c'est l'arrivée à venir qui compte.`;
+  }
+  const sys=`Tu es l'éditeur intellectuel de "BébéPilote", une app qui remplace le doomscrolling par UNE idée utile par jour sur le développement de l'enfant. Ton lecteur est un parent universitaire exigeant : il déteste les généralités rassurantes, il aime le débat d'idées argumenté, les nuances et l'honnêteté épistémique.
+
+Tu produis "La controverse du jour" : une vraie question parentale qui divise, présentée de façon équilibrée et stimulante.
+
+## Enfant
+${child.firstName}, ${child.gender==='girl'?'fille':'garçon'}, ${data.ageLabel} (jour ${data.ageInDays}).
+${sibCtx}
+
+## Règles de fond (NON négociables)
+- Choisis UNE controverse réelle, vivante, et pertinente pour CET âge précis.
+- Présente 2 ou 3 camps. CHAQUE camp DOIT avoir au moins un "pro" ET au moins un "con" honnête. Jamais un camp sans faille — c'est l'ADN de l'app.
+- "known" : ce que les données établissent vraiment, sans exagérer.
+- "believed" : ce qui relève de la croyance/idéologie des deux bords, présenté comme tel — pas comme un fait.
+- "unknown" : ce que la science ne tranche honnêtement pas.
+- "bridge" : c'est le "donc concrètement, cette semaine ?" du parent. Structure en 2 temps : (1) un signal OBSERVABLE à surveiller chez cet enfant précis à cet âge précis — comportement, réaction, timing concret ; (2) une micro-action ou ajustement que le parent peut tester dès aujourd'hui ou cette semaine. Jamais une platitude ("faites confiance à votre instinct"), jamais une conclusion idéologique. Le parent doit sortir avec quelque chose à FAIRE ou à REGARDER, pas juste à savoir.
+- "tomorrow_teaser" : une question alléchante mais honnête pour demain (une phrase).
+- "deep_questions" : 3 questions d'approfondissement précises, pointues et alléchantes pour creuser CETTE controverse (elles alimenteront un bouton "Creuser"). Ancrées sur les camps ci-dessus, pas génériques.
+
+## Citations & vérité
+- N'invente JAMAIS d'étude, de méta-analyse, de date ni de chiffre précis. Aucune fausse précision.
+- Tu peux nommer une école de pensée ou un chercheur célèbre et incontesté (Bowlby, Dweck, Montessori, Ferber, Goldman, Piaget…) SANS inventer de référence chiffrée.
+- En cas de doute, écris "les approches divergent" plutôt qu'un faux fait.
+- Sujets à risque vital (mort subite du nourrisson, fièvre, allergies, sécurité physique) : reste prudent et renvoie explicitement au principe de consulter une autorité médicale.
+
+## Style
+- Français, dense, vif, zéro remplissage. Ne commence jamais par "Bien sûr", "Absolument".
+- Ton de revue intellectuelle, pas de blog parental mièvre.
+
+## À NE PAS reprendre (questions déjà posées récemment)
+${recent.length?recent.map(q=>'- '+q).join('\n'):'(aucune)'}
+${liked.length?`\n## Sujets appréciés par ce parent (privilégie ce registre) : ${liked.join(', ')}`:''}
+${disliked.length?`\n## Sujets rejetés par ce parent (évite) : ${disliked.join(', ')}`:''}
+
+Réponds UNIQUEMENT avec le JSON structuré demandé.`;
+  try{
+    const obj=await aiControverse(sys);
+    if(!obj.camps||!obj.camps.length)throw new Error('Format inattendu');
+    localStorage.setItem(ck,JSON.stringify(obj));
+    upsertCtrvToday(obj);
+    S.controverse.data=obj;S.controverse.loading=false;S.controverse.childKey=ctrvIdent(child);render();
+  }catch(err){
+    S.controverse.loading=false;S.controverse.error=err.message;render();
+  }
+}
+
+// ── Creuser : parsing des registres + appel Gemini grounded ──
+function parseDiveAnswer(txt){
+  const re=/(◆\s*FAIT|◇\s*INTERPR[ÉE]TATION|○\s*POSITION|⚠\s*S[ÉE]CURIT[ÉE])\s*:?\s*/gi;
+  const idxs=[];let m;
+  while((m=re.exec(txt))){idxs.push({tag:m[1].toUpperCase(),start:m.index,end:re.lastIndex});}
+  if(!idxs.length)return[{type:'plain',text:txt.trim()}];
+  const out=[];
+  const pre=txt.slice(0,idxs[0].start).trim();
+  if(pre)out.push({type:'plain',text:pre});
+  for(let i=0;i<idxs.length;i++){
+    const cur=idxs[i],next=idxs[i+1];
+    const body=txt.slice(cur.end,next?next.start:undefined).trim();
+    let type='position';
+    if(cur.tag.includes('FAIT'))type='fait';
+    else if(cur.tag.includes('INTERPR'))type='interp';
+    else if(cur.tag.includes('POSITION'))type='position';
+    else type='safety';
+    if(body)out.push({type,text:body});
+  }
+  return out;
+}
+
+async function askDeepDive(child,data,q){
+  const keyMissing=S.provider==='anthropic'?!S.anthropicKey:!S.apiKey;
+  if(keyMissing){
+    if(S.provider==='anthropic'){S.controverse.dive.open=true;S.controverse.dive.error='Ajoute ta clé Claude dans les Paramètres.';render();return;}
+    S.modal='apikey';render();return;
+  }
+  if(S.controverse.dive.loading)return;
+  const d=S.controverse.data;if(!d||!q||!q.trim())return;
+  S.controverse.dive.open=true;S.controverse.dive.loading=true;S.controverse.dive.error=null;render();
+  const campsTxt=d.camps.map(c=>`${c.name} — ${c.logic}`).join(' || ');
+  const sys=`Tu approfondis une controverse parentale pour un parent universitaire exigeant, dans l'app BébéPilote.
+
+## Controverse en cours (reste ancré dessus, ne dérive pas)
+Question : ${d.question}
+Camps : ${campsTxt}
+
+## Enfant
+${child.firstName}, ${child.gender==='girl'?'fille':'garçon'}, ${data.ageLabel}.
+
+## Ta mission
+Réponds à la question de suivi du parent de façon rigoureuse, nuancée et HONNÊTE sur le statut épistémique de chaque affirmation.
+
+## Format OBLIGATOIRE
+Structure ta réponse en 2 à 5 blocs. Chaque bloc commence sur une NOUVELLE LIGNE par EXACTEMENT l'un de ces tags, suivi de ":" puis du texte :
+◆FAIT : une affirmation empirique établie, appuyée par une source que tu as réellement trouvée via la recherche.
+◇INTERPRÉTATION : une lecture plausible mais non tranchée par les données.
+○POSITION : une recommandation ou doctrine — nomme qui la porte (école, institution, auteur).
+⚠SÉCURITÉ : UNIQUEMENT si le sujet touche un risque vital (mort subite, étouffement, fièvre grave, allergie, sécurité physique). Invite alors à se référer à une autorité médicale (AAP, HAS, OMS) plutôt qu'à te croire.
+
+## Règles dures
+- Sers-toi de la recherche web pour fonder chaque ◆FAIT. N'invente JAMAIS d'étude, de chiffre ni de date.
+- Si tu ne trouves pas de source fiable, n'utilise PAS ◆FAIT — bascule en ◇INTERPRÉTATION.
+- Français, dense, sans remplissage. Ne commence pas par "Bien sûr" ni "Absolument".`;
+  const callDive=async(grounded)=>{
+    const {text,sources}=await aiDeepDive(sys,q.trim(),grounded);
+    return {blocks:parseDiveAnswer(text),sources,grounded};
+  };
+  let result=null;
+  try{result=await callDive(true);}
+  catch(err){
+    // Grounding indisponible (quota séparé sur tier gratuit, ou outil non supporté) → repli sans recherche web
+    try{result=await callDive(false);}
+    catch(err2){S.controverse.dive.loading=false;S.controverse.dive.error=err2.message;render();return;}
+  }
+  S.controverse.dive.items.push({q:q.trim(),...result});
+  S.controverse.dive.loading=false;render();
+}
+
+function renderDiveBlock(b){
+  const cfg={
+    fait:{c:'#3A5E38',sym:'◆',label:'Fait établi · sourcé'},
+    interp:{c:'#A06C2A',sym:'◇',label:'Interprétation'},
+    position:{c:'#C48A40',sym:'○',label:'Position / recommandation'},
+    safety:{c:'#A03828',sym:'⚠',label:'Sécurité'}
+  };
+  if(b.type==='plain')return`<p style="font-size:13.5px;color:#5C5752;line-height:1.7;margin-bottom:12px">${e(b.text)}</p>`;
+  const k=cfg[b.type]||cfg.position;
+  if(b.type==='safety')return`<div style="background:rgba(160,56,40,.07);border-radius:10px;padding:11px 13px;margin-bottom:12px">
+    <p style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:${k.c};margin-bottom:4px">${k.sym} ${k.label}</p>
+    <p style="font-size:13px;color:#5C5752;line-height:1.6">${e(b.text)}</p>
+  </div>`;
+  return`<div style="margin-bottom:13px">
+    <p style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:${k.c};margin-bottom:3px">${k.sym} ${k.label}</p>
+    <p style="font-size:13.5px;color:#5C5752;line-height:1.65">${e(b.text)}</p>
+  </div>`;
+}
+
+function renderDiveItem(it,child,data,idx){
+  const faved=child?isFavorited(favId(child.firstName,'creuser',it.q)):false;
+  return`<div style="margin-bottom:24px">
+    <div style="display:flex;gap:7px;align-items:flex-start;margin-bottom:13px;padding-bottom:11px;border-bottom:1px solid var(--c-bd)">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#A06C2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:3px"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+      <p style="font-size:14px;font-weight:600;color:var(--c-ink);line-height:1.4">${e(it.q)}</p>
+    </div>
+    ${it.blocks.map(renderDiveBlock).join('')}
+    ${it.grounded===false?`<p style="font-size:11px;color:#B0A89E;font-style:italic;margin-top:4px">Réponse sans recherche web (mode prudent — sans citation chiffrée). Le grounding s'activera avec un quota Google Search.</p>`:''}
+    ${it.sources&&it.sources.length?`<div style="margin-top:12px;padding-top:10px;border-top:1px dashed var(--c-bd)">
+      <p style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#9C9790;margin-bottom:7px">Sources</p>
+      ${it.sources.map(s=>`<a href="${e(s.uri)}" target="_blank" rel="noopener" class="msg-ref-link"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>${e(s.title)}</a>`).join('')}
+    </div>`:''}
+    ${child?`<div style="display:flex;gap:6px;margin-top:12px;padding-top:8px;border-top:1px solid var(--c-bd)">${modalActBtns('data-fav-dive',idx,'data-share-dive',idx,faved)}</div>`:''}
+  </div>`;
+}
+
+function renderControverseDive(child,d,dv,data){
+  const sugg=(d.deep_questions&&d.deep_questions.length)?d.deep_questions.slice(0,3):[
+    'Pourquoi les experts sont-ils en désaccord sur ce point ?',
+    `Qu'est-ce qui change selon le tempérament de ${child.firstName} ?`,
+    'Que disent les données les plus récentes ?'
+  ];
+  return`<div class="overlay" id="modal-overlay">
+<div class="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head">
+    <div style="display:flex;align-items:center;gap:8px">
+      <button id="btn-dive-back" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;color:var(--c-t3)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg></button>
+      <span style="font-weight:600;font-size:14px">Creuser · ${e(d.topic)}</span>
+    </div>
+    ${xBtn()}
+  </div>
+  <div class="sheet-body">
+    <div style="background:var(--c-bg2);border-left:3px solid #A06C2A;border-radius:0 10px 10px 0;padding:10px 14px;margin-bottom:20px">
+      <p style="font-size:13px;color:#6B6480;font-weight:600;line-height:1.4">${e(d.question)}</p>
+    </div>
+    ${dv.items.map((it,idx)=>renderDiveItem(it,child,data,idx)).join('')}
+    ${dv.loading?`<div style="display:flex;align-items:center;gap:9px;color:#C48A40;font-size:13px;margin-bottom:18px"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9" style="opacity:.25"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>Recherche en cours…</div>`:''}
+    ${dv.error?`<p style="font-size:13px;color:#A03828;margin-bottom:14px">${e(dv.error)}</p>`:''}
+    ${!dv.loading?`
+      <p style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#A06C2A;margin:6px 0 11px">${dv.items.length?'Continuer à creuser':'Creuser — par où ?'}</p>
+      ${sugg.map(q=>`<button class="dive-sugg" data-dive-q="${e(q)}">↳ ${e(q)}</button>`).join('')}
+      <div class="dive-ask">
+        <input id="dive-input" type="text" placeholder="Ou pose ta propre question…" autocomplete="off"/>
+        <button id="dive-send" class="dive-send-btn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+      </div>
+    `:''}
+    <div style="height:8px"></div>
+  </div>
+</div></div>`;
+}
+
+function ctrvShareText(d){return `${d.why_now} — ${d.bridge}`;}
+function diveShareText(it){return (it.blocks||[]).map(b=>b.text).join(' ');}
+
+function ctrvFullText(d){
+  const L=['CONTROVERSE — '+d.topic,'',d.question,'',d.why_now,'','— LES CAMPS —'];
+  (d.camps||[]).forEach(c=>{
+    L.push('','▸ '+c.name,c.logic);
+    (c.pros||[]).forEach(p=>L.push('  + '+p));
+    (c.cons||[]).forEach(p=>L.push('  − '+p));
+  });
+  L.push('','— CE QU\'ON SAIT —',d.known,'','— CE QU\'ON CROIT (pas un fait) —',d.believed,'','— CE QU\'ON NE SAIT PAS —',d.unknown,'','— ET POUR BÉBÉ ? —',d.bridge,'','— BébéPilote');
+  return L.join('\n');
+}
+function diveFullText(it){
+  const labels={fait:'FAIT ÉTABLI',interp:'INTERPRÉTATION',position:'POSITION',safety:'SÉCURITÉ',plain:''};
+  const L=['CREUSER — '+it.q,''];
+  (it.blocks||[]).forEach(b=>{const lb=labels[b.type];if(lb)L.push('['+lb+']');L.push(b.text,'');});
+  if(it.sources&&it.sources.length){L.push('Sources :');it.sources.forEach(s=>L.push('- '+s.title+' '+s.uri));L.push('');}
+  L.push('— BébéPilote');
+  return L.join('\n');
+}
+function toast(msg){
+  const el=document.createElement('div');
+  el.textContent=msg;
+  el.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:rgba(20,18,16,.92);color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:500;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,.25);max-width:80%;text-align:center';
+  document.body.appendChild(el);
+  setTimeout(()=>{el.style.transition='opacity .3s';el.style.opacity='0';setTimeout(()=>el.remove(),300);},1600);
+}
+async function shareTextContent(title,text){
+  if(navigator.share){try{await navigator.share({title,text});return;}catch(err){if(err&&err.name==='AbortError')return;}}
+  try{await navigator.clipboard.writeText(text);toast('Texte copié dans le presse-papier');}
+  catch{toast('Impossible de copier');}
+}
+
+function renderCtrvFavBody(d){
+  const cols=['#A06C2A','#3A5E38','#2D4A8A'];
+  return`<p style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;color:var(--c-ink);line-height:1.25;margin-bottom:6px">${e(d.question)}</p>
+  <p style="font-size:12px;color:#6B6480;line-height:1.55;margin-bottom:12px">${e(d.why_now)}</p>
+  ${(d.camps||[]).map((cp,i)=>`<div style="border-left:3px solid ${cols[i%3]};padding-left:10px;margin-bottom:10px">
+    <p style="font-weight:700;font-size:13px;color:var(--c-ink);margin-bottom:4px">${e(cp.name)}</p>
+    ${(cp.pros||[]).map(p=>`<div style="display:flex;gap:6px;margin-bottom:3px"><span style="color:#3A5E38;font-weight:800">✓</span><span style="font-size:12px;color:#5C5752;line-height:1.45">${e(p)}</span></div>`).join('')}
+    ${(cp.cons||[]).map(p=>`<div style="display:flex;gap:6px;margin-bottom:3px"><span style="color:#A03828;font-weight:800">✗</span><span style="font-size:12px;color:#5C5752;line-height:1.45">${e(p)}</span></div>`).join('')}
+  </div>`).join('')}
+  <div style="background:var(--c-bg2);border-radius:10px;padding:11px;margin:10px 0">
+    <p style="font-size:10px;font-weight:700;text-transform:uppercase;color:#3A5E38;margin-bottom:2px">◆ Ce qu'on sait</p><p style="font-size:12px;color:#5C5752;line-height:1.5;margin-bottom:8px">${e(d.known)}</p>
+    <p style="font-size:10px;font-weight:700;text-transform:uppercase;color:#A06C2A;margin-bottom:2px">◇ Ce qu'on croit</p><p style="font-size:12px;color:#5C5752;line-height:1.5;margin-bottom:8px">${e(d.believed)}</p>
+    <p style="font-size:10px;font-weight:700;text-transform:uppercase;color:#C48A40;margin-bottom:2px">○ Ce qu'on ne sait pas</p><p style="font-size:12px;color:#5C5752;line-height:1.5">${e(d.unknown)}</p>
+  </div>
+  <div class="refs-block acc-plum"><p style="font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px">Et pour bébé ?</p><p style="font-size:13px;color:#5C5752;line-height:1.6">${e(d.bridge)}</p></div>`;
+}
+
+function renderDiveFavBody(f){
+  return`<p style="font-size:13px;font-weight:600;color:var(--c-ink);line-height:1.4;margin-bottom:10px">${e(f.title)}</p>
+  ${(f.blocks||[]).map(renderDiveBlock).join('')}
+  ${f.diveSources&&f.diveSources.length?`<div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--c-bd)"><p style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#9C9790;margin-bottom:6px">Sources</p>${f.diveSources.map(s=>`<a href="${e(s.uri)}" target="_blank" rel="noopener" class="msg-ref-link">${e(s.title)}</a>`).join('')}</div>`:''}`;
+}
+
+function renderControverseCard(child,data){
+  const c=S.controverse;
+  if(c.loading)return`<div class="ctrv-card" style="cursor:default">
+    <p style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A06C2A;margin-bottom:12px">◆ Controverse du jour</p>
+    <div style="height:15px;width:75%;background:rgba(91,70,144,.16);border-radius:6px;margin-bottom:9px"></div>
+    <div style="height:15px;width:90%;background:rgba(91,70,144,.12);border-radius:6px;margin-bottom:9px"></div>
+    <div style="height:15px;width:45%;background:rgba(91,70,144,.1);border-radius:6px"></div>
+    <p style="font-size:12px;color:#C48A40;margin-top:14px">Génération en cours…</p>
+  </div>`;
+  if(c.error)return`<button class="ctrv-card" id="btn-ctrv-retry">
+    <p style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A06C2A;margin-bottom:8px">◆ Controverse du jour</p>
+    <p style="font-size:13px;color:#A03828;line-height:1.5">${e(c.error)}</p>
+    <p style="font-size:12px;color:#A06C2A;margin-top:10px;font-weight:600">Toucher pour réessayer</p>
+  </button>`;
+  const d=c.data;
+  if(!d)return`<button class="ctrv-card" id="btn-ctrv-gen">
+    <p style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A06C2A;margin-bottom:8px">◆ Controverse du jour</p>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:500;color:var(--c-ink);line-height:1.2">Qu'est-ce que je vais apprendre aujourd'hui&nbsp;?</p>
+    <p style="font-size:12px;color:#C48A40;margin-top:10px;font-weight:600">Générer la controverse du jour →</p>
+  </button>`;
+  return`<button class="ctrv-card" id="btn-ctrv-open">
+    <p style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A06C2A;margin-bottom:11px">◆ Controverse du jour · ${e(d.topic)}</p>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:500;color:var(--c-ink);line-height:1.22;margin-bottom:10px">${e(d.question)}</p>
+    <p style="font-size:13px;color:#6B6480;line-height:1.5;margin-bottom:15px">${e(d.why_now)}</p>
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <span style="font-size:12px;color:#C48A40">3 min de lecture</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:#A06C2A">Ouvrir <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </div>
+  </button>`;
+}
+
+function renderControverseModal(child,data){
+  const d=S.controverse.data;if(!d)return'';
+  if(S.controverse.dive.open)return renderControverseDive(child,d,S.controverse.dive,data);
+  const fb=getCtrvFeedbackToday();
+  const campCols=['#A06C2A','#3A5E38','#2D4A8A'];
+  const faved=isFavorited(favId(child.firstName,'controverse',d.topic));
+  return`<div class="overlay" id="modal-overlay">
+<div class="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head">
+    <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+      <div class="s-icon acc-plum" style="width:34px;height:34px;flex-shrink:0"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="20" x2="6" y2="14"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="18" y1="20" x2="18" y2="10"/></svg></div>
+      <span style="font-weight:600;font-size:14px">Controverse · ${e(d.topic)}</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+      ${modalActBtns('data-fav-ctrv','1','data-share-ctrv','1',faved)}
+      ${xBtn()}
+    </div>
+  </div>
+  <div class="sheet-body">
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:27px;font-weight:500;line-height:1.25;margin-bottom:12px">${e(d.question)}</h2>
+    <p style="font-size:14px;color:#5C5752;line-height:1.7;margin-bottom:24px">${e(d.why_now)}</p>
+
+    <p style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#A06C2A;margin-bottom:12px">Les camps</p>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:26px">
+      ${(d.camps||[]).map((cp,i)=>{const col=campCols[i%3];return`<div style="border:1px solid var(--c-bd);border-left:3px solid ${col};border-radius:12px;padding:14px 16px">
+        <p style="font-weight:700;font-size:14px;color:var(--c-ink);margin-bottom:6px">${e(cp.name)}</p>
+        <p style="font-size:13px;color:#5C5752;line-height:1.6;margin-bottom:11px">${e(cp.logic)}</p>
+        ${(cp.pros||[]).map(p=>`<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:6px"><span style="color:#3A5E38;font-weight:800;flex-shrink:0;line-height:1.5">✓</span><span style="font-size:13px;color:#5C5752;line-height:1.5">${e(p)}</span></div>`).join('')}
+        ${(cp.cons||[]).map(p=>`<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:6px"><span style="color:#A03828;font-weight:800;flex-shrink:0;line-height:1.5">✗</span><span style="font-size:13px;color:#5C5752;line-height:1.5">${e(p)}</span></div>`).join('')}
+      </div>`}).join('')}
+    </div>
+
+    <div style="background:var(--c-bg2);border-radius:14px;padding:16px;margin-bottom:26px">
+      <div style="margin-bottom:13px"><p style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#3A5E38;margin-bottom:4px">◆ Ce qu'on sait</p><p style="font-size:13px;color:#5C5752;line-height:1.6">${e(d.known)}</p></div>
+      <div style="margin-bottom:13px"><p style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#A06C2A;margin-bottom:4px">◇ Ce qu'on croit (pas un fait)</p><p style="font-size:13px;color:#5C5752;line-height:1.6">${e(d.believed)}</p></div>
+      <div><p style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#C48A40;margin-bottom:4px">○ Ce qu'on ne sait pas</p><p style="font-size:13px;color:#5C5752;line-height:1.6">${e(d.unknown)}</p></div>
+    </div>
+
+    <div class="refs-block acc-plum" style="margin-bottom:24px">
+      <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">Et pour ${e(child.firstName)} ?</p>
+      <p style="font-size:14px;color:#5C5752;line-height:1.7">${e(d.bridge)}</p>
+    </div>
+
+    <button id="btn-ctrv-creuser" class="ctrv-creuser-btn"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/></svg>Creuser ce sujet</button>
+
+    <p style="text-align:center;font-size:12px;color:#9C9790;margin-bottom:10px">Cette controverse…</p>
+    <div style="display:flex;gap:8px;margin-bottom:22px">
+      <button class="ctrv-fb${fb==='learned'?' on':''}" data-ctrv-fb="learned" style="flex:1"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;flex-shrink:0"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.5.4.8 1 .9 1.6h5.4c.1-.6.4-1.2.9-1.6A6 6 0 0 0 12 3z"/></svg>M'a appris</button>
+      <button class="ctrv-fb${fb==='skip'?' on':''}" data-ctrv-fb="skip" style="flex:1"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;flex-shrink:0"><circle cx="12" cy="12" r="9"/><line x1="5.6" y1="5.6" x2="18.4" y2="18.4"/></svg>Pas pour moi</button>
+    </div>
+
+    <div style="text-align:center;border-top:1px solid var(--c-bd);padding-top:16px">
+      <p style="font-size:12px;color:#9C9790;margin-bottom:5px">C'est tout pour aujourd'hui.</p>
+      ${d.tomorrow_teaser?`<p style="font-size:13px;color:#6B6480;font-style:italic;line-height:1.5">Demain : « ${e(d.tomorrow_teaser)} »</p>`:''}
+      <button id="btn-ctrv-regen" style="margin-top:14px;font-size:12px;color:#C48A40;text-decoration:underline">Régénérer (proto)</button>
+    </div>
+    <div style="height:8px"></div>
+  </div>
+</div></div>`;
 }
 
 // ═══════════════════════ NAV ICONS ═══════════════════════
@@ -1312,17 +1829,7 @@ function renderToday(child,data,childIdx){
   if(data.unborn)return renderPrenatal(child,childIdx??S.childIdx);
   const {milestone,neuron,ageLabel,ageInDays,sections}=data;
   return`<div style="padding-top:16px">
-<!-- Conseil du jour -->
-${milestone?.tip?`
-<button class="conseil-btn" id="btn-conseil">
-  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#A06C2A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="21" x2="14" y2="21"/><path d="M15.1 14.2c.2-1 .7-1.8 1.5-2.6A6 6 0 1 0 7.4 11.6c.8.8 1.3 1.6 1.5 2.6"/></svg>
-  <div style="flex:1;min-width:0">
-    <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#A06C2A;margin-bottom:4px">${t('today_conseil')}</p>
-    <p style="font-size:14px;color:#5C4A2A;line-height:1.6">${e(S.lang==='en'?(milestone.en?.tip||milestone.tip):milestone.tip)}</p>
-  </div>
-  ${chev()}
-</button>`:''}
-
+${S.flags.controverse?renderControverseCard(child,data):''}
 <!-- Section heading -->
 <div style="padding:0 16px;margin:4px 0 10px">
   <h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500;color:#1A1918">${t('today_dev')} ${e(child.firstName)}</h2>
@@ -1572,7 +2079,7 @@ function renderProfileSettings(){
 </div>
 <div style="margin-bottom:8px">
   <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t5);margin-bottom:10px">${t('profile_ai')}</p>
-  <button id="btn-apikey" class="profile-row" style="margin-bottom:0">
+  <button id="btn-apikey" class="profile-row" style="margin-bottom:10px">
     <div style="display:flex;align-items:center;gap:12px">
       <div class="child-bubble"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#7A7570" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div>
       <div style="text-align:left">
@@ -1582,13 +2089,41 @@ function renderProfileSettings(){
     </div>
     ${chev()}
   </button>
+  <div style="background:var(--c-card);border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.08)">
+    <p style="font-size:11px;font-weight:600;color:var(--c-t3);margin-bottom:8px;letter-spacing:.03em">Moteur de la controverse du jour</p>
+    <div style="display:flex;gap:8px">
+      <button class="lang-opt${S.provider==='gemini'?' active':''}" data-prov="gemini">Gemini</button>
+      <button class="lang-opt${S.provider==='anthropic'?' active':''}" data-prov="anthropic">Claude</button>
+    </div>
+    ${S.provider==='anthropic'?`
+      <p style="font-size:11px;font-weight:600;color:var(--c-t3);margin:14px 0 8px;letter-spacing:.03em">Clé API Claude (Anthropic)</p>
+      <input id="anthropic-key-in" class="field" type="password" placeholder="sk-ant-..." value="${e(S.anthropicKey)}"/>
+      <p style="font-size:11px;color:var(--c-t4);margin-top:6px;line-height:1.5">Modèle : Claude Sonnet 4.6. Le chat Zoé reste sur Gemini.</p>
+    `:`
+      <p style="font-size:11px;color:var(--c-t4);margin-top:10px;line-height:1.5">Utilise la clé Gemini ci-dessus (comme le chat).</p>
+    `}
+  </div>
 </div>
 <p style="text-align:center;font-size:10px;color:var(--c-t5);padding:16px 0 4px;letter-spacing:.04em">BébéPilote v${VERSION}</p>
 </div>`;
 }
 
+function renderSettingsModal(){
+  return`<div class="overlay" id="modal-overlay">
+<div class="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head">
+    <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+      <div class="s-icon" style="background:var(--c-bg3);width:34px;height:34px;flex-shrink:0"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+      <span style="font-weight:600;font-size:14px">${S.lang==='en'?'Settings':'Paramètres'}</span>
+    </div>
+    ${xBtn()}
+  </div>
+  <div class="sheet-body" style="padding:0">${renderProfileSettings()}</div>
+</div></div>`;
+}
+
 function renderProfile(){
-  if(S.profileSettings)return renderProfileSettings();
   const locale=S.lang==='en'?'en-GB':'fr-FR';
   return`<div style="padding:20px 16px">
 ${S.children.map((c,i)=>{
@@ -2054,6 +2589,8 @@ function render(){
   else if(S.modal==='fratrieBond')modalHTML=renderFratrieBondModal(S.modalSection,child);
   else if(S.modal==='prenatalDetail')modalHTML=renderPrenatalDetailModal(child);
   else if(S.modal==='prenatalSection')modalHTML=renderPrenatalSectionModal(S.modalSection,child);
+  else if(S.modal==='controverse')modalHTML=renderControverseModal(child,data);
+  else if(S.modal==='settings')modalHTML=renderSettingsModal();
 
   // Child dropdown entries
   const childDropItems=S.children.map((c,i)=>{
@@ -2070,26 +2607,21 @@ function render(){
     </button>`;
   }).join('');
 
-  // Topbar — different layout for Profile tab
-  const topbarPills=!data.unborn?`
+  // Topbar
+  const topbarPills=!data.unborn&&S.tab!=='profile'?`
     <div class="topbar-pills">
       <span class="topbar-pill">${e(data.ageLabel)}</span>
       <span class="topbar-pill">${t('today_day')} ${data.ageInDays}</span>
-      <span class="topbar-pill" style="text-transform:capitalize">${new Date().toLocaleDateString(S.lang==='en'?'en-GB':'fr-FR',{day:'numeric',month:'short'})}</span>
     </div>`:'';
 
   const chevDir=S.childMenu?'M18 15l-6-6-6 6':'M6 9l6 6 6-6';
-  const todayLabel=new Date().toLocaleDateString(S.lang==='en'?'en-GB':'fr-FR',{weekday:'long',day:'numeric',month:'long'});
-  const isProfile=S.tab==='profile';
-  const topbarHTML=isProfile?`
-    <span style="font-size:14px;font-weight:600;color:var(--c-ink);text-transform:capitalize">${todayLabel}</span>
-    <button id="btn-profile-settings" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;color:var(--c-t3);transition:background .15s" title="${S.profileSettings?(S.lang==='en'?'Back':'Retour'):(S.lang==='en'?'Settings':'Paramètres')}">
-      ${S.profileSettings
-        ?`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>`
-        :`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`
-      }
-    </button>`:`
-    <div class="child-switcher">
+  const hamburgerBtn=`<button class="hamburger-btn" id="btn-drawer-open" aria-label="Menu">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>`;
+
+  const topbarHTML=`
+    ${hamburgerBtn}
+    <div class="child-switcher" style="flex:1;padding:0 8px">
       <button id="btn-child-switcher" style="display:flex;align-items:center;gap:5px">
         <span class="child-name">${e(child.firstName)}</span>
         ${isUnborn(child)?`<span class="badge-coming"><svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg>${t('badge_coming')}</span>`:''}
@@ -2099,23 +2631,67 @@ function render(){
     </div>
     ${topbarPills}`;
 
+  // Drawer nav items
+  const sw='stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
+  const drawerIcons={
+    today:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+    chat:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+    history:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
+    profile:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+    settings:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+  };
+  const navItems=[
+    {id:'today',label:t('tab_today')},
+    {id:'chat',label:t('tab_chat')},
+    {id:'history',label:t('tab_history')},
+    {id:'profile',label:t('tab_profile')},
+  ];
+  const drawerHTML=`
+<div class="drawer-overlay${S.drawer?' open':''}" id="drawer-overlay"></div>
+<div class="drawer${S.drawer?' open':''}" id="main-drawer">
+  <div class="drawer-head">
+    <div style="display:flex;align-items:center;gap:10px">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--c-ink);transform:rotate(35deg)"><path d="M10 5V3a2 2 0 0 1 4 0v2"/><path d="M9 5h6v2H9z"/><path d="M7 7h10v12a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V7z"/><line x1="7" y1="13" x2="17" y2="13"/></svg>
+      <span style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--c-ink)">BébéPilote</span>
+    </div>
+  </div>
+  <div class="drawer-body">
+    ${navItems.map(item=>`<button class="drawer-item${S.tab===item.id?' active':''}" data-tab="${item.id}">
+      ${drawerIcons[item.id]}<span>${item.label}</span>
+    </button>`).join('')}
+  </div>
+  <div class="drawer-foot">
+    <button class="drawer-item" id="btn-drawer-settings">
+      ${drawerIcons.settings}<span>${S.lang==='en'?'Settings':'Paramètres'}</span>
+    </button>
+  </div>
+</div>`;
+
   app.innerHTML=`
 <div style="height:100dvh;display:flex;flex-direction:column">
   <div class="topbar">
     ${topbarHTML}
   </div>
-  <div style="flex:1;${S.tab==='chat'?'overflow:hidden;display:flex;flex-direction:column':'overflow-y:auto;padding-bottom:72px'}">${tabHTML}</div>
-  <nav class="bottom-nav">
-    ${tabs.map(t=>`<button class="nav-btn${S.tab===t.id?' on':''}" data-tab="${t.id}" title="${t.label}">${navIcon(t.id,S.tab===t.id)}</button>`).join('')}
-  </nav>
+  <div style="flex:1;${S.tab==='chat'?'overflow:hidden;display:flex;flex-direction:column':'overflow-y:auto'}">${tabHTML}</div>
 </div>
+${drawerHTML}
 ${modalHTML}`;
   bind(child,data);
 }
 
 // ═══════════════════════ BINDINGS ═══════════════════════
 function bind(child,data){
-  document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{S.tab=b.dataset.tab;if(b.dataset.tab!=='profile')S.profileSettings=false;render();}));
+  // Controverse du jour — chargement auto du jour (cache) ou génération
+  if(S.tab==='today'&&S.flags.controverse&&!data.unborn){
+    if(S.controverse.childKey&&S.controverse.childKey!==ctrvIdent(child)){S.controverse={loading:false,error:null,data:null,childKey:null,dive:{open:false,items:[],loading:false,error:null}};}
+    if(ctrvProviderKey()&&!S.controverse.data&&!S.controverse.loading&&!S.controverse.error){
+      const cached=localStorage.getItem(ctrvCacheKey(child));
+      if(cached){try{const parsed=JSON.parse(cached);if(parsed&&Array.isArray(parsed.camps)&&parsed.camps.length){S.controverse.data=parsed;S.controverse.childKey=ctrvIdent(child);}else{localStorage.removeItem(ctrvCacheKey(child));}}catch{}if(S.controverse.data){render();return;}}
+      generateControverse(child,data);
+    }
+  }
+  // data-tab outside the drawer (e.g. btn-zoe in chat)
+  document.querySelectorAll('[data-tab]:not(#main-drawer [data-tab])').forEach(b=>b.addEventListener('click',()=>{S.tab=b.dataset.tab;if(b.dataset.tab!=='profile')S.profileSettings=false;render();}));
   document.querySelectorAll('[data-switch]').forEach(b=>b.addEventListener('click',()=>{S.childIdx=+b.dataset.switch;S.childMenu=false;render();}));
   // Child switcher toggle
   document.getElementById('btn-child-switcher')?.addEventListener('click',ev=>{
@@ -2129,7 +2705,38 @@ function bind(child,data){
     setTimeout(()=>document.addEventListener('click',closeMenu),0);
   }
   document.querySelector('[data-caroline]')?.addEventListener('click',()=>{S.modal='caroline';render();});
-  document.getElementById('btn-conseil')?.addEventListener('click',()=>{S.modal='conseil';render();});
+  // Controverse du jour
+  document.getElementById('btn-ctrv-open')?.addEventListener('click',()=>{S.controverse.dive.open=false;S.modal='controverse';render();});
+  document.getElementById('btn-ctrv-gen')?.addEventListener('click',()=>generateControverse(child,data));
+  document.getElementById('btn-ctrv-retry')?.addEventListener('click',()=>generateControverse(child,data,true));
+  document.getElementById('btn-ctrv-regen')?.addEventListener('click',()=>{S.modal=null;generateControverse(child,data,true);});
+  document.querySelectorAll('[data-ctrv-fb]').forEach(b=>b.addEventListener('click',()=>{setCtrvFeedback(b.dataset.ctrvFb);render();}));
+  // Creuser (deep dive)
+  document.getElementById('btn-ctrv-creuser')?.addEventListener('click',()=>{S.controverse.dive.open=true;S.controverse.dive.error=null;render();});
+  document.getElementById('btn-dive-back')?.addEventListener('click',()=>{S.controverse.dive.open=false;render();});
+  document.querySelectorAll('[data-dive-q]').forEach(b=>b.addEventListener('click',()=>askDeepDive(child,data,b.dataset.diveQ)));
+  document.getElementById('dive-send')?.addEventListener('click',()=>{const inp=document.getElementById('dive-input');const v=inp?.value.trim();if(v)askDeepDive(child,data,v);});
+  document.getElementById('dive-input')?.addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();const v=ev.target.value.trim();if(v)askDeepDive(child,data,v);}});
+  // Garder / Partager — controverse
+  document.querySelector('[data-fav-ctrv]')?.addEventListener('click',()=>{
+    const d=S.controverse.data;if(!d)return;
+    toggleFavorite({id:favId(child.firstName,'controverse',d.topic),childName:child.firstName,childAge:data.ageLabel,type:'controverse',typeLabel:'Controverse',title:d.question,summary:d.why_now,ctrv:d,refsColorBg:'acc-plum',date:new Date().toISOString(),canShare:true,shareData:{headerBg:'#A06C2A',accentColor:'#A06C2A',categoryLabel:'Controverse · '+d.topic,title:d.question,body:ctrvShareText(d),ageLabel:data.ageLabel}});
+    render();
+  });
+  document.querySelector('[data-share-ctrv]')?.addEventListener('click',()=>{
+    const d=S.controverse.data;if(!d)return;
+    shareTextContent('Controverse — '+d.topic,ctrvFullText(d));
+  });
+  // Garder / Partager — creuser (par réponse)
+  document.querySelectorAll('[data-fav-dive]').forEach(b=>b.addEventListener('click',()=>{
+    const it=S.controverse.dive.items[+b.dataset.favDive];if(!it)return;const d=S.controverse.data;
+    toggleFavorite({id:favId(child.firstName,'creuser',it.q),childName:child.firstName,childAge:data.ageLabel,type:'creuser',typeLabel:'Creuser',title:it.q,summary:'',blocks:it.blocks,diveSources:it.sources,refsColorBg:'acc-plum',date:new Date().toISOString(),canShare:true,shareData:{headerBg:'#A06C2A',accentColor:'#A06C2A',categoryLabel:'Creuser'+(d?.topic?' · '+d.topic:''),title:it.q,body:diveShareText(it),ageLabel:data.ageLabel}});
+    render();
+  }));
+  document.querySelectorAll('[data-share-dive]').forEach(b=>b.addEventListener('click',()=>{
+    const it=S.controverse.dive.items[+b.dataset.shareDive];if(!it)return;
+    shareTextContent('Creuser — '+it.q,diveFullText(it));
+  }));
   document.getElementById('btn-zoe')?.addEventListener('click',()=>{S.tab='chat';render();});
   document.getElementById('chat-suggestions')?.addEventListener('change',ev=>{
     const val=ev.target.value;if(!val)return;
@@ -2198,8 +2805,10 @@ function bind(child,data){
   // Partager depuis la section favoris
   document.querySelectorAll('[data-share-fav]').forEach(b=>b.addEventListener('click',()=>{
     const fav=getFavorites().find(f=>String(f.id)===b.dataset.shareFav);
-    if(!fav?.shareData)return;
-    shareCardCanvas(child,{...fav.shareData});
+    if(!fav)return;
+    if(fav.type==='controverse'&&fav.ctrv){shareTextContent('Controverse — '+fav.ctrv.topic,ctrvFullText(fav.ctrv));return;}
+    if(fav.type==='creuser'&&fav.blocks){shareTextContent('Creuser — '+fav.title,diveFullText({q:fav.title,blocks:fav.blocks,sources:fav.diveSources}));return;}
+    if(fav.shareData)shareCardCanvas(child,{...fav.shareData});
   }));
   document.querySelectorAll('[data-fratrie-prep]').forEach(b=>b.addEventListener('click',()=>{S.modal='fratriePrep';S.modalSection=+b.dataset.fratriePrep;render();}));
   document.querySelectorAll('[data-fratrie-bond]').forEach(b=>b.addEventListener('click',()=>{S.modal='fratrieBond';S.modalSection=+b.dataset.fratrieBond;render();}));
@@ -2211,9 +2820,17 @@ function bind(child,data){
   document.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>{S.childIdx=+b.dataset.edit;S.modal='editChild';S.modalChildIdx=+b.dataset.edit;render();}));
   document.getElementById('btn-add-child')?.addEventListener('click',()=>{S.modal='addChild';render();});
   document.getElementById('btn-apikey')?.addEventListener('click',()=>{S.modal='apikey';render();});
-  document.getElementById('btn-profile-settings')?.addEventListener('click',()=>{S.profileSettings=!S.profileSettings;render();});
+  // Drawer open/close
+  document.getElementById('btn-drawer-open')?.addEventListener('click',ev=>{ev.stopPropagation();S.drawer=true;render();});
+  document.getElementById('drawer-overlay')?.addEventListener('click',()=>{S.drawer=false;render();});
+  // Drawer nav items
+  document.querySelectorAll('#main-drawer [data-tab]').forEach(b=>b.addEventListener('click',()=>{S.tab=b.dataset.tab;S.drawer=false;render();}));
+  // Drawer settings → modal overlay
+  document.getElementById('btn-drawer-settings')?.addEventListener('click',()=>{S.modal='settings';S.drawer=false;render();});
   document.querySelectorAll('[data-theme-val]').forEach(b=>b.addEventListener('click',()=>setTheme(b.dataset.themeVal)));
   document.querySelectorAll('[data-lang-val]').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.langVal)));
+  document.querySelectorAll('[data-prov]').forEach(b=>b.addEventListener('click',()=>{saveProvider(b.dataset.prov);render();}));
+  document.getElementById('anthropic-key-in')?.addEventListener('change',ev=>saveAnthropicKey(ev.target.value.trim()));
   document.getElementById('modal-close')?.addEventListener('click',()=>{S.modal=null;render();});
   document.getElementById('modal-overlay')?.addEventListener('click',ev=>{if(ev.target.id==='modal-overlay'){S.modal=null;render();}});
   document.getElementById('apikey-save')?.addEventListener('click',()=>{saveKey(document.getElementById('apikey-in').value.trim());S.modal=null;render();});
