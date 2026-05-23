@@ -75,11 +75,20 @@ a{color:#2D4A8A}
 .topbar-pills{display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end}
 .topbar-pill{font-size:11px;font-weight:600;padding:3px 8px;border-radius:99px;background:var(--c-bg3);color:var(--c-t3);letter-spacing:.01em;white-space:nowrap}
 
-/* ── Bottom nav ── */
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--c-card);display:flex;border-top:1px solid var(--c-bd2);z-index:20;padding-bottom:env(safe-area-inset-bottom)}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:14px 4px;font-size:11px;font-weight:600;color:var(--c-t4);transition:color .15s}
-.nav-btn.on{color:var(--c-ink)}
-.nav-btn svg{width:22px;height:22px;stroke:currentColor}
+/* ── Side drawer ── */
+.hamburger-btn{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:var(--c-bg3);color:var(--c-t2);transition:background .15s;flex-shrink:0}
+.hamburger-btn:hover,.hamburger-btn:active{background:var(--c-fbd)}
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:60;opacity:0;pointer-events:none;transition:opacity .22s}
+.drawer-overlay.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;left:0;top:0;height:100%;width:272px;max-width:82%;background:var(--c-card);z-index:61;transform:translateX(-100%);transition:transform .26s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:4px 0 32px rgba(0,0,0,.14)}
+.drawer.open{transform:translateX(0)}
+.drawer-head{padding:calc(16px + env(safe-area-inset-top)) 18px 12px;border-bottom:1px solid var(--c-bd);flex-shrink:0}
+.drawer-body{flex:1;overflow-y:auto;padding:10px 8px}
+.drawer-foot{border-top:1px solid var(--c-bd);padding:8px 8px calc(12px + env(safe-area-inset-bottom));flex-shrink:0}
+.drawer-item{display:flex;align-items:center;gap:13px;padding:11px 14px;border-radius:10px;width:100%;text-align:left;transition:background .12s;font-size:15px;font-weight:500;color:var(--c-t2)}
+.drawer-item:hover,.drawer-item:active{background:var(--c-bg3)}
+.drawer-item.active{background:var(--c-bg3);color:var(--c-ink);font-weight:600}
+.drawer-item svg{width:20px;height:20px;flex-shrink:0;stroke:currentColor}
 
 /* ── Section rows ── */
 .section-card{background:var(--c-card);border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.08);margin:0 16px 8px}
@@ -176,7 +185,6 @@ a{color:#2D4A8A}
 .chat-sugg-cat{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--c-t4);flex-shrink:0;width:64px}
 .chat-sugg-label{font-size:13px;color:var(--c-ink);line-height:1.4;flex:1}
 /* Keyboard awareness */
-.keyboard-open .bottom-nav{display:none}
 .keyboard-open .chat-pill-wrap{padding-bottom:max(10px,env(safe-area-inset-bottom))!important}
 /* Dots */
 .dot{width:6px;height:6px;background:var(--c-t4);border-radius:50%;animation:blink 1.3s infinite}
@@ -1113,6 +1121,7 @@ const S={
   chat:{msgs:[],stream:'',loading:false,showSugg:false},
   lang:'fr',
   childMenu:false,
+  drawer:false,
   profileSettings:false,
   flags:{controverse:true},
   controverse:{loading:false,error:null,data:null,childKey:null,dive:{open:false,items:[],loading:false,error:null}},
@@ -2583,8 +2592,8 @@ function render(){
     </button>`;
   }).join('');
 
-  // Topbar — different layout for Profile tab
-  const topbarPills=!data.unborn?`
+  // Topbar
+  const topbarPills=!data.unborn&&S.tab!=='profile'?`
     <div class="topbar-pills">
       <span class="topbar-pill">${e(data.ageLabel)}</span>
       <span class="topbar-pill">${t('today_day')} ${data.ageInDays}</span>
@@ -2592,17 +2601,19 @@ function render(){
     </div>`:'';
 
   const chevDir=S.childMenu?'M18 15l-6-6-6 6':'M6 9l6 6 6-6';
-  const todayLabel=new Date().toLocaleDateString(S.lang==='en'?'en-GB':'fr-FR',{weekday:'long',day:'numeric',month:'long'});
-  const isProfile=S.tab==='profile';
-  const topbarHTML=isProfile?`
-    <span style="font-size:14px;font-weight:600;color:var(--c-ink);text-transform:capitalize">${todayLabel}</span>
-    <button id="btn-profile-settings" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;color:var(--c-t3);transition:background .15s" title="${S.profileSettings?(S.lang==='en'?'Back':'Retour'):(S.lang==='en'?'Settings':'Paramètres')}">
-      ${S.profileSettings
-        ?`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>`
-        :`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`
-      }
-    </button>`:`
-    <div class="child-switcher">
+  const hamburgerBtn=`<button class="hamburger-btn" id="btn-drawer-open" aria-label="Menu">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>`;
+
+  const topbarHTML=S.profileSettings?`
+    <button id="btn-profile-settings" style="display:flex;align-items:center;gap:6px;color:var(--c-t2);font-size:14px;font-weight:500">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+      ${S.lang==='en'?'Back':'Retour'}
+    </button>
+    <span style="font-size:15px;font-weight:600;color:var(--c-ink)">${S.lang==='en'?'Settings':'Paramètres'}</span>
+    <div style="width:34px"></div>`:`
+    ${hamburgerBtn}
+    <div class="child-switcher" style="flex:1;padding:0 8px">
       <button id="btn-child-switcher" style="display:flex;align-items:center;gap:5px">
         <span class="child-name">${e(child.firstName)}</span>
         ${isUnborn(child)?`<span class="badge-coming"><svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg>${t('badge_coming')}</span>`:''}
@@ -2612,16 +2623,50 @@ function render(){
     </div>
     ${topbarPills}`;
 
+  // Drawer nav items
+  const sw='stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
+  const drawerIcons={
+    today:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+    chat:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+    history:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
+    profile:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+    settings:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+  };
+  const navItems=[
+    {id:'today',label:t('tab_today')},
+    {id:'chat',label:t('tab_chat')},
+    {id:'history',label:t('tab_history')},
+    {id:'profile',label:t('tab_profile')},
+  ];
+  const drawerHTML=`
+<div class="drawer-overlay${S.drawer?' open':''}" id="drawer-overlay"></div>
+<div class="drawer${S.drawer?' open':''}" id="main-drawer">
+  <div class="drawer-head">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:26px">🍼</span>
+      <span style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--c-ink)">BébéPilote</span>
+    </div>
+  </div>
+  <div class="drawer-body">
+    ${navItems.map(item=>`<button class="drawer-item${S.tab===item.id&&!S.profileSettings?' active':''}" data-tab="${item.id}">
+      ${drawerIcons[item.id]}<span>${item.label}</span>
+    </button>`).join('')}
+  </div>
+  <div class="drawer-foot">
+    <button class="drawer-item${S.profileSettings?' active':''}" id="btn-drawer-settings">
+      ${drawerIcons.settings}<span>${S.lang==='en'?'Settings':'Paramètres'}</span>
+    </button>
+  </div>
+</div>`;
+
   app.innerHTML=`
 <div style="height:100dvh;display:flex;flex-direction:column">
   <div class="topbar">
     ${topbarHTML}
   </div>
-  <div style="flex:1;${S.tab==='chat'?'overflow:hidden;display:flex;flex-direction:column':'overflow-y:auto;padding-bottom:72px'}">${tabHTML}</div>
-  <nav class="bottom-nav">
-    ${tabs.map(t=>`<button class="nav-btn${S.tab===t.id?' on':''}" data-tab="${t.id}" title="${t.label}">${navIcon(t.id,S.tab===t.id)}</button>`).join('')}
-  </nav>
+  <div style="flex:1;${S.tab==='chat'?'overflow:hidden;display:flex;flex-direction:column':'overflow-y:auto'}">${tabHTML}</div>
 </div>
+${drawerHTML}
 ${modalHTML}`;
   bind(child,data);
 }
@@ -2637,7 +2682,8 @@ function bind(child,data){
       generateControverse(child,data);
     }
   }
-  document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{S.tab=b.dataset.tab;if(b.dataset.tab!=='profile')S.profileSettings=false;render();}));
+  // data-tab outside the drawer (e.g. btn-zoe in chat)
+  document.querySelectorAll('[data-tab]:not(#main-drawer [data-tab])').forEach(b=>b.addEventListener('click',()=>{S.tab=b.dataset.tab;if(b.dataset.tab!=='profile')S.profileSettings=false;render();}));
   document.querySelectorAll('[data-switch]').forEach(b=>b.addEventListener('click',()=>{S.childIdx=+b.dataset.switch;S.childMenu=false;render();}));
   // Child switcher toggle
   document.getElementById('btn-child-switcher')?.addEventListener('click',ev=>{
@@ -2766,7 +2812,15 @@ function bind(child,data){
   document.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>{S.childIdx=+b.dataset.edit;S.modal='editChild';S.modalChildIdx=+b.dataset.edit;render();}));
   document.getElementById('btn-add-child')?.addEventListener('click',()=>{S.modal='addChild';render();});
   document.getElementById('btn-apikey')?.addEventListener('click',()=>{S.modal='apikey';render();});
-  document.getElementById('btn-profile-settings')?.addEventListener('click',()=>{S.profileSettings=!S.profileSettings;render();});
+  // Settings back button (topbar when settings open)
+  document.getElementById('btn-profile-settings')?.addEventListener('click',()=>{S.profileSettings=false;render();});
+  // Drawer open/close
+  document.getElementById('btn-drawer-open')?.addEventListener('click',ev=>{ev.stopPropagation();S.drawer=true;render();});
+  document.getElementById('drawer-overlay')?.addEventListener('click',()=>{S.drawer=false;render();});
+  // Drawer nav items
+  document.querySelectorAll('#main-drawer [data-tab]').forEach(b=>b.addEventListener('click',()=>{S.tab=b.dataset.tab;S.profileSettings=false;S.drawer=false;render();}));
+  // Drawer settings button
+  document.getElementById('btn-drawer-settings')?.addEventListener('click',()=>{S.tab='profile';S.profileSettings=true;S.drawer=false;render();});
   document.querySelectorAll('[data-theme-val]').forEach(b=>b.addEventListener('click',()=>setTheme(b.dataset.themeVal)));
   document.querySelectorAll('[data-lang-val]').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.langVal)));
   document.querySelectorAll('[data-prov]').forEach(b=>b.addEventListener('click',()=>{saveProvider(b.dataset.prov);render();}));
