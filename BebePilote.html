@@ -1291,7 +1291,7 @@ ${sibCtx}
 - "known" : ce que les données établissent vraiment, sans exagérer.
 - "believed" : ce qui relève de la croyance/idéologie des deux bords, présenté comme tel — pas comme un fait.
 - "unknown" : ce que la science ne tranche honnêtement pas.
-- "bridge" : ne tranche JAMAIS à la place du parent. Donne-lui un CRITÈRE de décision applicable à SON enfant. Le but : qu'il se sente plus compétent, pas materné.
+- "bridge" : c'est le "donc concrètement, cette semaine ?" du parent. Structure en 2 temps : (1) un signal OBSERVABLE à surveiller chez cet enfant précis à cet âge précis — comportement, réaction, timing concret ; (2) une micro-action ou ajustement que le parent peut tester dès aujourd'hui ou cette semaine. Jamais une platitude ("faites confiance à votre instinct"), jamais une conclusion idéologique. Le parent doit sortir avec quelque chose à FAIRE ou à REGARDER, pas juste à savoir.
 - "tomorrow_teaser" : une question alléchante mais honnête pour demain (une phrase).
 - "deep_questions" : 3 questions d'approfondissement précises, pointues et alléchantes pour creuser CETTE controverse (elles alimenteront un bouton "Creuser"). Ancrées sur les camps ci-dessus, pas génériques.
 
@@ -1821,17 +1821,6 @@ function renderToday(child,data,childIdx){
   const {milestone,neuron,ageLabel,ageInDays,sections}=data;
   return`<div style="padding-top:16px">
 ${S.flags.controverse?renderControverseCard(child,data):''}
-<!-- Conseil du jour -->
-${milestone?.tip?`
-<button class="conseil-btn" id="btn-conseil">
-  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#A06C2A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="21" x2="14" y2="21"/><path d="M15.1 14.2c.2-1 .7-1.8 1.5-2.6A6 6 0 1 0 7.4 11.6c.8.8 1.3 1.6 1.5 2.6"/></svg>
-  <div style="flex:1;min-width:0">
-    <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#A06C2A;margin-bottom:4px">${t('today_conseil')}</p>
-    <p style="font-size:14px;color:#5C4A2A;line-height:1.6">${e(S.lang==='en'?(milestone.en?.tip||milestone.tip):milestone.tip)}</p>
-  </div>
-  ${chev()}
-</button>`:''}
-
 <!-- Section heading -->
 <div style="padding:0 16px;margin:4px 0 10px">
   <h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500;color:#1A1918">${t('today_dev')} ${e(child.firstName)}</h2>
@@ -2662,7 +2651,6 @@ function bind(child,data){
     setTimeout(()=>document.addEventListener('click',closeMenu),0);
   }
   document.querySelector('[data-caroline]')?.addEventListener('click',()=>{S.modal='caroline';render();});
-  document.getElementById('btn-conseil')?.addEventListener('click',()=>{S.modal='conseil';render();});
   // Controverse du jour
   document.getElementById('btn-ctrv-open')?.addEventListener('click',()=>{S.controverse.dive.open=false;S.modal='controverse';render();});
   document.getElementById('btn-ctrv-gen')?.addEventListener('click',()=>generateControverse(child,data));
