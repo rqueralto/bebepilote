@@ -925,7 +925,11 @@ function getLikedExamples(){return getSavedChats().filter(x=>x.liked).slice(0,3)
 // ── Conversations (historique chat) ──
 function getConversations(){return JSON.parse(localStorage.getItem('bebeConversations')||'[]');}
 function saveConversations(convs){localStorage.setItem('bebeConversations',JSON.stringify(convs.slice(0,200)));}
-function serializeMsgs(msgs){return msgs.map(m=>({role:m.role,content:m.content,refs:m.refs||[],liked:m.liked||false,saved:m.saved||false,creuserLabel:m.creuserLabel||null}));}
+function serializeMsgs(msgs){return msgs.map(m=>{
+  const base={role:m.role,content:m.content,refs:m.refs||[],liked:m.liked||false,saved:m.saved||false,creuserLabel:m.creuserLabel||null};
+  if(m.camps){base.camps={camps:(m.camps.camps||[]).map(c=>({name:c.name,logic:c.logic,dive:c.dive||null})),unknown:m.camps.unknown||'',refs:m.camps.refs||[]};}
+  return base;
+});}
 function autoSaveConv(child){
   if(!child||!S.chat.msgs.length)return;
   const userFirst=S.chat.msgs.find(m=>m.role==='user');
@@ -946,7 +950,10 @@ function autoSaveConv(child){
 }
 function loadConv(id){
   const conv=getConversations().find(c=>c.id===id);if(!conv)return;
-  S.chat.msgs=conv.msgs.map(m=>({...m,camps:null,campLoading:false}));
+  S.chat.msgs=conv.msgs.map(m=>({
+    ...m,campLoading:false,
+    camps:m.camps?{...m.camps,camps:(m.camps.camps||[]).map(c=>({...c,diveLoading:false}))}:null
+  }));
   S.chat.currentConvId=id;S.tab='chat';S.drawer=false;render();
 }
 function newConv(){S.chat.msgs=[];S.chat.currentConvId=null;S.tab='chat';S.drawer=false;render();}
@@ -1078,7 +1085,8 @@ Structure ta réponse en 2 à 4 blocs. Chaque bloc commence sur une nouvelle lig
   try{
     let result;
     try{result=await callDive(true);}catch{result=await callDive(false);}
-    camp.dive=result;camp.diveLoading=false;patchChatMsgs();
+    camp.dive=result;camp.diveLoading=false;
+    autoSaveConv(S.children[S.childIdx]);patchChatMsgs();
   }catch(err){
     camp.dive={blocks:[{type:'plain',text:'Erreur : '+err.message}],sources:[]};
     camp.diveLoading=false;patchChatMsgs();
@@ -1107,7 +1115,8 @@ Génère une analyse structurée des 2 à 3 grandes positions ou écoles sur ce 
     const raw=json.candidates?.[0]?.content?.parts?.[0]?.text||'{}';
     const parsed=JSON.parse(raw);
     (parsed.camps||[]).forEach(c=>{c.diveLoading=false;c.dive=null;});
-    m.camps=parsed;m.campLoading=false;m.campsSaved=false;patchChatMsgs();
+    m.camps=parsed;m.campLoading=false;m.campsSaved=false;
+    autoSaveConv(S.children[S.childIdx]);patchChatMsgs();
   }catch(err){
     m.campLoading=false;m.camps={camps:[{name:'Erreur',logic:err.message}],unknown:''};patchChatMsgs();
   }
