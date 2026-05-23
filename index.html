@@ -1097,28 +1097,40 @@ async function loadZoeCamps(idx){
   const m=S.chat.msgs[idx];if(!m||m.campLoading||m.camps)return;
   const prevMsg=S.chat.msgs[idx-1];
   const question=prevMsg?.content||'';
-  if(!S.apiKey){S.modal='apikey';render();return;}
+  const useAnthropic=S.provider==='anthropic';
+  if(useAnthropic?!S.anthropicKey:!S.apiKey){S.modal='apikey';render();return;}
   m.campLoading=true;patchChatMsgs();
   const sys=`Tu es un analyste neutre en psychologie du développement de l'enfant. Ta mission : cartographier les grandes écoles de pensée sur un sujet parental contesté, de façon équilibrée et rigoureuse. Tu t'adresses à un parent universitaire francophone qui veut comprendre le débat, pas une réponse rassurante.`;
-  const prompt=`Sujet contesté : "${m.creuserLabel}"
-Question posée : "${question}"
-
-Génère une analyse structurée des 2 à 3 grandes positions ou écoles sur ce sujet. Chaque position doit avoir un nom clair (pas "Camp A") et une explication dense de 2-3 phrases (logique, arguments, courant ou auteurs représentatifs). Ajoute une phrase sur ce qui reste scientifiquement incertain. Ajoute 1 à 3 références académiques ou livres clés sur ce débat (auteur, année, titre court — pas d'URL).`;
-  const schema={type:'OBJECT',properties:{camps:{type:'ARRAY',minItems:2,maxItems:3,items:{type:'OBJECT',properties:{name:{type:'STRING'},logic:{type:'STRING'}},required:['name','logic']}},unknown:{type:'STRING'},refs:{type:'ARRAY',maxItems:3,items:{type:'STRING'}}},required:['camps','unknown','refs']};
+  const prompt=`Sujet contesté : "${m.creuserLabel}"\nQuestion posée : "${question}"\n\nGénère une analyse structurée des 2 à 3 grandes positions ou écoles sur ce sujet. Chaque position doit avoir un nom clair (pas "Camp A") et une explication dense de 2-3 phrases (logique, arguments, courant ou auteurs représentatifs). Ajoute une phrase sur ce qui reste scientifiquement incertain. Ajoute 1 à 3 références académiques ou livres clés sur ce débat (auteur, année, titre court — pas d'URL).`;
+  const inputSchema={type:'object',properties:{camps:{type:'array',minItems:2,maxItems:3,items:{type:'object',properties:{name:{type:'string'},logic:{type:'string'}},required:['name','logic']}},unknown:{type:'string'},refs:{type:'array',maxItems:3,items:{type:'string'}}},required:['camps','unknown','refs']};
   try{
-    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${S.apiKey}`,{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{responseMimeType:'application/json',responseSchema:schema,temperature:0.7}})
-    });
-    if(!res.ok){const err=await res.json();throw new Error(err.error?.message||`Erreur ${res.status}`);}
-    const json=await res.json();
-    const raw=json.candidates?.[0]?.content?.parts?.[0]?.text||'{}';
-    const parsed=JSON.parse(raw);
+    let parsed;
+    if(useAnthropic){
+      const res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',headers:anthropicHeaders(),
+        body:JSON.stringify({model:ANTHROPIC_MODEL,max_tokens:1024,system:sys,
+          tools:[{name:'camps',description:'Retourne les positions/écoles sur le sujet.',input_schema:inputSchema}],
+          tool_choice:{type:'tool',name:'camps'},
+          messages:[{role:'user',content:prompt}]})
+      });
+      if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`Erreur ${res.status}`);}
+      const j=await res.json();
+      parsed=(j.content||[]).find(b=>b.type==='tool_use')?.input||{};
+    }else{
+      const geminiSchema={type:'OBJECT',properties:{camps:{type:'ARRAY',minItems:2,maxItems:3,items:{type:'OBJECT',properties:{name:{type:'STRING'},logic:{type:'STRING'}},required:['name','logic']}},unknown:{type:'STRING'},refs:{type:'ARRAY',maxItems:3,items:{type:'STRING'}}},required:['camps','unknown','refs']};
+      const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${S.apiKey}`,{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{responseMimeType:'application/json',responseSchema:geminiSchema,temperature:0.7}})
+      });
+      if(!res.ok){const err=await res.json();throw new Error(err.error?.message||`Erreur ${res.status}`);}
+      const j=await res.json();
+      parsed=JSON.parse(j.candidates?.[0]?.content?.parts?.[0]?.text||'{}');
+    }
     (parsed.camps||[]).forEach(c=>{c.diveLoading=false;c.dive=null;});
     m.camps=parsed;m.campLoading=false;m.campsSaved=false;
     autoSaveConv(S.children[S.childIdx]);patchChatMsgs();
   }catch(err){
-    m.campLoading=false;m.camps={camps:[{name:'Erreur',logic:err.message}],unknown:''};patchChatMsgs();
+    m.campLoading=false;m.camps={camps:[{name:'Erreur',logic:err.message,diveLoading:false,dive:null}],unknown:'',refs:[]};patchChatMsgs();
   }
 }
 
@@ -2295,7 +2307,7 @@ function renderProfileSettings(){
     ${S.provider==='anthropic'?`
       <p style="font-size:11px;font-weight:600;color:var(--c-t3);margin:14px 0 8px;letter-spacing:.03em">Clé API Claude (Anthropic)</p>
       <input id="anthropic-key-in" class="field" type="password" placeholder="sk-ant-..." value="${e(S.anthropicKey)}"/>
-      <p style="font-size:11px;color:var(--c-t4);margin-top:6px;line-height:1.5">Modèle : Claude Sonnet 4.6. Le chat Zoé reste sur Gemini.</p>
+      <p style="font-size:11px;color:var(--c-t4);margin-top:6px;line-height:1.5">Toutes les fonctions IA utilisent Claude (controverse, chat Zoé, exploration).</p>
     `:`
       <p style="font-size:11px;color:var(--c-t4);margin-top:10px;line-height:1.5">Utilise la clé Gemini ci-dessus (comme le chat).</p>
     `}
@@ -3273,7 +3285,8 @@ function bindChat(child,data){
 
 async function sendMsg(txt,child,data){
   if(!txt.trim()||S.chat.loading)return;
-  if(!S.apiKey){S.modal='apikey';render();return;}
+  const useAnthropic=S.provider==='anthropic';
+  if(useAnthropic?!S.anthropicKey:!S.apiKey){S.modal='apikey';render();return;}
   S.chat.msgs.push({role:'user',content:txt.trim()});
   S.chat.loading=true;S.chat.stream='';render();
   const carolineCtx=getCarolineEntry(data.ageInMonths,data.doy);
@@ -3394,34 +3407,57 @@ Ne mets pas de URLs. Uniquement auteur + titre + année si connue.
 ---CREUSER---
 <label court du débat, max 8 mots, ex : "Sommeil : faut-il laisser pleurer ?">
 Ne mets ce marker QUE si le sujet est réellement débattu entre spécialistes. Ne le mets pas pour des questions factuelles ou de développement normal.${(()=>{const ex=getLikedExamples();return ex.length?`\n\n## Exemples de réponses appréciées par ce parent (few-shot)\n${ex.map(x=>`Q: ${x.question}\nR: ${x.answer}`).join('\n\n')}`:''})()}`;
-  // Build contents without refs markers (clean text only for conversation history)
-  const contents=S.chat.msgs.map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]}));
+  const reader_dec=new TextDecoder();
+  let full='',buf='';
+  const parseStream=chunk=>{
+    buf+=chunk;
+    const lines=buf.split('\n');buf=lines.pop();
+    return lines;
+  };
+  const flushStream=txt=>{
+    full+=txt;
+    S.chat.stream=full.split('---REFS---')[0].split('---CREUSER---')[0].trim();
+    patchChatMsgs();
+  };
   try{
-    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:streamGenerateContent?alt=sse&key=${S.apiKey}`,{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents}),
-    });
-    if(!res.ok){const err=await res.json();throw new Error(err.error?.message||`Erreur ${res.status}`);}
-    const reader=res.body.getReader(),dec=new TextDecoder();
-    let full='',buf='';
-    while(true){
-      const{done,value}=await reader.read();if(done)break;
-      buf+=dec.decode(value,{stream:true});
-      const lines=buf.split('\n');buf=lines.pop();
-      for(const l of lines){
-        if(l.startsWith('data: ')){const d=l.slice(6).trim();if(!d||d==='[DONE]')continue;
-          try{const p=JSON.parse(d),c=p.candidates?.[0]?.content?.parts?.[0]?.text;if(c){full+=c;
-            // During streaming show content before refs/creuser markers only
-            S.chat.stream=full.split('---REFS---')[0].split('---CREUSER---')[0].trim();
-            patchChatMsgs();
-          }}catch{}
+    let res;
+    if(useAnthropic){
+      const messages=S.chat.msgs.map(m=>({role:m.role,content:m.content}));
+      res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',headers:anthropicHeaders(),
+        body:JSON.stringify({model:ANTHROPIC_MODEL,max_tokens:1500,stream:true,system:sys,messages})
+      });
+      if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`Erreur ${res.status}`);}
+      const reader=res.body.getReader();
+      let eventType='';
+      while(true){
+        const{done,value}=await reader.read();if(done)break;
+        for(const l of parseStream(reader_dec.decode(value,{stream:true}))){
+          if(l.startsWith('event: ')){eventType=l.slice(7).trim();continue;}
+          if(l.startsWith('data: ')&&eventType==='content_block_delta'){
+            try{const p=JSON.parse(l.slice(6).trim());if(p.delta?.type==='text_delta'&&p.delta.text)flushStream(p.delta.text);}catch{}
+          }
+        }
+      }
+    }else{
+      const contents=S.chat.msgs.map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]}));
+      res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:streamGenerateContent?alt=sse&key=${S.apiKey}`,{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents})
+      });
+      if(!res.ok){const err=await res.json();throw new Error(err.error?.message||`Erreur ${res.status}`);}
+      const reader=res.body.getReader();
+      while(true){
+        const{done,value}=await reader.read();if(done)break;
+        for(const l of parseStream(reader_dec.decode(value,{stream:true}))){
+          if(l.startsWith('data: ')){const d=l.slice(6).trim();if(!d||d==='[DONE]')continue;
+            try{const p=JSON.parse(d),c=p.candidates?.[0]?.content?.parts?.[0]?.text;if(c)flushStream(c);}catch{}
+          }
         }
       }
     }
-    // Parse refs from completed response
     const refMatch=full.match(/---REFS---([\s\S]*?)---FIN---/);
     const refs=refMatch?refMatch[1].trim().split('\n').map(l=>l.replace(/^[-•]\s*/,'').trim()).filter(Boolean):[];
-    // Parse CREUSER marker
     const creuserMatch=full.match(/---CREUSER---\s*\n?(.+)/);
     const creuserLabel=creuserMatch?creuserMatch[1].trim():null;
     const content=full.split('---REFS---')[0].split('---CREUSER---')[0].trim();
