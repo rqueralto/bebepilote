@@ -2288,29 +2288,20 @@ function renderProfileSettings(){
 </div>
 <div style="margin-bottom:8px">
   <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t5);margin-bottom:10px">${t('profile_ai')}</p>
-  <button id="btn-apikey" class="profile-row" style="margin-bottom:10px">
-    <div style="display:flex;align-items:center;gap:12px">
-      <div class="child-bubble"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#7A7570" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div>
-      <div style="text-align:left">
-        <p style="font-weight:600;font-size:15px;color:#1A1918">${t('profile_api_title')}</p>
-        <p style="font-size:13px;color:#9C9790;margin-top:1px">${S.apiKey?t('profile_api_set'):t('profile_api_unset')}</p>
-      </div>
-    </div>
-    ${chev()}
-  </button>
   <div style="background:var(--c-card);border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.08)">
-    <p style="font-size:11px;font-weight:600;color:var(--c-t3);margin-bottom:8px;letter-spacing:.03em">Moteur de la controverse du jour</p>
-    <div style="display:flex;gap:8px">
-      <button class="lang-opt${S.provider==='gemini'?' active':''}" data-prov="gemini">Gemini</button>
-      <button class="lang-opt${S.provider==='anthropic'?' active':''}" data-prov="anthropic">Claude</button>
+    <p style="font-size:11px;font-weight:600;color:var(--c-t3);margin-bottom:8px;letter-spacing:.03em">Moteur IA</p>
+    <div style="display:flex;gap:8px;margin-bottom:18px">
+      <button class="lang-opt${S.provider==='gemini'?' active':''}" data-prov="gemini">Gemini Flash</button>
+      <button class="lang-opt${S.provider==='anthropic'?' active':''}" data-prov="anthropic">Claude Sonnet</button>
     </div>
-    ${S.provider==='anthropic'?`
-      <p style="font-size:11px;font-weight:600;color:var(--c-t3);margin:14px 0 8px;letter-spacing:.03em">Clé API Claude (Anthropic)</p>
-      <input id="anthropic-key-in" class="field" type="password" placeholder="sk-ant-..." value="${e(S.anthropicKey)}"/>
-      <p style="font-size:11px;color:var(--c-t4);margin-top:6px;line-height:1.5">Toutes les fonctions IA utilisent Claude (controverse, chat Zoé, exploration).</p>
-    `:`
-      <p style="font-size:11px;color:var(--c-t4);margin-top:10px;line-height:1.5">Utilise la clé Gemini ci-dessus (comme le chat).</p>
-    `}
+    <p style="font-size:11px;font-weight:600;color:var(--c-t3);margin-bottom:6px;letter-spacing:.03em">Clé API Gemini</p>
+    <input id="gemini-key-in" class="field" type="password" placeholder="AIza…" value="${e(S.apiKey)}" style="margin-bottom:14px"/>
+    <p style="font-size:11px;font-weight:600;color:var(--c-t3);margin-bottom:6px;letter-spacing:.03em">Clé API Claude (Anthropic)</p>
+    <input id="anthropic-key-in" class="field" type="password" placeholder="sk-ant-…" value="${e(S.anthropicKey)}" style="margin-bottom:14px"/>
+    <div style="background:var(--c-bg2);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--c-t4);display:flex;align-items:center;gap:7px">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Clés stockées uniquement sur votre appareil
+    </div>
   </div>
 </div>
 <p style="text-align:center;font-size:10px;color:var(--c-t5);padding:16px 0 4px;letter-spacing:.04em">BébéPilote v${VERSION}</p>
@@ -2761,15 +2752,22 @@ function renderConseilModal(milestone,data,child){
 }
 
 function renderApiKeyModal(){
+  const isAnt=S.provider==='anthropic';
+  const title=isAnt?'Clé Claude manquante':'Clé Gemini manquante';
+  const link=isAnt?'https://console.anthropic.com/':'https://aistudio.google.com/apikey';
+  const linkLabel=isAnt?'console.anthropic.com':'aistudio.google.com';
+  const placeholder=isAnt?'sk-ant-…':'AIza…';
+  const val=isAnt?e(S.anthropicKey):e(S.apiKey);
+  const inputId=isAnt?'apikey-modal-ant':'apikey-modal-gem';
   return`<div class="overlay" id="modal-overlay">
 <div style="display:flex;align-items:center;justify-content:center;width:100%;padding:24px">
 <div class="modal-box">
   <div style="text-align:center;margin-bottom:20px">
     <div style="margin-bottom:12px;display:flex;justify-content:center"><svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="#8B7355" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div>
-    <h3 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500">${t('modal_api_title')}</h3>
-    <p class="t-body" style="margin-top:6px;font-size:13px">${t('modal_api_desc')} <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com</a></p>
+    <h3 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500">${title}</h3>
+    <p class="t-body" style="margin-top:6px;font-size:13px">Obtenez votre clé sur <a href="${link}" target="_blank">${linkLabel}</a></p>
   </div>
-  <input id="apikey-in" class="field" type="password" placeholder="AIza…" value="${e(S.apiKey)}" style="margin-bottom:6px"/>
+  <input id="${inputId}" class="field" type="password" placeholder="${placeholder}" value="${val}" style="margin-bottom:6px"/>
   <div style="background:#F5F4F0;border-radius:10px;padding:11px 13px;margin-bottom:18px;font-size:13px;color:#7A7570;display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>${t('modal_api_stored')}</div>
   <div style="display:flex;gap:8px">
     <button class="btn btn-ghost" id="modal-close" style="flex:1;padding:12px">${t('modal_api_cancel')}</button>
@@ -3111,7 +3109,7 @@ function bind(child,data){
   document.querySelectorAll('[data-hist]').forEach(b=>b.addEventListener('click',()=>{const d=b.dataset.hist;S.histExp[d]=!S.histExp[d];render();}));
   document.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>{S.childIdx=+b.dataset.edit;S.modal='editChild';S.modalChildIdx=+b.dataset.edit;render();}));
   document.getElementById('btn-add-child')?.addEventListener('click',()=>{S.modal='addChild';render();});
-  document.getElementById('btn-apikey')?.addEventListener('click',()=>{S.modal='apikey';render();});
+  document.getElementById('gemini-key-in')?.addEventListener('change',ev=>saveKey(ev.target.value.trim()));
   // Drawer open/close
   document.getElementById('btn-drawer-open')?.addEventListener('click',ev=>{ev.stopPropagation();S.drawer=true;render();});
   document.getElementById('drawer-overlay')?.addEventListener('click',()=>{S.drawer=false;render();});
@@ -3161,7 +3159,11 @@ function bind(child,data){
   document.getElementById('anthropic-key-in')?.addEventListener('change',ev=>saveAnthropicKey(ev.target.value.trim()));
   document.getElementById('modal-close')?.addEventListener('click',()=>{S.modal=null;render();});
   document.getElementById('modal-overlay')?.addEventListener('click',ev=>{if(ev.target.id==='modal-overlay'){S.modal=null;render();}});
-  document.getElementById('apikey-save')?.addEventListener('click',()=>{saveKey(document.getElementById('apikey-in').value.trim());S.modal=null;render();});
+  document.getElementById('apikey-save')?.addEventListener('click',()=>{
+    if(S.provider==='anthropic'){const v=document.getElementById('apikey-modal-ant')?.value.trim();if(v)saveAnthropicKey(v);}
+    else{const v=document.getElementById('apikey-modal-gem')?.value.trim();if(v)saveKey(v);}
+    S.modal=null;render();
+  });
   bindChildForm();
   bindChat(child,data);
   document.getElementById('chat-end')?.scrollIntoView({behavior:'instant'});
