@@ -184,9 +184,9 @@ a{color:#2D4A8A}
 .chat-prompt-cat{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t4)}
 /* Input pill */
 .chat-pill-wrap{padding:10px 12px;padding-bottom:max(68px,calc(56px + env(safe-area-inset-bottom)));background:var(--c-bg);flex-shrink:0}
-.chat-pill{display:flex;align-items:center;gap:8px;border-radius:28px;border:1.5px solid var(--c-bd2);background:var(--c-card);padding:8px 8px 8px 16px;transition:border-color .15s}
+.chat-pill{display:flex;align-items:flex-end;gap:8px;border-radius:22px;border:1.5px solid var(--c-bd2);background:var(--c-card);padding:8px 8px 8px 16px;transition:border-color .15s}
 .chat-pill:focus-within{border-color:#3D5570}
-.chat-pill-in{flex:1;background:none;border:none;outline:none;font-size:15px;color:var(--c-ink);padding:3px 0;line-height:1.4;font-family:inherit}
+.chat-pill-in{flex:1;background:none;border:none;outline:none;font-size:15px;color:var(--c-ink);padding:5px 0;line-height:1.45;font-family:inherit;resize:none;overflow-y:auto;max-height:120px;display:block}
 .chat-pill-in::placeholder{color:var(--c-t4)}
 .chat-pill-in:disabled{opacity:.5}
 .chat-pill-send{width:34px;height:34px;border-radius:50%;background:var(--c-ink);color:var(--c-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s,transform .1s}
@@ -2249,9 +2249,9 @@ function renderChat(child,data){
       <button class="chat-pill-sugg${S.chat.showSugg?' active':''}" id="chat-sugg-btn" title="Suggestions" type="button">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg>
       </button>
-      <input id="chat-in" class="chat-pill-in" type="text"
+      <textarea id="chat-in" class="chat-pill-in" rows="1"
         placeholder="${S.apiKey?t('chat_placeholder_key'):t('chat_placeholder_nokey')}"
-        ${loading?'disabled':''}/>
+        ${loading?'disabled':''}></textarea>
       <button class="chat-pill-send" id="chat-send" ${loading?'disabled':''}>
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
       </button>
@@ -3267,13 +3267,15 @@ function bindChat(child,data){
   document.querySelectorAll('[data-q]').forEach(b=>b.addEventListener('click',()=>{
     S.chat.showSugg=false;
     if(b.dataset.tpl){
-      if(inp){inp.value=b.dataset.q;inp.focus();}
+      if(inp){inp.value=b.dataset.q;inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,120)+'px';inp.focus();}
     }else{
       sendMsg(b.dataset.q,child,data);
     }
   }));
+  const growInp=()=>{if(!inp)return;inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,120)+'px';};
+  inp?.addEventListener('input',growInp);
   document.getElementById('chat-send')?.addEventListener('click',()=>{S.chat.showSugg=false;sendMsg(inp?.value||'',child,data);});
-  inp?.addEventListener('keydown',ev=>{if(ev.key==='Enter'){S.chat.showSugg=false;sendMsg(inp.value,child,data);}});
+  inp?.addEventListener('keydown',ev=>{if(ev.key==='Enter'&&!ev.shiftKey){ev.preventDefault();S.chat.showSugg=false;sendMsg(inp.value,child,data);}});
   document.getElementById('btn-saved-chats')?.addEventListener('click',()=>{S.modal='savedChats';render();});
   // Suggestions panel toggle
   document.getElementById('chat-sugg-btn')?.addEventListener('click',()=>{
