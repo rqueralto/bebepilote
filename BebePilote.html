@@ -1100,6 +1100,8 @@ const S={
   children:JSON.parse(localStorage.getItem('bebeChildren')||'[]'),
   childIdx:0,
   apiKey:localStorage.getItem('bebeApiKey')||'',
+  provider:localStorage.getItem('bebeProvider')||'gemini',
+  anthropicKey:localStorage.getItem('bebeAnthropicKey')||'',
   tab:'today',
   modal:null,        // 'conseil'|'section'|'apikey'|'editChild'|'addChild'
   modalSection:null,
@@ -1117,6 +1119,10 @@ const S={
 };
 function saveKids(){localStorage.setItem('bebeChildren',JSON.stringify(S.children));}
 function saveKey(k){S.apiKey=k;localStorage.setItem('bebeApiKey',k);}
+function saveProvider(p){S.provider=p;localStorage.setItem('bebeProvider',p);}
+function saveAnthropicKey(k){S.anthropicKey=k;localStorage.setItem('bebeAnthropicKey',k);}
+function ctrvProviderKey(){return S.provider==='anthropic'?S.anthropicKey:S.apiKey;}
+function ctrvIdent(child){return child.firstName+'|'+S.provider;}
 function childData(c){
   const b=new Date(c.birthDate+'T12:00:00'),n=new Date(),d=Math.floor((n-b)/86400000);
   const doy=getDayOfYear(n);
@@ -1127,7 +1133,7 @@ function childData(c){
 
 // ═══════════════════════ CONTROVERSE DU JOUR (proto) ═══════════════════════
 function ctrvDateStr(){return new Date().toISOString().slice(0,10);}
-function ctrvCacheKey(c){return 'bebeCtrv_v2_'+c.firstName+'_'+ctrvDateStr();}
+function ctrvCacheKey(c){return 'bebeCtrv_v2_'+S.provider+'_'+c.firstName+'_'+ctrvDateStr();}
 function getCtrvHistory(){try{return JSON.parse(localStorage.getItem('bebeCtrvHistory')||'[]');}catch{return[];}}
 function upsertCtrvToday(obj){const h=getCtrvHistory();const today=ctrvDateStr();const ex=h.find(x=>x.date===today);if(ex){ex.topic=obj.topic;ex.question=obj.question;}else{h.unshift({date:today,topic:obj.topic,question:obj.question,signal:null});}localStorage.setItem('bebeCtrvHistory',JSON.stringify(h.slice(0,60)));}
 function setCtrvFeedback(signal){const h=getCtrvHistory();const it=h.find(x=>x.date===ctrvDateStr());if(it){it.signal=signal;localStorage.setItem('bebeCtrvHistory',JSON.stringify(h));}}
@@ -1150,12 +1156,96 @@ const CTRV_SCHEMA={type:'OBJECT',properties:{
   deep_questions:{type:'ARRAY',items:{type:'STRING'}}
 },required:['topic','question','why_now','camps','known','believed','unknown','bridge','tomorrow_teaser','deep_questions']};
 
+// JSON Schema standard (minuscules) pour le tool use Anthropic
+const CTRV_TOOL_SCHEMA={type:'object',properties:{
+  topic:{type:'string'},
+  question:{type:'string'},
+  why_now:{type:'string'},
+  camps:{type:'array',items:{type:'object',properties:{
+    name:{type:'string'},logic:{type:'string'},
+    pros:{type:'array',items:{type:'string'}},
+    cons:{type:'array',items:{type:'string'}}
+  },required:['name','logic','pros','cons']}},
+  known:{type:'string'},
+  believed:{type:'string'},
+  unknown:{type:'string'},
+  bridge:{type:'string'},
+  tomorrow_teaser:{type:'string'},
+  deep_questions:{type:'array',items:{type:'string'}}
+},required:['topic','question','why_now','camps','known','believed','unknown','bridge','tomorrow_teaser','deep_questions']};
+
+const ANTHROPIC_MODEL='claude-sonnet-4-6';
+function anthropicHeaders(){return{'content-type':'application/json','x-api-key':S.anthropicKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};}
+
+// Génère la controverse structurée selon le moteur choisi
+async function aiControverse(sys){
+  if(S.provider==='anthropic'){
+    if(!S.anthropicKey)throw new Error('Clé Claude manquante (Paramètres).');
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:anthropicHeaders(),
+      body:JSON.stringify({
+        model:ANTHROPIC_MODEL,max_tokens:2500,system:sys,
+        messages:[{role:'user',content:'Génère la controverse du jour.'}],
+        tools:[{name:'controverse',description:'Renvoie la controverse du jour, structurée.',input_schema:CTRV_TOOL_SCHEMA}],
+        tool_choice:{type:'tool',name:'controverse'}
+      })
+    });
+    if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`Erreur ${res.status}`);}
+    const j=await res.json();
+    const tu=(j.content||[]).find(b=>b.type==='tool_use');
+    if(!tu||!tu.input)throw new Error('Réponse Claude sans bloc structuré');
+    return tu.input;
+  }
+  if(!S.apiKey)throw new Error('Clé Gemini manquante (Paramètres).');
+  const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${S.apiKey}`,{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents:[{role:'user',parts:[{text:'Génère la controverse du jour.'}]}],generationConfig:{responseMimeType:'application/json',responseSchema:CTRV_SCHEMA,temperature:1.05}})
+  });
+  if(!res.ok){const err=await res.json();throw new Error(err.error?.message||`Erreur ${res.status}`);}
+  const j=await res.json();
+  const txt=j.candidates?.[0]?.content?.parts?.[0]?.text;
+  if(!txt)throw new Error('Réponse vide du modèle');
+  return JSON.parse(txt);
+}
+
+// Réponse de deep-dive (texte + sources) selon le moteur, avec ou sans recherche web
+async function aiDeepDive(sys,q,grounded){
+  if(S.provider==='anthropic'){
+    if(!S.anthropicKey)throw new Error('Clé Claude manquante (Paramètres).');
+    const body={model:ANTHROPIC_MODEL,max_tokens:1500,system:sys,messages:[{role:'user',content:q}]};
+    if(grounded)body.tools=[{type:'web_search_20250305',name:'web_search',max_uses:3}];
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:anthropicHeaders(),body:JSON.stringify(body)});
+    if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`Erreur ${res.status}`);}
+    const j=await res.json();
+    const text=(j.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n').trim();
+    let sources=[];
+    if(grounded){
+      const seen=new Set();
+      (j.content||[]).forEach(b=>{if(b.type==='web_search_tool_result'&&Array.isArray(b.content)){b.content.forEach(r=>{if(r.url&&!seen.has(r.url)){seen.add(r.url);sources.push({uri:r.url,title:r.title||r.url});}});}});
+      sources=sources.slice(0,6);
+    }
+    if(!text)throw new Error('Réponse vide du modèle');
+    return{text,sources};
+  }
+  const body={systemInstruction:{parts:[{text:sys}]},contents:[{role:'user',parts:[{text:q}]}]};
+  if(grounded)body.tools=[{google_search:{}}];
+  const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${S.apiKey}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!res.ok){const err=await res.json();throw new Error(err.error?.message||`Erreur ${res.status}`);}
+  const j=await res.json();const cand=j.candidates?.[0];
+  const text=(cand?.content?.parts||[]).map(p=>p.text||'').join('').trim();
+  if(!text)throw new Error('Réponse vide du modèle');
+  let sources=[];
+  if(grounded){const chunks=cand?.groundingMetadata?.groundingChunks||[];const seen=new Set();sources=chunks.filter(c=>c.web?.uri).map(c=>({uri:c.web.uri,title:c.web.title||c.web.uri})).filter(s=>{if(seen.has(s.uri))return false;seen.add(s.uri);return true;}).slice(0,6);}
+  return{text,sources};
+}
+
 async function generateControverse(child,data,force){
-  if(!S.apiKey){S.modal='apikey';render();return;}
+  if(S.provider==='anthropic'){if(!S.anthropicKey){S.controverse.error='Ajoute ta clé Claude dans les Paramètres.';S.controverse.childKey=ctrvIdent(child);render();return;}}
+  else if(!S.apiKey){S.modal='apikey';render();return;}
   S.controverse.dive={open:false,items:[],loading:false,error:null};
   const ck=ctrvCacheKey(child);
-  if(!force){const cached=localStorage.getItem(ck);if(cached){try{S.controverse.data=JSON.parse(cached);S.controverse.childKey=child.firstName;S.controverse.error=null;render();return;}catch{}}}
-  S.controverse.loading=true;S.controverse.error=null;S.controverse.childKey=child.firstName;render();
+  if(!force){const cached=localStorage.getItem(ck);if(cached){try{S.controverse.data=JSON.parse(cached);S.controverse.childKey=ctrvIdent(child);S.controverse.error=null;render();return;}catch{}}}
+  S.controverse.loading=true;S.controverse.error=null;S.controverse.childKey=ctrvIdent(child);render();
   const hist=getCtrvHistory();
   const recent=[...new Set(hist.slice(0,20).map(x=>x.question))];
   const liked=[...new Set(hist.filter(x=>x.signal==='learned').map(x=>x.topic))];
@@ -1222,23 +1312,11 @@ ${disliked.length?`\n## Sujets rejetés par ce parent (évite) : ${disliked.join
 
 Réponds UNIQUEMENT avec le JSON structuré demandé.`;
   try{
-    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${S.apiKey}`,{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        systemInstruction:{parts:[{text:sys}]},
-        contents:[{role:'user',parts:[{text:'Génère la controverse du jour.'}]}],
-        generationConfig:{responseMimeType:'application/json',responseSchema:CTRV_SCHEMA,temperature:1.05}
-      })
-    });
-    if(!res.ok){const err=await res.json();throw new Error(err.error?.message||`Erreur ${res.status}`);}
-    const j=await res.json();
-    const txt=j.candidates?.[0]?.content?.parts?.[0]?.text;
-    if(!txt)throw new Error('Réponse vide du modèle');
-    const obj=JSON.parse(txt);
+    const obj=await aiControverse(sys);
     if(!obj.camps||!obj.camps.length)throw new Error('Format inattendu');
     localStorage.setItem(ck,JSON.stringify(obj));
     upsertCtrvToday(obj);
-    S.controverse.data=obj;S.controverse.loading=false;S.controverse.childKey=child.firstName;render();
+    S.controverse.data=obj;S.controverse.loading=false;S.controverse.childKey=ctrvIdent(child);render();
   }catch(err){
     S.controverse.loading=false;S.controverse.error=err.message;render();
   }
@@ -1267,7 +1345,11 @@ function parseDiveAnswer(txt){
 }
 
 async function askDeepDive(child,data,q){
-  if(!S.apiKey){S.modal='apikey';render();return;}
+  const keyMissing=S.provider==='anthropic'?!S.anthropicKey:!S.apiKey;
+  if(keyMissing){
+    if(S.provider==='anthropic'){S.controverse.dive.open=true;S.controverse.dive.error='Ajoute ta clé Claude dans les Paramètres.';render();return;}
+    S.modal='apikey';render();return;
+  }
   if(S.controverse.dive.loading)return;
   const d=S.controverse.data;if(!d||!q||!q.trim())return;
   S.controverse.dive.open=true;S.controverse.dive.loading=true;S.controverse.dive.error=null;render();
@@ -1296,24 +1378,8 @@ Structure ta réponse en 2 à 5 blocs. Chaque bloc commence sur une NOUVELLE LIG
 - Si tu ne trouves pas de source fiable, n'utilise PAS ◆FAIT — bascule en ◇INTERPRÉTATION.
 - Français, dense, sans remplissage. Ne commence pas par "Bien sûr" ni "Absolument".`;
   const callDive=async(grounded)=>{
-    const body={systemInstruction:{parts:[{text:sys}]},contents:[{role:'user',parts:[{text:q.trim()}]}]};
-    if(grounded)body.tools=[{google_search:{}}];
-    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${S.apiKey}`,{
-      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)
-    });
-    if(!res.ok){const err=await res.json();throw new Error(err.error?.message||`Erreur ${res.status}`);}
-    const j=await res.json();
-    const cand=j.candidates?.[0];
-    const txt=(cand?.content?.parts||[]).map(p=>p.text||'').join('');
-    if(!txt)throw new Error('Réponse vide du modèle');
-    const blocks=parseDiveAnswer(txt);
-    let sources=[];
-    if(grounded){
-      const chunks=cand?.groundingMetadata?.groundingChunks||[];
-      const seen=new Set();
-      sources=chunks.filter(c=>c.web?.uri).map(c=>({uri:c.web.uri,title:c.web.title||c.web.uri})).filter(s=>{if(seen.has(s.uri))return false;seen.add(s.uri);return true;}).slice(0,6);
-    }
-    return {blocks,sources,grounded};
+    const {text,sources}=await aiDeepDive(sys,q.trim(),grounded);
+    return {blocks:parseDiveAnswer(text),sources,grounded};
   };
   let result=null;
   try{result=await callDive(true);}
@@ -1952,7 +2018,7 @@ function renderProfileSettings(){
 </div>
 <div style="margin-bottom:8px">
   <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t5);margin-bottom:10px">${t('profile_ai')}</p>
-  <button id="btn-apikey" class="profile-row" style="margin-bottom:0">
+  <button id="btn-apikey" class="profile-row" style="margin-bottom:10px">
     <div style="display:flex;align-items:center;gap:12px">
       <div class="child-bubble"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#7A7570" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div>
       <div style="text-align:left">
@@ -1962,6 +2028,20 @@ function renderProfileSettings(){
     </div>
     ${chev()}
   </button>
+  <div style="background:var(--c-card);border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.08)">
+    <p style="font-size:11px;font-weight:600;color:var(--c-t3);margin-bottom:8px;letter-spacing:.03em">Moteur de la controverse du jour</p>
+    <div style="display:flex;gap:8px">
+      <button class="lang-opt${S.provider==='gemini'?' active':''}" data-prov="gemini">Gemini</button>
+      <button class="lang-opt${S.provider==='anthropic'?' active':''}" data-prov="anthropic">Claude</button>
+    </div>
+    ${S.provider==='anthropic'?`
+      <p style="font-size:11px;font-weight:600;color:var(--c-t3);margin:14px 0 8px;letter-spacing:.03em">Clé API Claude (Anthropic)</p>
+      <input id="anthropic-key-in" class="field" type="password" placeholder="sk-ant-..." value="${e(S.anthropicKey)}"/>
+      <p style="font-size:11px;color:var(--c-t4);margin-top:6px;line-height:1.5">Modèle : Claude Sonnet 4.6. Le chat Zoé reste sur Gemini.</p>
+    `:`
+      <p style="font-size:11px;color:var(--c-t4);margin-top:10px;line-height:1.5">Utilise la clé Gemini ci-dessus (comme le chat).</p>
+    `}
+  </div>
 </div>
 <p style="text-align:center;font-size:10px;color:var(--c-t5);padding:16px 0 4px;letter-spacing:.04em">BébéPilote v${VERSION}</p>
 </div>`;
@@ -2498,10 +2578,10 @@ ${modalHTML}`;
 function bind(child,data){
   // Controverse du jour — chargement auto du jour (cache) ou génération
   if(S.tab==='today'&&S.flags.controverse&&!data.unborn){
-    if(S.controverse.childKey&&S.controverse.childKey!==child.firstName){S.controverse={loading:false,error:null,data:null,childKey:null,dive:{open:false,items:[],loading:false,error:null}};}
-    if(S.apiKey&&!S.controverse.data&&!S.controverse.loading&&!S.controverse.error){
+    if(S.controverse.childKey&&S.controverse.childKey!==ctrvIdent(child)){S.controverse={loading:false,error:null,data:null,childKey:null,dive:{open:false,items:[],loading:false,error:null}};}
+    if(ctrvProviderKey()&&!S.controverse.data&&!S.controverse.loading&&!S.controverse.error){
       const cached=localStorage.getItem(ctrvCacheKey(child));
-      if(cached){try{S.controverse.data=JSON.parse(cached);S.controverse.childKey=child.firstName;render();return;}catch{}}
+      if(cached){try{S.controverse.data=JSON.parse(cached);S.controverse.childKey=ctrvIdent(child);render();return;}catch{}}
       generateControverse(child,data);
     }
   }
@@ -2616,6 +2696,8 @@ function bind(child,data){
   document.getElementById('btn-profile-settings')?.addEventListener('click',()=>{S.profileSettings=!S.profileSettings;render();});
   document.querySelectorAll('[data-theme-val]').forEach(b=>b.addEventListener('click',()=>setTheme(b.dataset.themeVal)));
   document.querySelectorAll('[data-lang-val]').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.langVal)));
+  document.querySelectorAll('[data-prov]').forEach(b=>b.addEventListener('click',()=>{saveProvider(b.dataset.prov);render();}));
+  document.getElementById('anthropic-key-in')?.addEventListener('change',ev=>saveAnthropicKey(ev.target.value.trim()));
   document.getElementById('modal-close')?.addEventListener('click',()=>{S.modal=null;render();});
   document.getElementById('modal-overlay')?.addEventListener('click',ev=>{if(ev.target.id==='modal-overlay'){S.modal=null;render();}});
   document.getElementById('apikey-save')?.addEventListener('click',()=>{saveKey(document.getElementById('apikey-in').value.trim());S.modal=null;render();});
