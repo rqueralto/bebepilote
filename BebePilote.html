@@ -1135,7 +1135,7 @@ function childData(c){
 function ctrvDateStr(){return new Date().toISOString().slice(0,10);}
 function ctrvCacheKey(c){return 'bebeCtrv_v2_'+S.provider+'_'+c.firstName+'_'+ctrvDateStr();}
 function getCtrvHistory(){try{return JSON.parse(localStorage.getItem('bebeCtrvHistory')||'[]');}catch{return[];}}
-function upsertCtrvToday(obj){const h=getCtrvHistory();const today=ctrvDateStr();const ex=h.find(x=>x.date===today);if(ex){ex.topic=obj.topic;ex.question=obj.question;}else{h.unshift({date:today,topic:obj.topic,question:obj.question,signal:null});}localStorage.setItem('bebeCtrvHistory',JSON.stringify(h.slice(0,60)));}
+function upsertCtrvToday(obj){const h=getCtrvHistory();const today=ctrvDateStr();const ex=h.find(x=>x.date===today);if(ex){const changed=ex.topic!==obj.topic||ex.question!==obj.question;ex.topic=obj.topic;ex.question=obj.question;if(changed)ex.signal=null;}else{h.unshift({date:today,topic:obj.topic,question:obj.question,signal:null});}localStorage.setItem('bebeCtrvHistory',JSON.stringify(h.slice(0,60)));}
 function setCtrvFeedback(signal){const h=getCtrvHistory();const it=h.find(x=>x.date===ctrvDateStr());if(it){it.signal=signal;localStorage.setItem('bebeCtrvHistory',JSON.stringify(h));}}
 function getCtrvFeedbackToday(){return getCtrvHistory().find(x=>x.date===ctrvDateStr())?.signal||null;}
 
