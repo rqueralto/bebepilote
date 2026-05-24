@@ -221,6 +221,15 @@ a{color:#2D4A8A}
 .fav-card{background:var(--c-card);border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 3px 10px rgba(0,0,0,.08);margin-bottom:10px}
 .fav-card-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .fav-type-badge{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:99px}
+.fav-filter-row{display:flex;gap:7px;overflow-x:auto;padding:2px 16px 14px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.fav-filter-row::-webkit-scrollbar{display:none}
+.fav-chip{flex-shrink:0;padding:7px 13px;border-radius:99px;font-size:12px;font-weight:600;background:var(--c-bg3);color:var(--c-t2);border:1.5px solid transparent;white-space:nowrap;transition:background .15s,color .15s}
+.fav-chip.on{background:var(--c-ink);color:var(--c-bg)}
+.fav-flat{background:var(--c-card);border:1px solid var(--c-bd);border-radius:14px;margin-bottom:9px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.fav-flat-head{display:flex;align-items:center;gap:9px;width:100%;padding:13px 14px;text-align:left}
+.fav-flat-title{flex:1;min-width:0;font-size:13.5px;font-weight:600;color:var(--c-ink);line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.fav-flat-date{font-size:11px;color:var(--c-t4);flex-shrink:0;font-weight:500}
+.ctrv-learned-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;color:#3A5E38;background:#EAF0E8;padding:2px 7px;border-radius:99px;flex-shrink:0}
 /* ── Reference links (in modals) ── */
 .ref-link{display:flex;align-items:flex-start;gap:7px;font-size:12px;color:inherit;text-decoration:none;padding:7px 10px;border-radius:9px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);margin-bottom:6px;line-height:1.5;transition:background .12s}
 .ref-link:hover{background:rgba(255,255,255,.22)}
@@ -393,7 +402,7 @@ fr:{
   prenatal_anatomy:'Anatomie & taille',prenatal_anatomy_sub:'Organes, poids, taille',
   prenatal_prep:'Préparer la venue',prenatal_zoe:'Questions sur la grossesse, le bébé, la fratrie…',
   prenatal_fratrie_title:'Préparer la fratrie',prenatal_fratrie_sub:'Comment aider vos autres enfants à accueillir ce bébé',
-  hist_title:'Favoris',hist_sub:'Chat et favoris sauvegardés',
+  hist_title:'Favoris',hist_sub:'Tout ce que vous avez gardé',
   hist_favs:'Sauvegardés',hist_saved_zoe:'Chat',hist_activities:'Activités par jour',
   fav_empty:'Aucun favori — appuyez sur ♥ dans une section.',
   saved_empty:'Aucune réponse — utilisez 🔖 sous une réponse de Zoé.',
@@ -471,7 +480,7 @@ en:{
   prenatal_anatomy:'Anatomy & size',prenatal_anatomy_sub:'Organs, weight, size',
   prenatal_prep:'Preparing the arrival',prenatal_zoe:'Questions about pregnancy, the baby, siblings…',
   prenatal_fratrie_title:'Preparing siblings',prenatal_fratrie_sub:'How to help your other children welcome this baby',
-  hist_title:'Favourites',hist_sub:'Chat and saved favourites',
+  hist_title:'Favourites',hist_sub:'Everything you have kept',
   hist_favs:'Saved',hist_saved_zoe:'Chat',hist_activities:'Activities by day',
   fav_empty:'No favourites — tap ♥ in any section.',
   saved_empty:'No responses — use 🔖 under a Zoé response.',
@@ -650,7 +659,7 @@ activite:[
 
 const _sw='stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
 const _ico=(path,extra='')=>`<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" ${_sw} ${extra}>${path}</svg>`;
-const VERSION='1.0.1';
+const VERSION='1.0.2';
 const ALL_SECTIONS=[
   {id:'langage',  label:'Langage & Communication',  label_en:'Language & Communication', icon:_ico('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/>'),colorBg:'acc-blue',  colorText:'acc-blue'},
   {id:'motricite',label:'La Motricité',              label_en:'Motor Skills',              icon:_ico('<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>'),colorBg:'acc-green', colorText:'acc-green'},
@@ -1221,83 +1230,69 @@ async function shareCardCanvas(child,{headerBg,accentColor,categoryLabel,title,b
 }
 
 // ── Render favorites section (replaces neuron chart) ──
-function renderFavorites(child){
-  const all=getFavorites().filter(f=>f.childName===child.firstName);
-  if(!all.length)return`<div style="padding:20px;text-align:center">
-  <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#D4D0CA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:10px"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-  <p style="font-size:13px;color:#B0A89E;line-height:1.55">${t('fav_empty')}</p>
-</div>`;
-  // Group by typeLabel
-  const groups={};
-  all.forEach(f=>{const k=f.typeLabel||f.type;if(!groups[k])groups[k]={label:k,type:f.type,colorBg:f.refsColorBg||'acc-blue',items:[]};groups[k].items.push(f);});
-  const colors={section:{bg:'#EBF0FA',color:'#2D4A8A'},conseil:{bg:'#FBF3E5',color:'#A06C2A'},caroline:{bg:'#EAF0E8',color:'#3A5E38'},highlight:{bg:'#EBF0FA',color:'#2D4A8A'},controverse:{bg:'#FBF3E5',color:'#A06C2A'},creuser:{bg:'#FBF3E5',color:'#A06C2A'}};
-  return Object.values(groups).map(g=>{
-    const exp=!!S.favCatExp[g.label];
-    const c=colors[g.type]||colors.section;
-    return`<div class="hist-card">
-<button class="hist-row" data-fav-cat="${e(g.label)}">
-  <div style="flex:1;min-width:0;display:flex;align-items:center;gap:8px">
-    <span class="fav-type-badge" style="background:${c.bg};color:${c.color};flex-shrink:0">${e(g.label)}</span>
-    <span style="font-size:12px;color:#B0A89E;font-weight:500">${g.items.length}</span>
-  </div>
-  ${chev(exp)}
-</button>
-${exp?`<div style="border-top:1px solid #F5F3EF">
-${g.items.map((f,i)=>`<div style="padding:12px 16px;${i<g.items.length-1?'border-bottom:1px solid #FAFAF8':''}">
-  ${f.type==='controverse'&&f.ctrv?renderCtrvFavBody(f.ctrv):f.type==='creuser'&&f.blocks?renderDiveFavBody(f):f.type==='zoecamps'&&f.campsData?renderZoeCampsFavBody(f):`<p style="font-size:13px;font-weight:600;color:#1A1918;margin-bottom:5px;line-height:1.35">${e(f.title)}</p>
-  <p style="font-size:13px;color:#5C5752;line-height:1.65;margin-bottom:${f.refsHtml?'12px':'0'}">${e(f.summary)}</p>
-  ${f.refsHtml?`<div class="refs-block ${f.refsColorBg||'acc-blue'}">
-    <p style="font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;opacity:.75">📖 Pour aller plus loin</p>
-    ${f.refsHtml}
-  </div>`:''}`}
-  <div style="display:flex;gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid #F5F3EF">
-    <button class="msg-act fav-on" data-unfav="${f.id}" style="width:auto;padding:0 8px;font-size:12px;gap:5px">
-      <svg viewBox="0 0 24 24" width="12" height="12" fill="#E05A5A" stroke="#E05A5A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      Retirer
-    </button>
-    ${f.canShare?`<button class="msg-act" data-share-fav="${f.id}" style="width:auto;padding:0 8px;font-size:12px;gap:5px;color:#3D5570">
-      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-      Partager
-    </button>`:''}
-  </div>
-</div>`).join('')}
-</div>`:''}
-</div>`;
-  }).join('');
+const FAV_CATS={
+  controverse:{label:'Controverses',bg:'#FBF3E5',color:'#A06C2A'},
+  creuser:{label:'Creuser',bg:'#FBF3E5',color:'#A06C2A'},
+  zoecamps:{label:'Débats Zoé',bg:'#FBF3E5',color:'#A06C2A'},
+  conseil:{label:'Conseils',bg:'#FBF3E5',color:'#A06C2A'},
+  caroline:{label:'Caroline',bg:'#EAF0E8',color:'#3A5E38'},
+  section:{label:'Développement',bg:'#EBF0FA',color:'#2D4A8A'},
+  highlight:{label:'Développement',bg:'#EBF0FA',color:'#2D4A8A'},
+  chat:{label:'Chat Zoé',bg:'#EBF0FA',color:'#3D5570'},
+};
+function renderFavoritesUnified(child){
+  const favs=getFavorites().filter(f=>f.childName===child.firstName).map(f=>({...f,_cat:f.type,_date:f.date||new Date().toISOString(),_kind:'fav',_xid:'f'+f.id}));
+  const saves=getSavedChats().filter(x=>x.childName===child.firstName).map(s=>({...s,_cat:'chat',_date:s.date,_kind:'saved',_xid:'s'+s.id}));
+  const items=[...favs,...saves].sort((a,b)=>new Date(b._date)-new Date(a._date));
+  if(!items.length)return`<div style="padding:34px 24px;text-align:center">
+  <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#D4D0CA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:12px"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+  <p style="font-size:13px;color:#B0A89E;line-height:1.6">${t('fav_empty')}</p></div>`;
+  const order=['controverse','creuser','zoecamps','conseil','caroline','section','highlight','chat'];
+  const present=order.filter(c=>items.some(i=>i._cat===c));
+  const filter=(filter=>present.includes(filter)?filter:'all')(S.favFilter);
+  const shown=filter==='all'?items:items.filter(i=>i._cat===filter);
+  const chip=(id,label,count,on)=>`<button class="fav-chip${on?' on':''}" data-fav-filter="${id}">${label} · ${count}</button>`;
+  const chips=`<div class="fav-filter-row">
+    ${chip('all',S.lang==='en'?'All':'Tout',items.length,filter==='all')}
+    ${present.map(c=>chip(c,FAV_CATS[c].label,items.filter(i=>i._cat===c).length,filter===c)).join('')}
+  </div>`;
+  return chips+`<div style="padding:0 16px 16px">${shown.map(it=>renderFavCard(it)).join('')}</div>`;
 }
-
-function renderSavedSection(child){
-  const saves=getSavedChats().filter(x=>x.childName===child.firstName);
-  if(!saves.length)return`<div style="padding:20px;text-align:center">
-  <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#D4D0CA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:10px"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-  <p style="font-size:13px;color:#B0A89E;line-height:1.55">${t('saved_empty')}</p>
+function renderFavCard(it){
+  const cat=FAV_CATS[it._cat]||FAV_CATS.section;
+  const exp=!!S.favExp[it._xid];
+  const title=it._kind==='saved'?it.question:it.title;
+  const dl=new Date(it._date).toLocaleDateString(S.lang==='en'?'en-GB':'fr-FR',{day:'numeric',month:'short'});
+  const shareSvg='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>';
+  let body;
+  if(it._kind==='saved'){
+    body=`<p style="font-size:13px;color:#3A3835;line-height:1.7;margin-bottom:${it.refs&&it.refs.length?'10px':'0'}">${e(it.answer)}</p>
+    ${it.refs&&it.refs.length?`<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:4px">${it.refs.map(r=>`<a href="https://www.google.com/search?q=${encodeURIComponent(r)}" target="_blank" rel="noopener" class="msg-ref-link"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>${e(r)}</a>`).join('')}</div>`:''}`;
+  } else if(it.type==='controverse'&&it.ctrv){body=renderCtrvFavBody(it.ctrv);}
+  else if(it.type==='creuser'&&it.blocks){body=renderDiveFavBody(it);}
+  else if(it.type==='zoecamps'&&it.campsData){body=renderZoeCampsFavBody(it);}
+  else{body=`<p style="font-size:13px;color:#5C5752;line-height:1.65;margin-bottom:${it.refsHtml?'12px':'0'}">${e(it.summary)}</p>
+  ${it.refsHtml?`<div class="refs-block ${it.refsColorBg||'acc-blue'}"><p style="font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;opacity:.75">📖 Pour aller plus loin</p>${it.refsHtml}</div>`:''}`;}
+  const actions=`<div style="display:flex;gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid var(--c-bd)">
+    ${it._kind==='saved'
+      ?`<button class="msg-act" data-share-saved="${it.id}" style="width:auto;padding:0 8px;font-size:12px;color:#3D5570;gap:4px">${shareSvg}${S.lang==='en'?'Share':'Partager'}</button>
+        <button class="msg-act" data-del-saved="${it.id}" style="width:auto;padding:0 6px;font-size:12px;color:#C45A5A;gap:4px"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>${S.lang==='en'?'Delete':'Supprimer'}</button>`
+      :`<button class="msg-act fav-on" data-unfav="${it.id}" style="width:auto;padding:0 8px;font-size:12px;gap:5px"><svg viewBox="0 0 24 24" width="12" height="12" fill="#E05A5A" stroke="#E05A5A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>${S.lang==='en'?'Remove':'Retirer'}</button>
+        ${it.canShare?`<button class="msg-act" data-share-fav="${it.id}" style="width:auto;padding:0 8px;font-size:12px;gap:5px;color:#3D5570">${shareSvg}${S.lang==='en'?'Share':'Partager'}</button>`:''}`}
+  </div>`;
+  return`<div class="fav-flat">
+  <button class="fav-flat-head" data-fav-exp="${it._xid}">
+    <div style="flex:1;min-width:0">
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px">
+        <span class="fav-type-badge" style="background:${cat.bg};color:${cat.color}">${cat.label}</span>
+        <span class="fav-flat-date">${dl}</span>
+      </div>
+      <p class="fav-flat-title">${e(title)}</p>
+    </div>
+    ${chev(exp)}
+  </button>
+  ${exp?`<div style="border-top:1px solid var(--c-bd);padding:13px 14px">${body}${actions}</div>`:''}
 </div>`;
-  return saves.map(s=>{
-    const exp=!!S.savedExp[s.id];
-    return`<div class="hist-card">
-<button class="hist-row" data-saved-item="${s.id}">
-  <div style="flex:1;min-width:0">
-    <p style="font-size:13px;font-weight:600;color:#1A1918;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(s.question)}</p>
-    <p style="font-size:11px;color:#B0A89E;margin-top:1px">${new Date(s.date).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}</p>
-  </div>
-  ${chev(exp)}
-</button>
-${exp?`<div style="border-top:1px solid #F5F3EF;padding:12px 16px">
-  <p style="font-size:13px;color:#3A3835;line-height:1.7;margin-bottom:${s.refs&&s.refs.length?'10px':'0'}">${e(s.answer)}</p>
-  ${s.refs&&s.refs.length?`<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:4px">${s.refs.map(r=>`<a href="https://www.google.com/search?q=${encodeURIComponent(r)}" target="_blank" rel="noopener" class="msg-ref-link"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>${e(r)}</a>`).join('')}</div>`:''}
-  <div style="display:flex;gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid #F5F3EF">
-    <button class="msg-act" data-share-saved="${s.id}" style="width:auto;padding:0 8px;font-size:12px;color:#3D5570;gap:4px">
-      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-      Partager
-    </button>
-    <button class="msg-act" data-del-saved="${s.id}" style="width:auto;padding:0 6px;font-size:12px;color:#C45A5A;gap:4px">
-      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-      Supprimer
-    </button>
-  </div>
-</div>`:''}
-</div>`;
-  }).join('');
 }
 function chev(open=false){return`<svg viewBox="0 0 24 24" class="chev${open?' chev-open':''}" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;}
 function xBtn(){return`<button class="close-x" id="modal-close"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg></button>`;}
@@ -1324,6 +1319,10 @@ const S={
   histExp:{},
   favCatExp:{},
   savedExp:{},
+  favFilter:'all',
+  favExp:{},
+  viewCtrv:null,
+  viewCtrvDate:null,
   ob:{step:1,name:'',date:'',gender:'',apiKey:'',errs:{}},
   chat:{msgs:[],stream:'',loading:false,showSugg:false,currentConvId:null},
   ctxMenu:{open:false,convId:null,x:0,y:0},
@@ -1353,9 +1352,9 @@ function childData(c){
 function ctrvDateStr(){return new Date().toISOString().slice(0,10);}
 function ctrvCacheKey(c){return 'bebeCtrv_v2_'+S.provider+'_'+c.firstName+'_'+ctrvDateStr();}
 function getCtrvHistory(){try{return JSON.parse(localStorage.getItem('bebeCtrvHistory')||'[]');}catch{return[];}}
-function upsertCtrvToday(obj){const h=getCtrvHistory();const today=ctrvDateStr();const ex=h.find(x=>x.date===today);if(ex){const changed=ex.topic!==obj.topic||ex.question!==obj.question;ex.topic=obj.topic;ex.question=obj.question;if(changed)ex.signal=null;}else{h.unshift({date:today,topic:obj.topic,question:obj.question,signal:null});}localStorage.setItem('bebeCtrvHistory',JSON.stringify(h.slice(0,60)));}
-function setCtrvFeedback(signal){const h=getCtrvHistory();const it=h.find(x=>x.date===ctrvDateStr());if(it){it.signal=signal;localStorage.setItem('bebeCtrvHistory',JSON.stringify(h));}}
-function getCtrvFeedbackToday(){return getCtrvHistory().find(x=>x.date===ctrvDateStr())?.signal||null;}
+function upsertCtrvToday(obj,childName){const h=getCtrvHistory();const today=ctrvDateStr();const ex=h.find(x=>x.date===today&&x.childName===childName);if(ex){const changed=ex.topic!==obj.topic||ex.question!==obj.question;ex.topic=obj.topic;ex.question=obj.question;ex.data=obj;if(changed)ex.signal=null;}else{h.unshift({date:today,childName,topic:obj.topic,question:obj.question,signal:null,data:obj});}localStorage.setItem('bebeCtrvHistory',JSON.stringify(h.slice(0,60)));}
+function setCtrvFeedback(signal,childName){const h=getCtrvHistory();const it=h.find(x=>x.date===ctrvDateStr()&&x.childName===childName);if(it){it.signal=signal;localStorage.setItem('bebeCtrvHistory',JSON.stringify(h));}}
+function getCtrvFeedbackToday(childName){return getCtrvHistory().find(x=>x.date===ctrvDateStr()&&x.childName===childName)?.signal||null;}
 
 const CTRV_SCHEMA={type:'OBJECT',properties:{
   topic:{type:'STRING'},
@@ -1533,7 +1532,7 @@ Réponds UNIQUEMENT avec le JSON structuré demandé.`;
     const obj=await aiControverse(sys);
     if(!obj.camps||!obj.camps.length)throw new Error('Format inattendu');
     localStorage.setItem(ck,JSON.stringify(obj));
-    upsertCtrvToday(obj);
+    upsertCtrvToday(obj,child.firstName);
     S.controverse.data=obj;S.controverse.loading=false;S.controverse.childKey=ctrvIdent(child);render();
   }catch(err){
     S.controverse.loading=false;S.controverse.error=err.message;render();
@@ -1773,7 +1772,7 @@ function renderControverseCard(child,data){
 function renderControverseModal(child,data){
   const d=S.controverse.data;if(!d)return'';
   if(S.controverse.dive.open)return renderControverseDive(child,d,S.controverse.dive,data);
-  const fb=getCtrvFeedbackToday();
+  const fb=getCtrvFeedbackToday(child.firstName);
   const campCols=['#A06C2A','#3A5E38','#2D4A8A'];
   const faved=isFavorited(favId(child.firstName,'controverse',d.topic));
   return`<div class="overlay" id="modal-overlay">
@@ -2148,31 +2147,11 @@ function renderNeuronChart(c,ageInDays){
 
 // ═══════════════════════ HISTORY ═══════════════════════
 function renderHistory(child){
-  const dates=getAndUpdateHistory();
-  const favs=getFavorites().filter(f=>f.childName===child.firstName);
-  const saves=getSavedChats().filter(x=>x.childName===child.firstName);
   return`<div style="padding:20px 16px 12px">
 <h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500;margin-bottom:2px">${t('hist_title')}</h2>
 <p class="t-caption" style="margin-bottom:0">${t('hist_sub')}</p>
 </div>
-
-<div style="padding:0 16px 6px">
-<p class="t-caption" style="margin-bottom:10px;display:flex;align-items:center;gap:6px">
-  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#E05A5A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-  ${t('hist_favs')}${favs.length?` · ${favs.length}`:''}
-</p>
-${renderFavorites(child)}
-</div>
-
-<div style="padding:0 16px 6px">
-<p class="t-caption" style="margin-bottom:10px;display:flex;align-items:center;gap:6px">
-  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#3D5570" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-  ${t('hist_saved_zoe')}${saves.length?` · ${saves.length}`:''}
-</p>
-${renderSavedSection(child)}
-</div>
-
-`;
+${renderFavoritesUnified(child)}`;
 }
 
 // ═══════════════════════ CHAT ═══════════════════════
@@ -2351,6 +2330,58 @@ function renderAllConvsModal(child){
       ${convs.length?rows:`<p style="padding:24px 16px;color:var(--c-t4);font-size:14px">${S.lang==='en'?'No conversations yet.':'Aucune conversation.'}</p>`}
     </div>
   </div></div>`;
+}
+function renderAllCtrvModal(child){
+  const hist=getCtrvHistory().filter(x=>x.childName===child.firstName&&x.data);
+  const favIds=getFavorites().filter(f=>f.childName===child.firstName&&f.type==='controverse').map(f=>f.id);
+  const groups={};
+  hist.forEach(c=>{const g=convDateGroup(c.date);if(!groups[g])groups[g]=[];groups[g].push(c);});
+  const order=["Aujourd'hui","Hier","7 derniers jours","Ce mois","Plus ancien"];
+  const learnedBadge=`<span class="ctrv-learned-badge"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.5.4.8 1 .9 1.6h5.4c.1-.6.4-1.2.9-1.6A6 6 0 0 0 12 3z"/></svg>${S.lang==='en'?'Learned':'Appris'}</span>`;
+  const starBadge=`<span class="ctrv-learned-badge" style="color:#A06C2A;background:#FBF3E5"><svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor" stroke="none"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.6 6.8L12 17.3 5.8 20.9l1.6-6.8L2.2 8.9l6.9-.6z"/></svg>${S.lang==='en'?'Saved':'Favori'}</span>`;
+  const rows=order.filter(g=>groups[g]?.length).map(g=>`
+    <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t4);padding:14px 16px 4px">${g}</p>
+    ${groups[g].map(c=>{const faved=favIds.includes(`${child.firstName}|controverse|${c.data.topic}|${c.date}`);return`<button class="drawer-conv-item" data-ctrv-hist="${c.date}" style="border-radius:0;padding:11px 16px;border-bottom:1px solid var(--c-bg3);align-items:flex-start">
+      <div style="flex:1;min-width:0">
+        <p style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#A06C2A;margin-bottom:3px">${e(c.data.topic||'')}</p>
+        <p style="font-size:14px;color:var(--c-ink);line-height:1.35;font-weight:500">${e(c.question||c.data.question)}</p>
+        ${(c.signal==='learned'||faved)?`<div style="display:flex;gap:5px;margin-top:6px">${c.signal==='learned'?learnedBadge:''}${faved?starBadge:''}</div>`:''}
+      </div>
+    </button>`}).join('')}`).join('');
+  return`<div class="overlay" id="modal-overlay">
+  <div class="sheet" style="max-height:90dvh">
+    <div class="sheet-handle"></div>
+    <div class="sheet-head">
+      <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+        <span style="font-weight:600;font-size:14px">${S.lang==='en'?'All debates':'Toutes les controverses'}</span>
+        <span style="font-size:12px;color:var(--c-t4)">${hist.length}</span>
+      </div>
+      ${xBtn()}
+    </div>
+    <div class="sheet-body" style="padding:0;overflow-y:auto">
+      ${hist.length?rows:`<p style="padding:24px 16px;color:var(--c-t4);font-size:14px">${S.lang==='en'?'No debates yet.':'Aucune controverse.'}</p>`}
+    </div>
+  </div></div>`;
+}
+function renderCtrvViewModal(child){
+  const d=S.viewCtrv;if(!d)return'';
+  const fid=`${child.firstName}|controverse|${d.topic}|${S.viewCtrvDate}`;
+  const faved=isFavorited(fid);
+  return`<div class="overlay" id="modal-overlay">
+<div class="sheet" style="max-height:90dvh">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head">
+    <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+      <div class="s-icon acc-plum" style="width:34px;height:34px;flex-shrink:0"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="20" x2="6" y2="14"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="18" y1="20" x2="18" y2="10"/></svg></div>
+      <span style="font-weight:600;font-size:14px">Controverse · ${e(d.topic||'')}</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+      ${modalActBtns('data-fav-ctrvview','1','data-share-ctrvview','1',faved)}
+      ${xBtn()}
+    </div>
+  </div>
+  <div class="sheet-body">${renderCtrvFavBody(d)}</div>
+</div></div>`;
 }
 function renderSettingsModal(){
   return`<div class="overlay" id="modal-overlay">
@@ -2844,6 +2875,8 @@ function render(){
   else if(S.modal==='settings')modalHTML=renderSettingsModal();
   else if(S.modal==='renameConv')modalHTML=renderRenameConvModal();
   else if(S.modal==='allConversations')modalHTML=renderAllConvsModal(child);
+  else if(S.modal==='allCtrv')modalHTML=renderAllCtrvModal(child);
+  else if(S.modal==='ctrvView')modalHTML=renderCtrvViewModal(child);
 
   // Child dropdown entries
   const childDropItems=S.children.map((c,i)=>{
@@ -2908,6 +2941,10 @@ function render(){
   const childConvs=getConversations().filter(c=>c.childName===child.firstName);
   const recentConvs=childConvs.slice(0,10);
   const hasMore=childConvs.length>10;
+  const ctrvHist=getCtrvHistory().filter(x=>x.childName===child.firstName&&x.data);
+  const recentCtrv=ctrvHist.slice(0,5);
+  const hasMoreCtrv=ctrvHist.length>5;
+  const learnedSvg='<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.5.4.8 1 .9 1.6h5.4c.1-.6.4-1.2.9-1.6A6 6 0 0 0 12 3z"/></svg>';
   const drawerHTML=`
 <div class="drawer-overlay${S.drawer?' open':''}" id="drawer-overlay"></div>
 <div class="drawer${S.drawer?' open':''}" id="main-drawer">
@@ -2933,6 +2970,16 @@ function render(){
     </button>`).join('')}
     ${hasMore?`<button class="drawer-all-convs" id="btn-all-convs">
       ${S.lang==='en'?'All conversations':'Toutes les conversations'} <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:4px"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>`:''}
+    `:''}
+    ${recentCtrv.length?`
+    <div class="drawer-section-label">${S.lang==='en'?'Recent debates':'Controverses récentes'}</div>
+    ${recentCtrv.map(c=>`<button class="drawer-conv-item" data-ctrv-hist="${c.date}">
+      <span class="drawer-conv-title">${e(c.topic||c.question)}</span>
+      ${c.signal==='learned'?`<span style="color:#3A5E38;display:flex;flex-shrink:0;margin-left:6px">${learnedSvg}</span>`:''}
+    </button>`).join('')}
+    ${hasMoreCtrv?`<button class="drawer-all-convs" id="btn-all-ctrv">
+      ${S.lang==='en'?'All debates':'Toutes les controverses'} <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:4px"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </button>`:''}
     `:''}
   </div>
@@ -2999,7 +3046,7 @@ function bind(child,data){
   document.getElementById('btn-ctrv-gen')?.addEventListener('click',()=>generateControverse(child,data));
   document.getElementById('btn-ctrv-retry')?.addEventListener('click',()=>generateControverse(child,data,true));
   document.getElementById('btn-ctrv-regen')?.addEventListener('click',()=>{S.modal=null;generateControverse(child,data,true);});
-  document.querySelectorAll('[data-ctrv-fb]').forEach(b=>b.addEventListener('click',()=>{setCtrvFeedback(b.dataset.ctrvFb);render();}));
+  document.querySelectorAll('[data-ctrv-fb]').forEach(b=>b.addEventListener('click',()=>{setCtrvFeedback(b.dataset.ctrvFb,child.firstName);render();}));
   // Creuser (deep dive)
   document.getElementById('btn-ctrv-creuser')?.addEventListener('click',()=>{S.controverse.dive.open=true;S.controverse.dive.error=null;render();});
   document.getElementById('btn-dive-back')?.addEventListener('click',()=>{S.controverse.dive.open=false;render();});
@@ -3104,8 +3151,8 @@ function bind(child,data){
   document.querySelectorAll('[data-fratrie-bond]').forEach(b=>b.addEventListener('click',()=>{S.modal='fratrieBond';S.modalSection=+b.dataset.fratrieBond;render();}));
   document.querySelectorAll('[data-prenatal-detail]').forEach(b=>b.addEventListener('click',()=>{S.modal='prenatalDetail';render();}));
   document.querySelectorAll('[data-prenatal-section]').forEach(b=>b.addEventListener('click',()=>{S.modal='prenatalSection';S.modalSection=b.dataset.prenatalSection;render();}));
-  document.querySelectorAll('[data-fav-cat]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.favCat;S.favCatExp[k]=!S.favCatExp[k];render();}));
-  document.querySelectorAll('[data-saved-item]').forEach(b=>b.addEventListener('click',()=>{const id=+b.dataset.savedItem;S.savedExp[id]=!S.savedExp[id];render();}));
+  document.querySelectorAll('[data-fav-filter]').forEach(b=>b.addEventListener('click',()=>{S.favFilter=b.dataset.favFilter;render();}));
+  document.querySelectorAll('[data-fav-exp]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.favExp;S.favExp[k]=!S.favExp[k];render();}));
   document.querySelectorAll('[data-hist]').forEach(b=>b.addEventListener('click',()=>{const d=b.dataset.hist;S.histExp[d]=!S.histExp[d];render();}));
   document.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>{S.childIdx=+b.dataset.edit;S.modal='editChild';S.modalChildIdx=+b.dataset.edit;render();}));
   document.getElementById('btn-add-child')?.addEventListener('click',()=>{S.modal='addChild';render();});
@@ -3122,6 +3169,21 @@ function bind(child,data){
   document.getElementById('btn-new-conv-topbar')?.addEventListener('click',()=>newConv());
   // Toutes les conversations
   document.getElementById('btn-all-convs')?.addEventListener('click',()=>{S.modal='allConversations';S.drawer=false;render();});
+  document.getElementById('btn-all-ctrv')?.addEventListener('click',()=>{S.modal='allCtrv';S.drawer=false;render();});
+  // Rouvrir une controverse passée (drawer + modal)
+  document.querySelectorAll('[data-ctrv-hist]').forEach(el=>el.addEventListener('click',()=>{
+    const entry=getCtrvHistory().find(x=>x.date===el.dataset.ctrvHist&&x.childName===child.firstName);
+    if(entry?.data){S.viewCtrv=entry.data;S.viewCtrvDate=entry.date;S.modal='ctrvView';S.drawer=false;render();}
+  }));
+  document.querySelector('[data-fav-ctrvview]')?.addEventListener('click',()=>{
+    const d=S.viewCtrv;if(!d)return;
+    const isoDate=S.viewCtrvDate?new Date(S.viewCtrvDate+'T12:00:00').toISOString():new Date().toISOString();
+    toggleFavorite({id:`${child.firstName}|controverse|${d.topic}|${S.viewCtrvDate}`,childName:child.firstName,childAge:data.ageLabel,type:'controverse',typeLabel:'Controverse',title:d.question,summary:d.why_now,ctrv:d,refsColorBg:'acc-plum',date:isoDate,canShare:true,shareData:{headerBg:'#A06C2A',accentColor:'#A06C2A',categoryLabel:'Controverse · '+d.topic,title:d.question,body:ctrvShareText(d),ageLabel:data.ageLabel}});
+    render();
+  });
+  document.querySelector('[data-share-ctrvview]')?.addEventListener('click',()=>{
+    const d=S.viewCtrv;if(!d)return;shareTextContent('Controverse — '+d.topic,ctrvFullText(d));
+  });
   // Charger une conversation (drawer + modal)
   let longPressTimer=null;
   document.querySelectorAll('[data-conv-id]').forEach(el=>{
