@@ -19,8 +19,8 @@
   --c-ink:#F0EDE8;--c-t2:#9E9690;--c-t3:#7A7570;--c-t4:#5A5450;--c-t5:#6A6460;--c-t6:#4A4845;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%}
-body{font-family:'DM Sans',system-ui,sans-serif;background:var(--c-bg);color:var(--c-ink);font-size:15px;line-height:1.5}
+html{height:100%;font-size:100%}body{height:100%}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--c-bg);color:var(--c-ink);font-size:0.9375rem;line-height:1.5}
 button{cursor:pointer;border:none;background:none;font-family:inherit;color:inherit}
 input{font-family:inherit}
 a{color:#2D4A8A}
@@ -29,11 +29,11 @@ a{color:#2D4A8A}
 #app{min-height:100%;display:flex;flex-direction:column;max-width:430px;margin:0 auto}
 
 /* ── Typography ── */
-.t-headline{font-size:26px;font-weight:700;letter-spacing:-.5px;color:var(--c-ink)}
-.t-title{font-size:18px;font-weight:600;color:var(--c-ink)}
-.t-body{font-size:14px;color:var(--c-t2);line-height:1.65}
-.t-caption{font-size:12px;color:var(--c-t5);font-weight:500}
-.t-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--c-t5)}
+.t-headline{font-size:1.625rem;font-weight:700;letter-spacing:-.5px;color:var(--c-ink)}
+.t-title{font-size:1.125rem;font-weight:600;color:var(--c-ink)}
+.t-body{font-size:0.875rem;color:var(--c-t2);line-height:1.65}
+.t-caption{font-size:0.75rem;color:var(--c-t5);font-weight:500}
+.t-label{font-size:0.6875rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--c-t5)}
 .serif{font-family:'Cormorant Garamond',Georgia,serif}
 .serif-title{font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;letter-spacing:.01em}
 
@@ -42,28 +42,28 @@ a{color:#2D4A8A}
 .surface-sm{background:var(--c-card);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.08)}
 
 /* ── Inputs ── */
-.field{width:100%;border:1.5px solid var(--c-fbd);border-radius:10px;padding:11px 14px;font-size:15px;color:var(--c-ink);background:var(--c-card);outline:none;transition:border-color .15s}
+.field{width:100%;border:1.5px solid var(--c-fbd);border-radius:10px;padding:11px 14px;font-size:0.9375rem;color:var(--c-ink);background:var(--c-card);outline:none;transition:border-color .15s}
 .field:focus{border-color:#2D4A8A}
-.field-label{display:block;font-size:12px;font-weight:600;color:var(--c-t3);margin-bottom:6px;letter-spacing:.03em}
+.field-label{display:block;font-size:0.75rem;font-weight:600;color:var(--c-t3);margin-bottom:6px;letter-spacing:.03em}
 
 /* ── Buttons ── */
-.btn{display:block;width:100%;padding:14px;border-radius:10px;font-size:15px;font-weight:600;text-align:center;transition:opacity .15s,transform .1s}
+.btn{display:block;width:100%;padding:14px;border-radius:10px;font-size:0.9375rem;font-weight:600;text-align:center;transition:opacity .15s,transform .1s}
 .btn:active{transform:scale(.98)}
 .btn-dark{background:var(--c-ink);color:var(--c-bg)}
 .btn-dark:hover{opacity:.88}
 .btn-ghost{border:1.5px solid var(--c-fbd);color:var(--c-t2)}
 .btn-ghost:hover{border-color:var(--c-t6)}
-.btn-danger-ghost{border:1.5px solid #F0D4D4;color:#C45A5A;border-radius:10px;width:100%;padding:12px;font-size:14px;font-weight:600}
-.btn-danger-confirm{background:#C45A5A;color:#fff;border-radius:10px;width:100%;padding:12px;font-size:14px;font-weight:600}
+.btn-danger-ghost{border:1.5px solid #F0D4D4;color:#C45A5A;border-radius:10px;width:100%;padding:12px;font-size:0.875rem;font-weight:600}
+.btn-danger-confirm{background:#C45A5A;color:#fff;border-radius:10px;width:100%;padding:12px;font-size:0.875rem;font-weight:600}
 
 /* ── Gender toggle ── */
-.gender-opt{flex:1;padding:10px 8px;border-radius:10px;border:1.5px solid var(--c-fbd);font-size:14px;font-weight:600;color:var(--c-t2);text-align:center;transition:all .15s}
+.gender-opt{flex:1;padding:10px 8px;border-radius:10px;border:1.5px solid var(--c-fbd);font-size:0.875rem;font-weight:600;color:var(--c-t2);text-align:center;transition:all .15s}
 .gender-opt.sel{background:var(--c-ink);border-color:var(--c-ink);color:var(--c-bg)}
 
 /* ── Top bar ── */
 .topbar{background:var(--c-bg);padding:12px 20px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
-.child-name{font-family:'Cormorant Garamond',Georgia,serif;font-size:26px;font-weight:500;letter-spacing:.01em}
-.child-avatar{width:30px;height:30px;border-radius:50%;background:var(--c-fbd);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--c-t2)}
+.child-name{font-family:'Cormorant Garamond',Georgia,serif;font-size:1.625rem;font-weight:500;letter-spacing:.01em}
+.child-avatar{width:30px;height:30px;border-radius:50%;background:var(--c-fbd);display:flex;align-items:center;justify-content:center;font-size:0.8125rem;font-weight:700;color:var(--c-t2)}
 /* Child switcher dropdown */
 .child-switcher{position:relative}
 .child-drop{position:absolute;top:calc(100% + 8px);left:0;background:var(--c-card);border:1px solid var(--c-bd2);border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.12);min-width:200px;z-index:40;overflow:hidden}
@@ -73,7 +73,7 @@ a{color:#2D4A8A}
 .child-drop-item.active-c{background:var(--c-bg3)}
 /* Topbar stat pills */
 .topbar-pills{display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end}
-.topbar-pill{font-size:11px;font-weight:600;padding:3px 8px;border-radius:99px;background:var(--c-bg3);color:var(--c-t3);letter-spacing:.01em;white-space:nowrap}
+.topbar-pill{font-size:0.6875rem;font-weight:600;padding:3px 8px;border-radius:99px;background:var(--c-bg3);color:var(--c-t3);letter-spacing:.01em;white-space:nowrap}
 
 /* ── Side drawer ── */
 .hamburger-btn{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:var(--c-bg3);color:var(--c-t2);transition:background .15s;flex-shrink:0}
@@ -85,21 +85,21 @@ a{color:#2D4A8A}
 .drawer-head{padding:calc(16px + env(safe-area-inset-top)) 18px 12px;border-bottom:1px solid var(--c-bd);flex-shrink:0}
 .drawer-body{flex:1;overflow-y:auto;padding:10px 8px}
 .drawer-foot{border-top:1px solid var(--c-bd);padding:8px 8px calc(12px + env(safe-area-inset-bottom));flex-shrink:0}
-.drawer-item{display:flex;align-items:center;gap:13px;padding:11px 14px;border-radius:10px;width:100%;text-align:left;transition:background .12s;font-size:15px;font-weight:500;color:var(--c-t2)}
+.drawer-item{display:flex;align-items:center;gap:13px;padding:11px 14px;border-radius:10px;width:100%;text-align:left;transition:background .12s;font-size:0.9375rem;font-weight:500;color:var(--c-t2)}
 .drawer-item:hover,.drawer-item:active{background:var(--c-bg3)}
 .drawer-item.active{background:var(--c-bg3);color:var(--c-ink);font-weight:600}
 .drawer-item svg{width:20px;height:20px;flex-shrink:0;stroke:currentColor}
-.drawer-section-label{padding:10px 14px 4px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t4)}
+.drawer-section-label{padding:10px 14px 4px;font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t4)}
 .drawer-conv-item{display:flex;align-items:center;padding:8px 14px;border-radius:10px;width:100%;text-align:left;transition:background .12s;cursor:pointer;gap:0}
 .drawer-conv-item:hover,.drawer-conv-item:active{background:var(--c-bg3)}
 .drawer-conv-item.active{background:var(--c-bg3)}
-.drawer-conv-title{flex:1;font-size:14px;color:var(--c-t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.35}
+.drawer-conv-title{flex:1;font-size:0.875rem;color:var(--c-t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.35}
 .drawer-conv-item.active .drawer-conv-title{color:var(--c-ink);font-weight:500}
-.drawer-all-convs{display:flex;align-items:center;padding:7px 14px;font-size:13px;font-weight:500;color:var(--c-t3);width:100%;text-align:left;border-radius:10px;transition:background .12s}
+.drawer-all-convs{display:flex;align-items:center;padding:7px 14px;font-size:0.8125rem;font-weight:500;color:var(--c-t3);width:100%;text-align:left;border-radius:10px;transition:background .12s}
 .drawer-all-convs:hover,.drawer-all-convs:active{background:var(--c-bg3)}
 /* ── Context menu ── */
 .ctx-menu{position:fixed;background:var(--c-card);border:1px solid var(--c-bd2);border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.18);z-index:300;min-width:190px;padding:5px;animation:fadeIn .1s}
-.ctx-menu-item{display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;font-size:15px;font-weight:500;text-align:left;border-radius:10px;color:var(--c-t2);transition:background .1s}
+.ctx-menu-item{display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;font-size:0.9375rem;font-weight:500;text-align:left;border-radius:10px;color:var(--c-t2);transition:background .1s}
 .ctx-menu-item:hover,.ctx-menu-item:active{background:var(--c-bg3)}
 .ctx-menu-item.danger{color:#C45A5A}
 .ctx-menu-sep{height:1px;background:var(--c-bd);margin:3px 0}
@@ -110,7 +110,7 @@ a{color:#2D4A8A}
 .s-row{display:flex;align-items:center;gap:14px;padding:15px 16px;width:100%;text-align:left;border-bottom:1px solid var(--c-bd4);background:none;transition:background .12s}
 .s-row:last-child{border-bottom:none}
 .s-row:hover,.s-row:active{background:var(--c-bg2)}
-.s-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.s-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.125rem;flex-shrink:0}
 
 /* Section accent colors */
 .acc-blue  {background:#EBF0FA;color:#2D4A8A}
@@ -127,18 +127,18 @@ a{color:#2D4A8A}
 /* ── Controverse du jour (proto) ── */
 .ctrv-card{display:block;margin:0 16px 16px;width:calc(100% - 32px);padding:18px;border-radius:16px;text-align:left;transition:opacity .15s;background:#FBF3E5;border:1px solid #F0E8D4}
 .ctrv-card:hover{opacity:.92}
-.ctrv-fb{display:inline-flex;align-items:center;justify-content:center;padding:11px 8px;border-radius:11px;font-size:13px;font-weight:600;color:var(--c-t2);background:var(--c-bg2);border:1px solid var(--c-bd);transition:background .15s,border-color .15s,color .15s}
+.ctrv-fb{display:inline-flex;align-items:center;justify-content:center;padding:11px 8px;border-radius:11px;font-size:0.8125rem;font-weight:600;color:var(--c-t2);background:var(--c-bg2);border:1px solid var(--c-bd);transition:background .15s,border-color .15s,color .15s}
 .ctrv-fb.on{background:#FBF3E5;border-color:#E8D5B0;color:#A06C2A}
-.ctrv-creuser-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:13px;border-radius:12px;background:#A06C2A;color:#fff;font-size:14px;font-weight:600;margin-bottom:22px;transition:opacity .15s}
+.ctrv-creuser-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:13px;border-radius:12px;background:#A06C2A;color:#fff;font-size:0.875rem;font-weight:600;margin-bottom:22px;transition:opacity .15s}
 .ctrv-creuser-btn:hover{opacity:.9}
-.dive-sugg{display:block;width:100%;text-align:left;padding:12px 14px;border-radius:11px;background:var(--c-bg2);border:1px solid var(--c-bd);font-size:13px;color:var(--c-ink);margin-bottom:8px;transition:background .15s}
+.dive-sugg{display:block;width:100%;text-align:left;padding:12px 14px;border-radius:11px;background:var(--c-bg2);border:1px solid var(--c-bd);font-size:0.8125rem;color:var(--c-ink);margin-bottom:8px;transition:background .15s}
 .dive-sugg:hover{background:var(--c-bg3)}
 .dive-ask{display:flex;gap:8px;margin-top:12px}
-.dive-ask input{flex:1;padding:11px 14px;border-radius:11px;border:1px solid var(--c-bd);background:var(--c-card);font-size:14px;color:var(--c-ink);outline:none}
+.dive-ask input{flex:1;padding:11px 14px;border-radius:11px;border:1px solid var(--c-bd);background:var(--c-card);font-size:0.875rem;color:var(--c-ink);outline:none}
 .dive-ask input:focus{border-color:#E8D5B0}
 .dive-send-btn{display:flex;align-items:center;justify-content:center;width:44px;border-radius:11px;background:#A06C2A;color:#fff;flex-shrink:0}
 /* ── Zoé camps (débat inline) ── */
-.zoe-camps-btn{display:inline-flex;align-items:center;gap:7px;margin-top:10px;padding:8px 13px;border-radius:10px;background:#FBF3E5;border:1px solid #F0E8D4;font-size:13px;font-weight:600;color:#A06C2A;transition:background .15s}
+.zoe-camps-btn{display:inline-flex;align-items:center;gap:7px;margin-top:10px;padding:8px 13px;border-radius:10px;background:#FBF3E5;border:1px solid #F0E8D4;font-size:0.8125rem;font-weight:600;color:#A06C2A;transition:background .15s}
 .zoe-camps-btn:hover,.zoe-camps-btn:active{background:#F5EBD5}
 .zoe-camps-inline{margin-top:14px;padding-top:12px;border-top:1px solid var(--c-bd)}
 .zoe-camp-item{border-radius:0 9px 9px 0;padding:9px 12px;margin-bottom:7px}
@@ -147,7 +147,7 @@ a{color:#2D4A8A}
 .neuron-wrap{margin:12px 16px;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.1)}
 .neuron-head{background:#3D5570;padding:11px 18px;display:flex;align-items:center;gap:8px}
 .neuron-body{background:var(--c-card);padding:16px 18px}
-.stat-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:12px;font-weight:600}
+.stat-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:0.75rem;font-weight:600}
 
 /* ── Conseil ── */
 .conseil-btn{display:flex;gap:14px;align-items:flex-start;margin:0 16px 16px;width:calc(100%-32px);padding:14px 16px;border-radius:14px;text-align:left;transition:opacity .15s;width:calc(100% - 32px);background:var(--c-bg2);border:1px solid var(--c-bd2)}
@@ -163,10 +163,10 @@ a{color:#2D4A8A}
 .chat-zoe-av{width:34px;height:34px;border-radius:50%;background:#3D5570;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .chat-msgs-area{flex:1;min-height:0;overflow-y:auto;padding:18px 16px 10px;display:flex;flex-direction:column;gap:16px;background:var(--c-bg)}
 /* User bubble — right aligned */
-.msg-me{align-self:flex-end;background:var(--c-ink);color:var(--c-bg);border-radius:18px 18px 4px 18px;padding:11px 15px;max-width:80%;font-size:15px;line-height:1.55;word-break:break-word}
+.msg-me{align-self:flex-end;background:var(--c-ink);color:var(--c-bg);border-radius:18px 18px 4px 18px;padding:11px 15px;max-width:80%;font-size:0.9375rem;line-height:1.55;word-break:break-word}
 /* Bot response — no bubble, plain text */
 .msg-block{display:flex;flex-direction:column;align-items:flex-start;gap:6px;max-width:94%;align-self:flex-start}
-.msg-bot{color:var(--c-ink);font-size:15px;line-height:1.72;word-break:break-word}
+.msg-bot{color:var(--c-ink);font-size:0.9375rem;line-height:1.72;word-break:break-word}
 .msg-actions{display:flex;gap:2px;margin-top:2px}
 .msg-act{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--c-t4);transition:background .12s,color .12s}
 .msg-act:hover{background:var(--c-bg3);color:var(--c-t2)}
@@ -174,19 +174,19 @@ a{color:#2D4A8A}
 .msg-act.saved-on{color:#3D5570}
 .msg-act.copied-flash{color:#3D7050}
 .msg-refs{display:flex;flex-direction:column;gap:5px;margin-top:4px;width:100%}
-.msg-ref-link{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--c-t2);text-decoration:none;padding:7px 11px;background:var(--c-card);border:1px solid var(--c-bd2);border-radius:10px;line-height:1.4;transition:background .12s}
+.msg-ref-link{display:flex;align-items:center;gap:7px;font-size:0.75rem;color:var(--c-t2);text-decoration:none;padding:7px 11px;background:var(--c-card);border:1px solid var(--c-bd2);border-radius:10px;line-height:1.4;transition:background .12s}
 .msg-ref-link:hover{background:var(--c-bg2)}
 /* Empty state */
 .chat-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 16px 8px;gap:20px}
 .chat-prompt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
-.chat-prompt-card{background:var(--c-card);border:1px solid var(--c-bd2);border-radius:16px;padding:14px 13px;text-align:left;font-size:13px;line-height:1.5;color:var(--c-t2);transition:background .12s,transform .1s;cursor:pointer;display:flex;flex-direction:column;gap:7px}
+.chat-prompt-card{background:var(--c-card);border:1px solid var(--c-bd2);border-radius:16px;padding:14px 13px;text-align:left;font-size:0.8125rem;line-height:1.5;color:var(--c-t2);transition:background .12s,transform .1s;cursor:pointer;display:flex;flex-direction:column;gap:7px}
 .chat-prompt-card:hover,.chat-prompt-card:active{background:var(--c-bg2);transform:scale(.98)}
-.chat-prompt-cat{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t4)}
+.chat-prompt-cat{font-size:0.625rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t4)}
 /* Input pill */
 .chat-pill-wrap{padding:10px 12px;padding-bottom:max(68px,calc(56px + env(safe-area-inset-bottom)));background:var(--c-bg);flex-shrink:0}
 .chat-pill{display:flex;align-items:flex-end;gap:8px;border-radius:22px;border:1.5px solid var(--c-bd2);background:var(--c-card);padding:8px 8px 8px 16px;transition:border-color .15s}
 .chat-pill:focus-within{border-color:#3D5570}
-.chat-pill-in{flex:1;background:none;border:none;outline:none;font-size:15px;color:var(--c-ink);padding:5px 0;line-height:1.45;font-family:inherit;resize:none;overflow-y:auto;max-height:120px;display:block}
+.chat-pill-in{flex:1;background:none;border:none;outline:none;font-size:0.9375rem;color:var(--c-ink);padding:5px 0;line-height:1.45;font-family:inherit;resize:none;overflow-y:auto;max-height:120px;display:block}
 .chat-pill-in::placeholder{color:var(--c-t4)}
 .chat-pill-in:disabled{opacity:.5}
 .chat-pill-send{width:34px;height:34px;border-radius:50%;background:var(--c-ink);color:var(--c-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s,transform .1s}
@@ -198,12 +198,12 @@ a{color:#2D4A8A}
 .chat-pill-sugg:active{opacity:.7}
 /* Suggestion panel above input */
 .chat-sugg-panel{background:var(--c-card);border:1px solid var(--c-bd2);border-radius:20px;padding:14px 14px 10px;margin-bottom:10px;box-shadow:0 4px 20px rgba(0,0,0,.1)}
-.chat-sugg-panel-title{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--c-t4);margin-bottom:10px;padding-left:2px}
+.chat-sugg-panel-title{font-size:0.625rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--c-t4);margin-bottom:10px;padding-left:2px}
 .chat-sugg-list{display:flex;flex-direction:column;gap:2px;max-height:220px;overflow-y:auto}
 .chat-sugg-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:12px;text-align:left;background:none;transition:background .12s}
 .chat-sugg-item:active,.chat-sugg-item:hover{background:var(--c-bg3)}
-.chat-sugg-cat{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--c-t4);flex-shrink:0;width:64px}
-.chat-sugg-label{font-size:13px;color:var(--c-ink);line-height:1.4;flex:1}
+.chat-sugg-cat{font-size:0.625rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--c-t4);flex-shrink:0;width:64px}
+.chat-sugg-label{font-size:0.8125rem;color:var(--c-ink);line-height:1.4;flex:1}
 /* Keyboard awareness */
 .keyboard-open .chat-pill-wrap{padding-bottom:max(10px,env(safe-area-inset-bottom))!important}
 /* Dots */
@@ -220,24 +220,24 @@ a{color:#2D4A8A}
 /* ── Favorites section ── */
 .fav-card{background:var(--c-card);border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 3px 10px rgba(0,0,0,.08);margin-bottom:10px}
 .fav-card-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.fav-type-badge{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:99px}
+.fav-type-badge{font-size:0.625rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:99px}
 .fav-filter-row{display:flex;gap:7px;overflow-x:auto;padding:2px 16px 14px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .fav-filter-row::-webkit-scrollbar{display:none}
-.fav-chip{flex-shrink:0;padding:7px 13px;border-radius:99px;font-size:12px;font-weight:600;background:var(--c-bg3);color:var(--c-t2);border:1.5px solid transparent;white-space:nowrap;transition:background .15s,color .15s}
+.fav-chip{flex-shrink:0;padding:7px 13px;border-radius:99px;font-size:0.75rem;font-weight:600;background:var(--c-bg3);color:var(--c-t2);border:1.5px solid transparent;white-space:nowrap;transition:background .15s,color .15s}
 .fav-chip.on{background:var(--c-ink);color:var(--c-bg)}
 .fav-flat{background:var(--c-card);border:1px solid var(--c-bd);border-radius:14px;margin-bottom:9px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.04)}
 .fav-flat-head{display:flex;align-items:center;gap:9px;width:100%;padding:13px 14px;text-align:left}
-.fav-flat-title{flex:1;min-width:0;font-size:13.5px;font-weight:600;color:var(--c-ink);line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.fav-flat-date{font-size:11px;color:var(--c-t4);flex-shrink:0;font-weight:500}
-.ctrv-learned-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;color:#3A5E38;background:#EAF0E8;padding:2px 7px;border-radius:99px;flex-shrink:0}
+.fav-flat-title{flex:1;min-width:0;font-size:0.8438rem;font-weight:600;color:var(--c-ink);line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.fav-flat-date{font-size:0.6875rem;color:var(--c-t4);flex-shrink:0;font-weight:500}
+.ctrv-learned-badge{display:inline-flex;align-items:center;gap:3px;font-size:0.625rem;font-weight:700;color:#3A5E38;background:#EAF0E8;padding:2px 7px;border-radius:99px;flex-shrink:0}
 /* ── Reference links (in modals) ── */
-.ref-link{display:flex;align-items:flex-start;gap:7px;font-size:12px;color:inherit;text-decoration:none;padding:7px 10px;border-radius:9px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);margin-bottom:6px;line-height:1.5;transition:background .12s}
+.ref-link{display:flex;align-items:flex-start;gap:7px;font-size:0.75rem;color:inherit;text-decoration:none;padding:7px 10px;border-radius:9px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);margin-bottom:6px;line-height:1.5;transition:background .12s}
 .ref-link:hover{background:rgba(255,255,255,.22)}
 .ref-link:last-child{margin-bottom:0}
 /* ── Saved chats ── */
 .saved-card{background:var(--c-card);border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 3px 10px rgba(0,0,0,.08);margin-bottom:10px}
-.saved-q{font-size:12px;font-weight:600;color:var(--c-t2);margin-bottom:6px;letter-spacing:.01em}
-.saved-a{font-size:13px;color:var(--c-ink);line-height:1.65}
+.saved-q{font-size:0.75rem;font-weight:600;color:var(--c-t2);margin-bottom:6px;letter-spacing:.01em}
+.saved-a{font-size:0.8125rem;color:var(--c-ink);line-height:1.65}
 
 /* ── Modal ── */
 .overlay{position:fixed;inset:0;background:rgba(10,9,8,.6);z-index:50;display:flex;align-items:flex-end;justify-content:center}
@@ -248,22 +248,22 @@ a{color:#2D4A8A}
 .sheet-handle{width:36px;height:4px;background:var(--c-fbd);border-radius:99px;margin:10px auto 0}
 .sheet-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid var(--c-bd);flex-shrink:0}
 .sheet-body{overflow-y:auto;flex:1;padding:20px}
-.close-x{width:30px;height:30px;border-radius:50%;background:var(--c-bg);display:flex;align-items:center;justify-content:center;color:var(--c-t3);font-size:16px;transition:background .12s}
+.close-x{width:30px;height:30px;border-radius:50%;background:var(--c-bg);display:flex;align-items:center;justify-content:center;color:var(--c-t3);font-size:1rem;transition:background .12s}
 .close-x:hover{background:var(--c-bd3)}
 
 /* ── Profile ── */
 .profile-row{display:flex;align-items:center;justify-content:space-between;background:var(--c-card);border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.08);width:100%;text-align:left;transition:background .12s}
 .profile-row:hover{background:var(--c-bg2)}
 .profile-row.active-p{box-shadow:0 0 0 2px #2D4A8A,0 4px 12px rgba(0,0,0,.06)}
-.child-bubble{width:44px;height:44px;border-radius:12px;background:var(--c-bg);display:flex;align-items:center;justify-content:center;font-size:22px}
-.dashed-add{width:100%;border:1.5px dashed var(--c-bd2);border-radius:14px;padding:14px;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--c-t3);font-size:15px;font-weight:500;margin-bottom:24px;transition:border-color .15s}
+.child-bubble{width:44px;height:44px;border-radius:12px;background:var(--c-bg);display:flex;align-items:center;justify-content:center;font-size:1.375rem}
+.dashed-add{width:100%;border:1.5px dashed var(--c-bd2);border-radius:14px;padding:14px;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--c-t3);font-size:0.9375rem;font-weight:500;margin-bottom:24px;transition:border-color .15s}
 .dashed-add:hover{border-color:var(--c-t4)}
 
 /* ── Theme selector ── */
-.theme-opt{flex:1;padding:9px 6px;border-radius:10px;font-size:13px;font-weight:600;background:var(--c-bg3);color:var(--c-t2);border:1.5px solid transparent;transition:all .15s;text-align:center}
+.theme-opt{flex:1;padding:9px 6px;border-radius:10px;font-size:0.8125rem;font-weight:600;background:var(--c-bg3);color:var(--c-t2);border:1.5px solid transparent;transition:all .15s;text-align:center}
 .theme-opt.active{background:var(--c-card);color:var(--c-ink);border-color:var(--c-bd2);box-shadow:0 1px 3px rgba(0,0,0,.08)}
 /* ── Language selector ── */
-.lang-opt{flex:1;padding:9px 6px;border-radius:10px;font-size:13px;font-weight:600;background:var(--c-bg3);color:var(--c-t2);border:1.5px solid transparent;transition:all .15s;text-align:center}
+.lang-opt{flex:1;padding:9px 6px;border-radius:10px;font-size:0.8125rem;font-weight:600;background:var(--c-bg3);color:var(--c-t2);border:1.5px solid transparent;transition:all .15s;text-align:center}
 .lang-opt.active{background:var(--c-card);color:var(--c-ink);border-color:var(--c-bd2);box-shadow:0 1px 3px rgba(0,0,0,.08)}
 
 /* ── Chevron ── */
@@ -276,29 +276,29 @@ a{color:#2D4A8A}
 /* ── Onboarding ── */
 .ob-wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;background:var(--c-bg)}
 .ob-card{background:var(--c-card);border-radius:20px;padding:28px;width:100%;max-width:380px;box-shadow:0 2px 8px rgba(0,0,0,.08),0 12px 40px rgba(0,0,0,.12)}
-.ob-emoji{font-size:52px;text-align:center;display:block;margin-bottom:4px}
+.ob-emoji{font-size:3.25rem;text-align:center;display:block;margin-bottom:4px}
 
 /* ── Quick chips ── */
 .quick-chips{display:flex;gap:6px;padding:8px 12px 10px;overflow-x:auto;border-top:1px solid var(--c-bd);scrollbar-width:none;-ms-overflow-style:none}
 .quick-chips::-webkit-scrollbar{display:none}
-.chip-btn{flex-shrink:0;padding:5px 11px;border-radius:99px;font-size:12px;font-weight:500;background:var(--c-bg3);color:var(--c-t2);border:1px solid var(--c-bd3);white-space:nowrap;transition:all .15s;max-width:220px;overflow:hidden;text-overflow:ellipsis}
+.chip-btn{flex-shrink:0;padding:5px 11px;border-radius:99px;font-size:0.75rem;font-weight:500;background:var(--c-bg3);color:var(--c-t2);border:1px solid var(--c-bd3);white-space:nowrap;transition:all .15s;max-width:220px;overflow:hidden;text-overflow:ellipsis}
 .chip-btn:hover,.chip-btn:active{background:var(--c-bd3);border-color:var(--c-t6);color:var(--c-ink)}
 .chip-template{background:#EBF0FA;color:#2D4A8A;border-color:#C8D6F0}
 .chip-template:hover{background:#D8E5F7;border-color:#8FADD8}
 /* ── Suggestions select ── */
-.suggest-select{width:100%;border:none;border-top:1px solid var(--c-bd);background:var(--c-bg2);color:var(--c-t2);font-family:inherit;font-size:13px;padding:10px 14px;outline:none;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23B0A89E' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;cursor:pointer}
+.suggest-select{width:100%;border:none;border-top:1px solid var(--c-bd);background:var(--c-bg2);color:var(--c-t2);font-family:inherit;font-size:0.8125rem;padding:10px 14px;outline:none;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23B0A89E' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;cursor:pointer}
 
 /* ── Share button ── */
-.share-btn{padding:5px 10px;border-radius:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.92);font-size:12px;font-weight:600;display:flex;align-items:center;gap:5px;transition:background .15s;letter-spacing:.02em;flex-shrink:0}
+.share-btn{padding:5px 10px;border-radius:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.92);font-size:0.75rem;font-weight:600;display:flex;align-items:center;gap:5px;transition:background .15s;letter-spacing:.02em;flex-shrink:0}
 .share-btn:hover,.share-btn:active{background:rgba(255,255,255,.27)}
 
 /* ── Neuron chart ── */
 .neuron-chart{margin:0 16px 12px;background:var(--c-card);border-radius:14px;padding:16px 16px 12px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.08)}
 
 /* ── Prenatal / Fratrie ── */
-.prenatal-alert{background:#FEF4E8;border-radius:12px;padding:11px 14px;margin:0 16px 12px;font-size:13px;color:#8A4A10;line-height:1.55;display:flex;align-items:flex-start;gap:9px}
-.badge-coming{display:inline-flex;align-items:center;gap:4px;background:#E6F4F1;color:#1B7060;border-radius:99px;padding:2px 8px;font-size:11px;font-weight:600;margin-left:6px}
-.badge-sibling{display:inline-flex;align-items:center;gap:4px;background:#F0EBFB;color:#5A3A8A;border-radius:99px;padding:2px 8px;font-size:11px;font-weight:600;margin-left:6px}
+.prenatal-alert{background:#FEF4E8;border-radius:12px;padding:11px 14px;margin:0 16px 12px;font-size:0.8125rem;color:#8A4A10;line-height:1.55;display:flex;align-items:flex-start;gap:9px}
+.badge-coming{display:inline-flex;align-items:center;gap:4px;background:#E6F4F1;color:#1B7060;border-radius:99px;padding:2px 8px;font-size:0.6875rem;font-weight:600;margin-left:6px}
+.badge-sibling{display:inline-flex;align-items:center;gap:4px;background:#F0EBFB;color:#5A3A8A;border-radius:99px;padding:2px 8px;font-size:0.6875rem;font-weight:600;margin-left:6px}
 
 /* ── Dark mode — accent colors (muted tinted darks) ── */
 [data-theme="dark"] .acc-blue  {background:#1A2840;color:#8AAAD8}
@@ -659,7 +659,7 @@ activite:[
 
 const _sw='stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
 const _ico=(path,extra='')=>`<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" ${_sw} ${extra}>${path}</svg>`;
-const VERSION='1.1.2';
+const VERSION='1.1.3';
 const ALL_SECTIONS=[
   {id:'langage',  label:'Langage & Communication',  label_en:'Language & Communication', icon:_ico('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/>'),colorBg:'acc-blue',  colorText:'acc-blue'},
   {id:'motricite',label:'La Motricité',              label_en:'Motor Skills',              icon:_ico('<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>'),colorBg:'acc-green', colorText:'acc-green'},
@@ -1005,7 +1005,7 @@ function renderMsgBlock(m,idx,child,data){
   ${m.creuserLabel&&!m.camps&&!m.campLoading?`<button class="zoe-camps-btn" data-zoe-creuser="${idx}">
     <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
     Les écoles divergent · ${e(m.creuserLabel)}</button>`:''}
-  ${m.campLoading?`<div class="zoe-camps-inline"><p style="font-size:12px;color:#C48A40;display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9" style="opacity:.25"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>Analyse des positions en cours…</p></div>`:''}
+  ${m.campLoading?`<div class="zoe-camps-inline"><p style="font-size:0.75rem;color:#C48A40;display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9" style="opacity:.25"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>Analyse des positions en cours…</p></div>`:''}
   ${m.camps?renderZoeCampsInline(m,idx):''}
 </div>`;
 }
@@ -1024,12 +1024,12 @@ function renderZoeCampsFavBody(f){
   const camps=(f.campsData?.camps)||[];
   const unknown=f.campsData?.unknown||'';
   const refs=f.campsData?.refs||[];
-  return`<p style="font-size:12px;font-weight:700;color:#A06C2A;margin-bottom:10px;letter-spacing:.02em">${e(f.title)}</p>
+  return`<p style="font-size:0.75rem;font-weight:700;color:#A06C2A;margin-bottom:10px;letter-spacing:.02em">${e(f.title)}</p>
   ${camps.map((c,i)=>`<div style="border-left:3px solid ${campCols[i%3]};padding:7px 10px;border-radius:0 8px 8px 0;background:var(--c-bg2);margin-bottom:7px">
-    <p style="font-size:11px;font-weight:700;color:${campCols[i%3]};margin-bottom:2px">${e(c.name)}</p>
-    <p style="font-size:12px;color:#5C5752;line-height:1.55">${md(c.logic)}</p>
+    <p style="font-size:0.6875rem;font-weight:700;color:${campCols[i%3]};margin-bottom:2px">${e(c.name)}</p>
+    <p style="font-size:0.75rem;color:#5C5752;line-height:1.55">${md(c.logic)}</p>
   </div>`).join('')}
-  ${unknown?`<p style="font-size:12px;color:#C48A40;margin-top:4px;line-height:1.45">○ ${e(unknown)}</p>`:''}
+  ${unknown?`<p style="font-size:0.75rem;color:#C48A40;margin-top:4px;line-height:1.45">○ ${e(unknown)}</p>`:''}
   ${refs.length?`<div class="msg-refs" style="margin-top:8px">${refs.map(r=>`<a href="https://www.google.com/search?q=${encodeURIComponent(r)}" target="_blank" rel="noopener" class="msg-ref-link"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>${e(r)}</a>`).join('')}</div>`:''}`;
 }
 function renderZoeCampsInline(m,idx){
@@ -1043,15 +1043,15 @@ function renderZoeCampsInline(m,idx){
   const saved=fid?isFavorited(fid):false;
   const sw='stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"';
   return`<div class="zoe-camps-inline">
-    <p style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#A06C2A;margin-bottom:10px">◆ ${e(m.creuserLabel)} — Les positions</p>
+    <p style="font-size:0.625rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#A06C2A;margin-bottom:10px">◆ ${e(m.creuserLabel)} — Les positions</p>
     ${camps.map((c,i)=>`<div class="zoe-camp-item" style="background:var(--c-bg2);border-left:3px solid ${campCols[i%3]}">
-      <p style="font-size:11px;font-weight:700;color:${campCols[i%3]};margin-bottom:3px">${e(c.name)}</p>
-      <p style="font-size:13px;color:var(--c-t2);line-height:1.6;margin-bottom:8px">${md(c.logic)}</p>
+      <p style="font-size:0.6875rem;font-weight:700;color:${campCols[i%3]};margin-bottom:3px">${e(c.name)}</p>
+      <p style="font-size:0.8125rem;color:var(--c-t2);line-height:1.6;margin-bottom:8px">${md(c.logic)}</p>
       ${c.dive?`<div style="margin-top:6px;padding-top:8px;border-top:1px dashed var(--c-bd)">${(c.dive.blocks||[]).map(renderDiveBlock).join('')}${c.dive.sources&&c.dive.sources.length?`<div style="margin-top:6px">${c.dive.sources.map(s=>`<a href="${e(s.uri)}" target="_blank" rel="noopener" class="msg-ref-link"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>${e(s.title||s.uri)}</a>`).join('')}</div>`:''}</div>`
-      :c.diveLoading?`<p style="font-size:11px;color:#C48A40;display:flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9" style="opacity:.25"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>Analyse en cours…</p>`
-      :`<button style="font-size:11px;font-weight:600;color:${campCols[i%3]};display:inline-flex;align-items:center;gap:4px;padding:0;opacity:.85" data-zoe-camp-dive="${idx}-${i}">Creuser <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>`}
+      :c.diveLoading?`<p style="font-size:0.6875rem;color:#C48A40;display:flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9" style="opacity:.25"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>Analyse en cours…</p>`
+      :`<button style="font-size:0.6875rem;font-weight:600;color:${campCols[i%3]};display:inline-flex;align-items:center;gap:4px;padding:0;opacity:.85" data-zoe-camp-dive="${idx}-${i}">Creuser <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>`}
     </div>`).join('')}
-    ${unknown?`<p style="font-size:12px;color:#C48A40;margin-top:4px;margin-bottom:10px;line-height:1.5">○ Ce qu'on ne sait pas vraiment : ${e(unknown)}</p>`:''}
+    ${unknown?`<p style="font-size:0.75rem;color:#C48A40;margin-top:4px;margin-bottom:10px;line-height:1.5">○ Ce qu'on ne sait pas vraiment : ${e(unknown)}</p>`:''}
     ${refs.length?`<div class="msg-refs" style="margin-bottom:10px">${refs.map(r=>`<a href="https://www.google.com/search?q=${encodeURIComponent(r)}" target="_blank" rel="noopener" class="msg-ref-link">
       <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
       ${e(r)}</a>`).join('')}</div>`:''}
@@ -1167,12 +1167,12 @@ function renderBridge(txt,fs){
     {re:/^Observer\s*:\s*/i,label:'Observer',icon:iconObs,color:'#2D4A8A'},
     {re:/^Essayer\s*:\s*/i,  label:'Essayer', icon:iconEss,color:'#3A5E38'},
   ];
-  const fontSize=fs||'13px';
+  const fontSize=fs||'0.8125rem';
   return txt.split(/\n\n+/).filter(Boolean).map((seg,i)=>{
     const match=sections.find(s=>s.re.test(seg.replace(/^\*\*?/,'')));
     const clean=seg.replace(/^\*?\*?\w[\w ]*\*?\*?\s*:\s*/,'');
     if(match){
-      return `<div style="margin-bottom:10px"><div style="display:flex;align-items:center;gap:5px;color:${match.color};margin-bottom:5px">${match.icon}<span style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">${match.label}</span></div><div style="font-size:${fontSize};color:var(--c-t2);line-height:1.65">${md(clean)}</div></div>`;
+      return `<div style="margin-bottom:10px"><div style="display:flex;align-items:center;gap:5px;color:${match.color};margin-bottom:5px">${match.icon}<span style="font-size:0.625rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase">${match.label}</span></div><div style="font-size:${fontSize};color:var(--c-t2);line-height:1.65">${md(clean)}</div></div>`;
     }
     return `<div style="font-size:${fontSize};color:var(--c-t2);line-height:1.65;margin-bottom:8px">${md(seg)}</div>`;
   }).join('');
@@ -1285,7 +1285,7 @@ function renderFavoritesUnified(child){
   const items=[...favs,...saves].sort((a,b)=>new Date(b._date)-new Date(a._date));
   if(!items.length)return`<div style="padding:34px 24px;text-align:center">
   <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#D4D0CA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:12px"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-  <p style="font-size:13px;color:#B0A89E;line-height:1.6">${t('fav_empty')}</p></div>`;
+  <p style="font-size:0.8125rem;color:#B0A89E;line-height:1.6">${t('fav_empty')}</p></div>`;
   const order=['controverse','creuser','zoecamps','conseil','caroline','section','highlight','chat'];
   const present=order.filter(c=>items.some(i=>i._cat===c));
   const filter=(filter=>present.includes(filter)?filter:'all')(S.favFilter);
@@ -1305,19 +1305,19 @@ function renderFavCard(it){
   const shareSvg='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>';
   let body;
   if(it._kind==='saved'){
-    body=`<p style="font-size:13px;color:#3A3835;line-height:1.7;margin-bottom:${it.refs&&it.refs.length?'10px':'0'}">${e(it.answer)}</p>
+    body=`<p style="font-size:0.8125rem;color:#3A3835;line-height:1.7;margin-bottom:${it.refs&&it.refs.length?'10px':'0'}">${e(it.answer)}</p>
     ${it.refs&&it.refs.length?`<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:4px">${it.refs.map(r=>`<a href="https://www.google.com/search?q=${encodeURIComponent(r)}" target="_blank" rel="noopener" class="msg-ref-link"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>${e(r)}</a>`).join('')}</div>`:''}`;
   } else if(it.type==='controverse'&&it.ctrv){body=renderCtrvFavBody(it.ctrv);}
   else if(it.type==='creuser'&&it.blocks){body=renderDiveFavBody(it);}
   else if(it.type==='zoecamps'&&it.campsData){body=renderZoeCampsFavBody(it);}
-  else{body=`<p style="font-size:13px;color:#5C5752;line-height:1.65;margin-bottom:${it.refsHtml?'12px':'0'}">${e(it.summary)}</p>
-  ${it.refsHtml?`<div class="refs-block ${it.refsColorBg||'acc-blue'}"><p style="font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;opacity:.75;display:flex;align-items:center;gap:5px">${_svgIco.book}Pour aller plus loin</p>${it.refsHtml}</div>`:''}`;}
+  else{body=`<p style="font-size:0.8125rem;color:#5C5752;line-height:1.65;margin-bottom:${it.refsHtml?'12px':'0'}">${e(it.summary)}</p>
+  ${it.refsHtml?`<div class="refs-block ${it.refsColorBg||'acc-blue'}"><p style="font-size:0.625rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;opacity:.75;display:flex;align-items:center;gap:5px">${_svgIco.book}Pour aller plus loin</p>${it.refsHtml}</div>`:''}`;}
   const actions=`<div style="display:flex;gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid var(--c-bd)">
     ${it._kind==='saved'
-      ?`<button class="msg-act" data-share-saved="${it.id}" style="width:auto;padding:0 8px;font-size:12px;color:#3D5570;gap:4px">${shareSvg}${S.lang==='en'?'Share':'Partager'}</button>
-        <button class="msg-act" data-del-saved="${it.id}" style="width:auto;padding:0 6px;font-size:12px;color:#C45A5A;gap:4px"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>${S.lang==='en'?'Delete':'Supprimer'}</button>`
-      :`<button class="msg-act fav-on" data-unfav="${it.id}" style="width:auto;padding:0 8px;font-size:12px;gap:5px"><svg viewBox="0 0 24 24" width="12" height="12" fill="#E05A5A" stroke="#E05A5A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>${S.lang==='en'?'Remove':'Retirer'}</button>
-        ${it.canShare?`<button class="msg-act" data-share-fav="${it.id}" style="width:auto;padding:0 8px;font-size:12px;gap:5px;color:#3D5570">${shareSvg}${S.lang==='en'?'Share':'Partager'}</button>`:''}`}
+      ?`<button class="msg-act" data-share-saved="${it.id}" style="width:auto;padding:0 8px;font-size:0.75rem;color:#3D5570;gap:4px">${shareSvg}${S.lang==='en'?'Share':'Partager'}</button>
+        <button class="msg-act" data-del-saved="${it.id}" style="width:auto;padding:0 6px;font-size:0.75rem;color:#C45A5A;gap:4px"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>${S.lang==='en'?'Delete':'Supprimer'}</button>`
+      :`<button class="msg-act fav-on" data-unfav="${it.id}" style="width:auto;padding:0 8px;font-size:0.75rem;gap:5px"><svg viewBox="0 0 24 24" width="12" height="12" fill="#E05A5A" stroke="#E05A5A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>${S.lang==='en'?'Remove':'Retirer'}</button>
+        ${it.canShare?`<button class="msg-act" data-share-fav="${it.id}" style="width:auto;padding:0 8px;font-size:0.75rem;gap:5px;color:#3D5570">${shareSvg}${S.lang==='en'?'Share':'Partager'}</button>`:''}`}
   </div>`;
   return`<div class="fav-flat">
   <button class="fav-flat-head" data-fav-exp="${it._xid}">
@@ -1674,15 +1674,15 @@ function renderDiveBlock(b){
     position:{c:'#C48A40',sym:'○',label:'Position / recommandation'},
     safety:{c:'#A03828',sym:'⚠',label:'Sécurité'}
   };
-  if(b.type==='plain')return`<p style="font-size:13.5px;color:#5C5752;line-height:1.7;margin-bottom:12px">${e(b.text)}</p>`;
+  if(b.type==='plain')return`<p style="font-size:0.8438rem;color:#5C5752;line-height:1.7;margin-bottom:12px">${e(b.text)}</p>`;
   const k=cfg[b.type]||cfg.position;
   if(b.type==='safety')return`<div style="background:rgba(160,56,40,.07);border-radius:10px;padding:11px 13px;margin-bottom:12px">
-    <p style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:${k.c};margin-bottom:4px">${k.sym} ${k.label}</p>
-    <p style="font-size:13px;color:#5C5752;line-height:1.6">${e(b.text)}</p>
+    <p style="font-size:0.625rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:${k.c};margin-bottom:4px">${k.sym} ${k.label}</p>
+    <p style="font-size:0.8125rem;color:#5C5752;line-height:1.6">${e(b.text)}</p>
   </div>`;
   return`<div style="margin-bottom:13px">
-    <p style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:${k.c};margin-bottom:3px">${k.sym} ${k.label}</p>
-    <p style="font-size:13.5px;color:#5C5752;line-height:1.65">${e(b.text)}</p>
+    <p style="font-size:0.625rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:${k.c};margin-bottom:3px">${k.sym} ${k.label}</p>
+    <p style="font-size:0.8438rem;color:#5C5752;line-height:1.65">${e(b.text)}</p>
   </div>`;
 }
 
@@ -1691,12 +1691,12 @@ function renderDiveItem(it,child,data,idx){
   return`<div style="margin-bottom:24px">
     <div style="display:flex;gap:7px;align-items:flex-start;margin-bottom:13px;padding-bottom:11px;border-bottom:1px solid var(--c-bd)">
       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#A06C2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:3px"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
-      <p style="font-size:14px;font-weight:600;color:var(--c-ink);line-height:1.4">${e(it.q)}</p>
+      <p style="font-size:0.875rem;font-weight:600;color:var(--c-ink);line-height:1.4">${e(it.q)}</p>
     </div>
     ${it.blocks.map(renderDiveBlock).join('')}
-    ${it.grounded===false?`<p style="font-size:11px;color:#B0A89E;font-style:italic;margin-top:4px">Réponse sans recherche web (mode prudent — sans citation chiffrée). Le grounding s'activera avec un quota Google Search.</p>`:''}
+    ${it.grounded===false?`<p style="font-size:0.6875rem;color:#B0A89E;font-style:italic;margin-top:4px">Réponse sans recherche web (mode prudent — sans citation chiffrée). Le grounding s'activera avec un quota Google Search.</p>`:''}
     ${it.sources&&it.sources.length?`<div style="margin-top:12px;padding-top:10px;border-top:1px dashed var(--c-bd)">
-      <p style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#9C9790;margin-bottom:7px">Sources</p>
+      <p style="font-size:0.625rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#9C9790;margin-bottom:7px">Sources</p>
       ${it.sources.map(s=>`<a href="${e(s.uri)}" target="_blank" rel="noopener" class="msg-ref-link"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>${e(s.title)}</a>`).join('')}
     </div>`:''}
     ${child?`<div style="display:flex;gap:6px;margin-top:12px;padding-top:8px;border-top:1px solid var(--c-bd)">${modalActBtns('data-fav-dive',idx,'data-share-dive',idx,faved)}</div>`:''}
@@ -1715,19 +1715,19 @@ function renderControverseDive(child,d,dv,data){
   <div class="sheet-head">
     <div style="display:flex;align-items:center;gap:8px">
       <button id="btn-dive-back" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;color:var(--c-t3)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg></button>
-      <span style="font-weight:600;font-size:14px">Creuser · ${e(d.topic)}</span>
+      <span style="font-weight:600;font-size:0.875rem">Creuser · ${e(d.topic)}</span>
     </div>
     ${xBtn()}
   </div>
   <div class="sheet-body">
     <div style="background:var(--c-bg2);border-left:3px solid #A06C2A;border-radius:0 10px 10px 0;padding:10px 14px;margin-bottom:20px">
-      <p style="font-size:13px;color:#6B6480;font-weight:600;line-height:1.4">${e(d.question)}</p>
+      <p style="font-size:0.8125rem;color:#6B6480;font-weight:600;line-height:1.4">${e(d.question)}</p>
     </div>
     ${dv.items.map((it,idx)=>renderDiveItem(it,child,data,idx)).join('')}
-    ${dv.loading?`<div style="display:flex;align-items:center;gap:9px;color:#C48A40;font-size:13px;margin-bottom:18px"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9" style="opacity:.25"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>Recherche en cours…</div>`:''}
-    ${dv.error?`<p style="font-size:13px;color:#A03828;margin-bottom:14px">${e(dv.error)}</p>`:''}
+    ${dv.loading?`<div style="display:flex;align-items:center;gap:9px;color:#C48A40;font-size:0.8125rem;margin-bottom:18px"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9" style="opacity:.25"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>Recherche en cours…</div>`:''}
+    ${dv.error?`<p style="font-size:0.8125rem;color:#A03828;margin-bottom:14px">${e(dv.error)}</p>`:''}
     ${!dv.loading?`
-      <p style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#A06C2A;margin:6px 0 11px">${dv.items.length?'Continuer à creuser':'Creuser — par où ?'}</p>
+      <p style="font-size:0.6875rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#A06C2A;margin:6px 0 11px">${dv.items.length?'Continuer à creuser':'Creuser — par où ?'}</p>
       ${sugg.map(q=>`<button class="dive-sugg" data-dive-q="${e(q)}">↳ ${e(q)}</button>`).join('')}
       <div class="dive-ask">
         <input id="dive-input" type="text" placeholder="Ou pose ta propre question…" autocomplete="off"/>
@@ -1763,7 +1763,7 @@ function diveFullText(it){
 function toast(msg){
   const el=document.createElement('div');
   el.textContent=msg;
-  el.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:rgba(20,18,16,.92);color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:500;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,.25);max-width:80%;text-align:center';
+  el.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:rgba(20,18,16,.92);color:#fff;padding:10px 16px;border-radius:10px;font-size:0.8125rem;font-weight:500;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,.25);max-width:80%;text-align:center';
   document.body.appendChild(el);
   setTimeout(()=>{el.style.transition='opacity .3s';el.style.opacity='0';setTimeout(()=>el.remove(),300);},1600);
 }
@@ -1775,54 +1775,54 @@ async function shareTextContent(title,text){
 
 function renderCtrvFavBody(d){
   const cols=['#A06C2A','#3A5E38','#2D4A8A'];
-  return`<p style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;color:var(--c-ink);line-height:1.25;margin-bottom:6px">${e(d.question)}</p>
-  <p style="font-size:12px;color:#6B6480;line-height:1.55;margin-bottom:12px">${e(d.why_now)}</p>
+  return`<p style="font-family:'Cormorant Garamond',serif;font-size:1.125rem;font-weight:500;color:var(--c-ink);line-height:1.25;margin-bottom:6px">${e(d.question)}</p>
+  <p style="font-size:0.75rem;color:#6B6480;line-height:1.55;margin-bottom:12px">${e(d.why_now)}</p>
   ${(d.camps||[]).map((cp,i)=>`<div style="border-left:3px solid ${cols[i%3]};padding-left:10px;margin-bottom:10px">
-    <p style="font-weight:700;font-size:13px;color:var(--c-ink);margin-bottom:4px">${e(cp.name)}</p>
-    ${(cp.pros||[]).map(p=>`<div style="display:flex;gap:6px;margin-bottom:3px"><span style="color:#3A5E38;font-weight:800">✓</span><span style="font-size:12px;color:#5C5752;line-height:1.45">${md(p)}</span></div>`).join('')}
-    ${(cp.cons||[]).map(p=>`<div style="display:flex;gap:6px;margin-bottom:3px"><span style="color:#A03828;font-weight:800">✗</span><span style="font-size:12px;color:#5C5752;line-height:1.45">${md(p)}</span></div>`).join('')}
+    <p style="font-weight:700;font-size:0.8125rem;color:var(--c-ink);margin-bottom:4px">${e(cp.name)}</p>
+    ${(cp.pros||[]).map(p=>`<div style="display:flex;gap:6px;margin-bottom:3px"><span style="color:#3A5E38;font-weight:800">✓</span><span style="font-size:0.75rem;color:#5C5752;line-height:1.45">${md(p)}</span></div>`).join('')}
+    ${(cp.cons||[]).map(p=>`<div style="display:flex;gap:6px;margin-bottom:3px"><span style="color:#A03828;font-weight:800">✗</span><span style="font-size:0.75rem;color:#5C5752;line-height:1.45">${md(p)}</span></div>`).join('')}
   </div>`).join('')}
   <div style="background:var(--c-bg2);border-radius:10px;padding:11px;margin:10px 0">
-    <p style="font-size:10px;font-weight:700;text-transform:uppercase;color:#3A5E38;margin-bottom:2px">◆ Ce qu'on sait</p><p style="font-size:12px;color:#5C5752;line-height:1.5;margin-bottom:8px">${md(d.known)}</p>
-    <p style="font-size:10px;font-weight:700;text-transform:uppercase;color:#A06C2A;margin-bottom:2px">◇ Ce qu'on croit</p><p style="font-size:12px;color:#5C5752;line-height:1.5;margin-bottom:8px">${md(d.believed)}</p>
-    <p style="font-size:10px;font-weight:700;text-transform:uppercase;color:#C48A40;margin-bottom:2px">○ Ce qu'on ne sait pas</p><p style="font-size:12px;color:#5C5752;line-height:1.5">${md(d.unknown)}</p>
+    <p style="font-size:0.625rem;font-weight:700;text-transform:uppercase;color:#3A5E38;margin-bottom:2px">◆ Ce qu'on sait</p><p style="font-size:0.75rem;color:#5C5752;line-height:1.5;margin-bottom:8px">${md(d.known)}</p>
+    <p style="font-size:0.625rem;font-weight:700;text-transform:uppercase;color:#A06C2A;margin-bottom:2px">◇ Ce qu'on croit</p><p style="font-size:0.75rem;color:#5C5752;line-height:1.5;margin-bottom:8px">${md(d.believed)}</p>
+    <p style="font-size:0.625rem;font-weight:700;text-transform:uppercase;color:#C48A40;margin-bottom:2px">○ Ce qu'on ne sait pas</p><p style="font-size:0.75rem;color:#5C5752;line-height:1.5">${md(d.unknown)}</p>
   </div>
-  <div class="refs-block acc-plum"><p style="font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">Et pour bébé ?</p>${renderBridge(d.bridge,'12px')}</div>`;
+  <div class="refs-block acc-plum"><p style="font-size:0.625rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">Et pour bébé ?</p>${renderBridge(d.bridge,'12px')}</div>`;
 }
 
 function renderDiveFavBody(f){
-  return`<p style="font-size:13px;font-weight:600;color:var(--c-ink);line-height:1.4;margin-bottom:10px">${e(f.title)}</p>
+  return`<p style="font-size:0.8125rem;font-weight:600;color:var(--c-ink);line-height:1.4;margin-bottom:10px">${e(f.title)}</p>
   ${(f.blocks||[]).map(renderDiveBlock).join('')}
-  ${f.diveSources&&f.diveSources.length?`<div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--c-bd)"><p style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#9C9790;margin-bottom:6px">Sources</p>${f.diveSources.map(s=>`<a href="${e(s.uri)}" target="_blank" rel="noopener" class="msg-ref-link">${e(s.title)}</a>`).join('')}</div>`:''}`;
+  ${f.diveSources&&f.diveSources.length?`<div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--c-bd)"><p style="font-size:0.625rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#9C9790;margin-bottom:6px">Sources</p>${f.diveSources.map(s=>`<a href="${e(s.uri)}" target="_blank" rel="noopener" class="msg-ref-link">${e(s.title)}</a>`).join('')}</div>`:''}`;
 }
 
 function renderControverseCard(child,data){
   const c=S.controverse;
   if(c.loading)return`<div class="ctrv-card" style="cursor:default">
-    <p style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A06C2A;margin-bottom:12px">◆ Controverse du jour</p>
+    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A06C2A;margin-bottom:12px">◆ Controverse du jour</p>
     <div style="height:15px;width:75%;background:rgba(91,70,144,.16);border-radius:6px;margin-bottom:9px"></div>
     <div style="height:15px;width:90%;background:rgba(91,70,144,.12);border-radius:6px;margin-bottom:9px"></div>
     <div style="height:15px;width:45%;background:rgba(91,70,144,.1);border-radius:6px"></div>
-    <p style="font-size:12px;color:#C48A40;margin-top:14px">Génération en cours…</p>
+    <p style="font-size:0.75rem;color:#C48A40;margin-top:14px">Génération en cours…</p>
   </div>`;
   if(c.error)return`<button class="ctrv-card" id="btn-ctrv-retry">
-    <p style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A06C2A;margin-bottom:8px">◆ Controverse du jour</p>
-    <p style="font-size:13px;color:#A03828;line-height:1.5">${e(c.error)}</p>
-    <p style="font-size:12px;color:#A06C2A;margin-top:10px;font-weight:600">Toucher pour réessayer</p>
+    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A06C2A;margin-bottom:8px">◆ Controverse du jour</p>
+    <p style="font-size:0.8125rem;color:#A03828;line-height:1.5">${e(c.error)}</p>
+    <p style="font-size:0.75rem;color:#A06C2A;margin-top:10px;font-weight:600">Toucher pour réessayer</p>
   </button>`;
   const d=c.data;
   if(!d)return`<button class="ctrv-card" id="btn-ctrv-gen">
-    <p style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A06C2A;margin-bottom:8px">◆ Controverse du jour</p>
-    <p style="font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:500;color:var(--c-ink);line-height:1.2">Qu'est-ce que je vais apprendre aujourd'hui&nbsp;?</p>
-    <p style="font-size:12px;color:#C48A40;margin-top:10px;font-weight:600">Générer la controverse du jour →</p>
+    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A06C2A;margin-bottom:8px">◆ Controverse du jour</p>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:1.3125rem;font-weight:500;color:var(--c-ink);line-height:1.2">Qu'est-ce que je vais apprendre aujourd'hui&nbsp;?</p>
+    <p style="font-size:0.75rem;color:#C48A40;margin-top:10px;font-weight:600">Générer la controverse du jour →</p>
   </button>`;
   return`<button class="ctrv-card" id="btn-ctrv-open">
-    <p style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A06C2A;margin-bottom:11px">◆ Controverse du jour · ${e(d.topic)}</p>
-    <p style="font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:500;color:var(--c-ink);line-height:1.22;margin-bottom:10px">${e(d.question)}</p>
-    <p style="font-size:13px;color:#6B6480;line-height:1.5;margin-bottom:15px">${e(d.why_now)}</p>
+    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A06C2A;margin-bottom:11px">◆ Controverse du jour · ${e(d.topic)}</p>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:1.4375rem;font-weight:500;color:var(--c-ink);line-height:1.22;margin-bottom:10px">${e(d.question)}</p>
+    <p style="font-size:0.8125rem;color:#6B6480;line-height:1.5;margin-bottom:15px">${e(d.why_now)}</p>
     <div style="display:flex;align-items:center;justify-content:space-between">
-      <span style="font-size:12px;color:#C48A40">3 min de lecture</span>
-      <span style="display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:#A06C2A">Ouvrir <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      <span style="font-size:0.75rem;color:#C48A40">3 min de lecture</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;font-size:0.8125rem;font-weight:600;color:#A06C2A">Ouvrir <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
     </div>
   </button>`;
 }
@@ -1839,7 +1839,7 @@ function renderControverseModal(child,data){
   <div class="sheet-head">
     <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
       <div class="s-icon acc-plum" style="width:34px;height:34px;flex-shrink:0"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="20" x2="6" y2="14"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="18" y1="20" x2="18" y2="10"/></svg></div>
-      <span style="font-weight:600;font-size:14px">Controverse · ${e(d.topic)}</span>
+      <span style="font-weight:600;font-size:0.875rem">Controverse · ${e(d.topic)}</span>
     </div>
     <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
       ${modalActBtns('data-fav-ctrv','1','data-share-ctrv','1',faved)}
@@ -1847,42 +1847,42 @@ function renderControverseModal(child,data){
     </div>
   </div>
   <div class="sheet-body">
-    <h2 style="font-family:'Cormorant Garamond',serif;font-size:27px;font-weight:500;line-height:1.25;margin-bottom:12px">${e(d.question)}</h2>
-    <p style="font-size:14px;color:#5C5752;line-height:1.7;margin-bottom:24px">${e(d.why_now)}</p>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.6875rem;font-weight:500;line-height:1.25;margin-bottom:12px">${e(d.question)}</h2>
+    <p style="font-size:0.875rem;color:#5C5752;line-height:1.7;margin-bottom:24px">${e(d.why_now)}</p>
 
-    <p style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#A06C2A;margin-bottom:12px">Les camps</p>
+    <p style="font-size:0.6875rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#A06C2A;margin-bottom:12px">Les camps</p>
     <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:26px">
       ${(d.camps||[]).map((cp,i)=>{const col=campCols[i%3];return`<div style="border:1px solid var(--c-bd);border-left:3px solid ${col};border-radius:12px;padding:14px 16px">
-        <p style="font-weight:700;font-size:14px;color:var(--c-ink);margin-bottom:6px">${e(cp.name)}</p>
-        <p style="font-size:13px;color:#5C5752;line-height:1.6;margin-bottom:11px">${e(cp.logic)}</p>
-        ${(cp.pros||[]).map(p=>`<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:6px"><span style="color:#3A5E38;font-weight:800;flex-shrink:0;line-height:1.5">✓</span><span style="font-size:13px;color:#5C5752;line-height:1.5">${md(p)}</span></div>`).join('')}
-        ${(cp.cons||[]).map(p=>`<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:6px"><span style="color:#A03828;font-weight:800;flex-shrink:0;line-height:1.5">✗</span><span style="font-size:13px;color:#5C5752;line-height:1.5">${md(p)}</span></div>`).join('')}
+        <p style="font-weight:700;font-size:0.875rem;color:var(--c-ink);margin-bottom:6px">${e(cp.name)}</p>
+        <p style="font-size:0.8125rem;color:#5C5752;line-height:1.6;margin-bottom:11px">${e(cp.logic)}</p>
+        ${(cp.pros||[]).map(p=>`<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:6px"><span style="color:#3A5E38;font-weight:800;flex-shrink:0;line-height:1.5">✓</span><span style="font-size:0.8125rem;color:#5C5752;line-height:1.5">${md(p)}</span></div>`).join('')}
+        ${(cp.cons||[]).map(p=>`<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:6px"><span style="color:#A03828;font-weight:800;flex-shrink:0;line-height:1.5">✗</span><span style="font-size:0.8125rem;color:#5C5752;line-height:1.5">${md(p)}</span></div>`).join('')}
       </div>`}).join('')}
     </div>
 
     <div style="background:var(--c-bg2);border-radius:14px;padding:16px;margin-bottom:26px">
-      <div style="margin-bottom:13px"><p style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#3A5E38;margin-bottom:4px">◆ Ce qu'on sait</p><p style="font-size:13px;color:#5C5752;line-height:1.6">${md(d.known)}</p></div>
-      <div style="margin-bottom:13px"><p style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#A06C2A;margin-bottom:4px">◇ Ce qu'on croit (pas un fait)</p><p style="font-size:13px;color:#5C5752;line-height:1.6">${md(d.believed)}</p></div>
-      <div><p style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#C48A40;margin-bottom:4px">○ Ce qu'on ne sait pas</p><p style="font-size:13px;color:#5C5752;line-height:1.6">${md(d.unknown)}</p></div>
+      <div style="margin-bottom:13px"><p style="font-size:0.6875rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#3A5E38;margin-bottom:4px">◆ Ce qu'on sait</p><p style="font-size:0.8125rem;color:#5C5752;line-height:1.6">${md(d.known)}</p></div>
+      <div style="margin-bottom:13px"><p style="font-size:0.6875rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#A06C2A;margin-bottom:4px">◇ Ce qu'on croit (pas un fait)</p><p style="font-size:0.8125rem;color:#5C5752;line-height:1.6">${md(d.believed)}</p></div>
+      <div><p style="font-size:0.6875rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#C48A40;margin-bottom:4px">○ Ce qu'on ne sait pas</p><p style="font-size:0.8125rem;color:#5C5752;line-height:1.6">${md(d.unknown)}</p></div>
     </div>
 
     <div class="refs-block acc-plum" style="margin-bottom:24px">
-      <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">Et pour ${e(child.firstName)} ?</p>
-      <div style="font-size:14px">${renderBridge(d.bridge,'14px')}</div>
+      <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">Et pour ${e(child.firstName)} ?</p>
+      <div style="font-size:0.875rem">${renderBridge(d.bridge,'14px')}</div>
     </div>
 
     <button id="btn-ctrv-creuser" class="ctrv-creuser-btn"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/></svg>Creuser ce sujet</button>
 
-    <p style="text-align:center;font-size:12px;color:#9C9790;margin-bottom:10px">Cette controverse…</p>
+    <p style="text-align:center;font-size:0.75rem;color:#9C9790;margin-bottom:10px">Cette controverse…</p>
     <div style="display:flex;gap:8px;margin-bottom:22px">
       <button class="ctrv-fb${fb==='learned'?' on':''}" data-ctrv-fb="learned" style="flex:1"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;flex-shrink:0"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.5.4.8 1 .9 1.6h5.4c.1-.6.4-1.2.9-1.6A6 6 0 0 0 12 3z"/></svg>M'a appris</button>
       <button class="ctrv-fb${fb==='skip'?' on':''}" data-ctrv-fb="skip" style="flex:1"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;flex-shrink:0"><circle cx="12" cy="12" r="9"/><line x1="5.6" y1="5.6" x2="18.4" y2="18.4"/></svg>Pas pour moi</button>
     </div>
 
     <div style="text-align:center;border-top:1px solid var(--c-bd);padding-top:16px">
-      <p style="font-size:12px;color:#9C9790;margin-bottom:5px">C'est tout pour aujourd'hui.</p>
-      ${d.tomorrow_teaser?`<p style="font-size:13px;color:#6B6480;font-style:italic;line-height:1.5">Demain : « ${e(d.tomorrow_teaser)} »</p>`:''}
-      <button id="btn-ctrv-regen" style="margin-top:14px;font-size:12px;color:#C48A40;text-decoration:underline">Régénérer (proto)</button>
+      <p style="font-size:0.75rem;color:#9C9790;margin-bottom:5px">C'est tout pour aujourd'hui.</p>
+      ${d.tomorrow_teaser?`<p style="font-size:0.8125rem;color:#6B6480;font-style:italic;line-height:1.5">Demain : « ${e(d.tomorrow_teaser)} »</p>`:''}
+      <button id="btn-ctrv-regen" style="margin-top:14px;font-size:0.75rem;color:#C48A40;text-decoration:underline">Régénérer (proto)</button>
     </div>
     <div style="height:8px"></div>
   </div>
@@ -1908,19 +1908,19 @@ function renderOnboarding(){
     app.innerHTML=`<div class="ob-wrap">
 <div style="text-align:center;margin-bottom:32px">
   <div style="margin-bottom:16px;display:flex;justify-content:center"><svg viewBox="0 0 48 48" width="56" height="56" fill="none" stroke="#A06C2A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="20"/><path d="M16 28c0-4.4 3.6-8 8-8s8 3.6 8 8"/><circle cx="24" cy="20" r="2" fill="#A06C2A" stroke="none"/><path d="M20 34h8"/></svg></div>
-  <h1 style="font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:500;letter-spacing:.02em;color:#1A1918">BébéPilote</h1>
+  <h1 style="font-family:'Cormorant Garamond',serif;font-size:2.375rem;font-weight:500;letter-spacing:.02em;color:#1A1918">BébéPilote</h1>
   <p class="t-body" style="margin-top:6px">Le suivi de développement de votre enfant</p>
 </div>
 <div class="ob-card">
   <div style="margin-bottom:24px">
     <p class="t-label" style="margin-bottom:4px">Prénom</p>
     <input id="ob-name" class="field" type="text" placeholder="Emma, Lucas…" value="${e(ob.name)}"/>
-    ${ob.errs.name?`<p style="color:#C45A5A;font-size:12px;margin-top:4px">${ob.errs.name}</p>`:''}
+    ${ob.errs.name?`<p style="color:#C45A5A;font-size:0.75rem;margin-top:4px">${ob.errs.name}</p>`:''}
   </div>
   <div style="margin-bottom:24px">
     <p class="t-label" style="margin-bottom:4px">Date de naissance ou date prévue</p>
     <input id="ob-date" class="field" type="date" value="${ob.date}"/>
-    ${ob.errs.date?`<p style="color:#C45A5A;font-size:12px;margin-top:4px">${ob.errs.date}</p>`:''}
+    ${ob.errs.date?`<p style="color:#C45A5A;font-size:0.75rem;margin-top:4px">${ob.errs.date}</p>`:''}
   </div>
   <div style="margin-bottom:28px">
     <p class="t-label" style="margin-bottom:8px">Genre</p>
@@ -1928,7 +1928,7 @@ function renderOnboarding(){
       <button class="gender-opt${ob.gender==='boy'?' sel':''}" id="ob-boy"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="14" r="5"/><line x1="14.5" y1="9.5" x2="21" y2="3"/><polyline points="16 3 21 3 21 8"/></svg> Garçon</button>
       <button class="gender-opt${ob.gender==='girl'?' sel':''}" id="ob-girl"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="5"/><line x1="12" y1="14" x2="12" y2="21"/><line x1="9" y1="18" x2="15" y2="18"/></svg> Fille</button>
     </div>
-    ${ob.errs.gender?`<p style="color:#C45A5A;font-size:12px;margin-top:4px">${ob.errs.gender}</p>`:''}
+    ${ob.errs.gender?`<p style="color:#C45A5A;font-size:0.75rem;margin-top:4px">${ob.errs.gender}</p>`:''}
   </div>
   <button class="btn btn-dark" id="ob-next">Continuer</button>
 </div></div>`;
@@ -1951,16 +1951,16 @@ function renderOnboarding(){
 <div class="ob-card">
   <div style="text-align:center;margin-bottom:28px">
     <div style="margin-bottom:14px;display:flex;justify-content:center"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="#8B7355" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div>
-    <h2 style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:500;letter-spacing:.01em">Clé API Gemini</h2>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.625rem;font-weight:500;letter-spacing:.01em">Clé API Gemini</h2>
     <p class="t-body" style="margin-top:6px">Pour chatter avec Zoé — obtenez votre clé gratuite sur <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com</a></p>
   </div>
   <input id="ob-key" class="field" type="password" placeholder="AIza…" value="${e(ob.apiKey)}" style="margin-bottom:6px"/>
   <p class="t-caption" style="margin-bottom:20px">Optionnel — vous pouvez l'ajouter plus tard dans Profil.</p>
-  <div style="background:#F5F4F0;border-radius:10px;padding:12px;margin-bottom:24px;font-size:13px;color:#7A7570">
+  <div style="background:#F5F4F0;border-radius:10px;padding:12px;margin-bottom:24px;font-size:0.8125rem;color:#7A7570">
     <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Stockée uniquement sur votre appareil, jamais envoyée ailleurs.
   </div>
   <button class="btn btn-dark" id="ob-go" style="margin-bottom:10px">C'est parti !</button>
-  <button id="ob-skip" style="width:100%;padding:10px;color:#9C9790;font-size:14px">Passer pour l'instant</button>
+  <button id="ob-skip" style="width:100%;padding:10px;color:#9C9790;font-size:0.875rem">Passer pour l'instant</button>
 </div></div>`;
     document.getElementById('ob-key').addEventListener('input',ev=>ob.apiKey=ev.target.value);
     const finish=()=>{const k=document.getElementById('ob-key').value.trim();if(k)saveKey(k);S.children.push({firstName:ob.name.trim(),birthDate:ob.date,gender:ob.gender});saveKids();render();};
@@ -1990,8 +1990,8 @@ function renderPrenatal(child,childIdx){
 <button class="s-row" data-fratrie-prep="${S.children.indexOf(sib)}" style="border-bottom:none">
   <div class="s-icon acc-coral"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
   <div style="flex:1;min-width:0">
-    <p style="font-size:14px;font-weight:600;color:#1A1918">${e(sib.firstName)} — préparer l'arrivée</p>
-    <p style="font-size:12px;color:#9C9790;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(fp.title)}</p>
+    <p style="font-size:0.875rem;font-weight:600;color:#1A1918">${e(sib.firstName)} — préparer l'arrivée</p>
+    <p style="font-size:0.75rem;color:#9C9790;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(fp.title)}</p>
   </div>
   ${chev()}
 </button>`;
@@ -2003,7 +2003,7 @@ function renderPrenatal(child,childIdx){
   <div class="neuron-head">
     <div style="display:flex;align-items:center;gap:8px">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-      <span style="color:#fff;font-size:13px;font-weight:600;letter-spacing:.03em">Suivi prénatal</span>
+      <span style="color:#fff;font-size:0.8125rem;font-weight:600;letter-spacing:.03em">Suivi prénatal</span>
     </div>
   </div>
   <div class="neuron-body">
@@ -2014,7 +2014,7 @@ function renderPrenatal(child,childIdx){
         <path d="M9 10c.5-1.5 3.5-1.5 4 0"/>
       </svg>
       <div style="flex:1">
-        <p style="font-size:14px;color:#3A3835;line-height:1.65">
+        <p style="font-size:0.875rem;color:#3A3835;line-height:1.65">
           <strong style="color:#1A1918">${e(child.firstName)}</strong> est attendu·e
           <strong style="color:#2D4A8A">le ${dueDate}</strong> —
           dans <strong style="color:#2D4A8A">${dtu} jour${dtu>1?'s':''}</strong>.
@@ -2032,8 +2032,8 @@ function renderPrenatal(child,childIdx){
 <button class="conseil-btn" data-prenatal-detail="true">
   <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#1B7060" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px"><path d="M12 2a5 5 0 0 1 5 5c0 1-.3 2-.8 2.7A4 4 0 0 1 20 13a4 4 0 0 1-4 4h-1v3H9v-3H8a4 4 0 0 1-4-4 4 4 0 0 1 3.8-3.3A5 5 0 0 1 7 7a5 5 0 0 1 5-5z"/><line x1="12" y1="9" x2="12" y2="12"/></svg>
   <div style="flex:1;min-width:0">
-    <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#1B7060;margin-bottom:4px">Ce qui se passe à SA ${Math.max(5,gw)}</p>
-    <p style="font-size:14px;color:#1B4A3A;line-height:1.6">${e(pd.fact)}</p>
+    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#1B7060;margin-bottom:4px">Ce qui se passe à SA ${Math.max(5,gw)}</p>
+    <p style="font-size:0.875rem;color:#1B4A3A;line-height:1.6">${e(pd.fact)}</p>
   </div>
   ${chev()}
 </button>
@@ -2042,16 +2042,16 @@ function renderPrenatal(child,childIdx){
 <button class="conseil-btn" data-prenatal-section="tip" style="background:#FFFBF2;border-color:#F0E8D4">
   <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#A06C2A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="21" x2="14" y2="21"/><path d="M15.1 14.2c.2-1 .7-1.8 1.5-2.6A6 6 0 1 0 7.4 11.6c.8.8 1.3 1.6 1.5 2.6"/></svg>
   <div style="flex:1;min-width:0">
-    <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#A06C2A;margin-bottom:4px">Préparer la venue · aujourd'hui</p>
-    <p style="font-size:14px;color:#5C4A2A;line-height:1.6">${e(dailyTip)}</p>
+    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#A06C2A;margin-bottom:4px">Préparer la venue · aujourd'hui</p>
+    <p style="font-size:0.875rem;color:#5C4A2A;line-height:1.6">${e(dailyTip)}</p>
   </div>
   ${chev()}
 </button>
 
 <!-- Sections heading -->
 <div style="padding:0 16px;margin:4px 0 10px">
-  <h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500;color:#1A1918">Grossesse semaine ${Math.max(5,gw)}</h2>
-  <p style="font-size:12px;color:#9C9790;margin-top:2px">Développement fœtal · conseils pratiques</p>
+  <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500;color:#1A1918">Grossesse semaine ${Math.max(5,gw)}</h2>
+  <p style="font-size:0.75rem;color:#9C9790;margin-top:2px">Développement fœtal · conseils pratiques</p>
 </div>
 
 <!-- Fetal sections -->
@@ -2059,31 +2059,31 @@ function renderPrenatal(child,childIdx){
 <button class="s-row" data-prenatal-section="sens">
   <div class="s-icon acc-teal"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
   <div style="flex:1;min-width:0">
-    <p style="font-size:14px;font-weight:600;color:#1A1918">Sens en développement</p>
-    <p style="font-size:12px;color:#9C9790;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(pd.sens||'Audition, toucher, goût…')}</p>
+    <p style="font-size:0.875rem;font-weight:600;color:#1A1918">Sens en développement</p>
+    <p style="font-size:0.75rem;color:#9C9790;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(pd.sens||'Audition, toucher, goût…')}</p>
   </div>
   ${chev()}
 </button>
 <button class="s-row" data-prenatal-section="details">
   <div class="s-icon acc-blue"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 1 5 5c0 1-.3 2-.8 2.7A4 4 0 0 1 20 13a4 4 0 0 1-4 4h-1v3H9v-3H8a4 4 0 0 1-4-4 4 4 0 0 1 3.8-3.3A5 5 0 0 1 7 7a5 5 0 0 1 5-5z"/></svg></div>
   <div style="flex:1;min-width:0">
-    <p style="font-size:14px;font-weight:600;color:#1A1918">Anatomie & taille</p>
-    <p style="font-size:12px;color:#9C9790;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(pd.details||'Organes, poids, taille')}</p>
+    <p style="font-size:0.875rem;font-weight:600;color:#1A1918">Anatomie & taille</p>
+    <p style="font-size:0.75rem;color:#9C9790;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(pd.details||'Organes, poids, taille')}</p>
   </div>
   ${chev()}
 </button>
 <button class="s-row" data-prenatal-section="tip" style="border-bottom:none">
   <div class="s-icon acc-honey"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="21" x2="14" y2="21"/><path d="M15.1 14.2c.2-1 .7-1.8 1.5-2.6A6 6 0 1 0 7.4 11.6c.8.8 1.3 1.6 1.5 2.6"/></svg></div>
   <div style="flex:1;min-width:0">
-    <p style="font-size:14px;font-weight:600;color:#1A1918">${S.lang==='en'?'Prepare for arrival':'Préparer la venue'}</p>
-    <p style="font-size:12px;color:#9C9790;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(dailyTip)}</p>
+    <p style="font-size:0.875rem;font-weight:600;color:#1A1918">${S.lang==='en'?'Prepare for arrival':'Préparer la venue'}</p>
+    <p style="font-size:0.75rem;color:#9C9790;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(dailyTip)}</p>
   </div>
   ${chev()}
 </button>
 ${bornSiblings.length?`</div>
 <div style="padding:0 16px;margin:16px 0 10px">
-  <h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500;color:#1A1918">${S.lang==='en'?'Sibling preparation':'Préparer la fratrie'}</h2>
-  <p style="font-size:12px;color:#9C9790;margin-top:2px">${S.lang==='en'?'How to help your other children welcome this baby':'Comment aider vos autres enfants à accueillir ce bébé'}</p>
+  <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500;color:#1A1918">${S.lang==='en'?'Sibling preparation':'Préparer la fratrie'}</h2>
+  <p style="font-size:0.75rem;color:#9C9790;margin-top:2px">${S.lang==='en'?'How to help your other children welcome this baby':'Comment aider vos autres enfants à accueillir ce bébé'}</p>
 </div>
 <div class="section-card">${siblingRows}`:''}
 </div>
@@ -2098,8 +2098,8 @@ function renderToday(child,data,childIdx){
 ${S.flags.controverse?renderControverseCard(child,data):''}
 <!-- Section heading -->
 <div style="padding:0 16px;margin:4px 0 10px">
-  <h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500;color:#1A1918">${t('today_dev')} ${e(child.firstName)}</h2>
-  <p style="font-size:12px;color:#9C9790;margin-top:2px">${t('today_updated')}</p>
+  <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500;color:#1A1918">${t('today_dev')} ${e(child.firstName)}</h2>
+  <p style="font-size:0.75rem;color:#9C9790;margin-top:2px">${t('today_updated')}</p>
 </div>
 
 <!-- Sections -->
@@ -2108,8 +2108,8 @@ ${sections.map(({s,entry},i)=>`
 <button class="s-row" data-section="${s.id}" ${i===sections.length-1?'style="border-bottom:none"':''}>
   <div class="s-icon ${s.colorBg}">${s.icon}</div>
   <div style="flex:1;min-width:0">
-    <p style="font-size:14px;font-weight:600;color:#1A1918">${e(S.lang==='en'?(s.label_en||s.label):s.label)}</p>
-    ${entry?`<p style="font-size:12px;color:#9C9790;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(S.lang==='en'?(entry.title_en||entry.title):entry.title)}</p>`:''}
+    <p style="font-size:0.875rem;font-weight:600;color:#1A1918">${e(S.lang==='en'?(s.label_en||s.label):s.label)}</p>
+    ${entry?`<p style="font-size:0.75rem;color:#9C9790;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(S.lang==='en'?(entry.title_en||entry.title):entry.title)}</p>`:''}
   </div>
   ${chev()}
 </button>`).join('')}
@@ -2117,8 +2117,8 @@ ${sections.map(({s,entry},i)=>`
 <button class="s-row" data-caroline="true" style="border-bottom:none">
   <div class="s-icon acc-sage"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
   <div style="flex:1;min-width:0">
-    <p style="font-size:14px;font-weight:600;color:#1A1918">${t('caroline_title')}</p>
-    <p style="font-size:12px;color:#9C9790;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(S.lang==='en'?(getCarolineEntry(ageInDays/30.44|0,data.doy).topic_en||getCarolineEntry(ageInDays/30.44|0,data.doy).topic):getCarolineEntry(ageInDays/30.44|0,data.doy).topic)}</p>
+    <p style="font-size:0.875rem;font-weight:600;color:#1A1918">${t('caroline_title')}</p>
+    <p style="font-size:0.75rem;color:#9C9790;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(S.lang==='en'?(getCarolineEntry(ageInDays/30.44|0,data.doy).topic_en||getCarolineEntry(ageInDays/30.44|0,data.doy).topic):getCarolineEntry(ageInDays/30.44|0,data.doy).topic)}</p>
   </div>
   ${chev()}
 </button>
@@ -2138,8 +2138,8 @@ ${(()=>{
       return`<button class="s-row" data-fratrie-prep="${S.children.indexOf(sib)}" style="border-bottom:none">
   <div class="s-icon acc-coral"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
   <div style="flex:1;min-width:0">
-    <p style="font-size:14px;font-weight:600;color:#1A1918">${e(sib.firstName)} ${t('fratrie_arrives')} ${dtu} ${dtu>1?t('fratrie_days_pl'):t('fratrie_days')}</p>
-    <p style="font-size:12px;color:#9C9790;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(S.lang==='en'?(fp.title_en||fp.title):fp.title)}</p>
+    <p style="font-size:0.875rem;font-weight:600;color:#1A1918">${e(sib.firstName)} ${t('fratrie_arrives')} ${dtu} ${dtu>1?t('fratrie_days_pl'):t('fratrie_days')}</p>
+    <p style="font-size:0.75rem;color:#9C9790;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(S.lang==='en'?(fp.title_en||fp.title):fp.title)}</p>
   </div>
   ${chev()}
 </button>`;
@@ -2150,16 +2150,16 @@ ${(()=>{
       return`<button class="s-row" data-fratrie-bond="${S.children.indexOf(sib)}" style="border-bottom:none">
   <div class="s-icon acc-coral"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
   <div style="flex:1;min-width:0">
-    <p style="font-size:14px;font-weight:600;color:#1A1918">${t('fratrie_with')} ${e(sib.firstName)}</p>
-    <p style="font-size:12px;color:#9C9790;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(S.lang==='en'?(fb.title_en||fb.title):fb.title)}</p>
+    <p style="font-size:0.875rem;font-weight:600;color:#1A1918">${t('fratrie_with')} ${e(sib.firstName)}</p>
+    <p style="font-size:0.75rem;color:#9C9790;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(S.lang==='en'?(fb.title_en||fb.title):fb.title)}</p>
   </div>
   ${chev()}
 </button>`;
     }
   }).join('');
   return`<div style="padding:0 16px;margin:16px 0 10px">
-  <h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500;color:#1A1918">${t('fratrie_title')}</h2>
-  <p style="font-size:12px;color:#9C9790;margin-top:2px">${t('fratrie_sub')}</p>
+  <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500;color:#1A1918">${t('fratrie_title')}</h2>
+  <p style="font-size:0.75rem;color:#9C9790;margin-top:2px">${t('fratrie_sub')}</p>
 </div>
 <div class="section-card">${rows}</div>`;
 })()}
@@ -2181,7 +2181,7 @@ function renderNeuronChart(c,ageInDays){
   const avg=Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
   const fd=pts[0].ds.slice(5).replace('-','/');
   return`<div class="neuron-chart">
-  <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#9C9790;margin-bottom:10px">${t('neuron_14')}</p>
+  <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#9C9790;margin-bottom:10px">${t('neuron_14')}</p>
   <svg viewBox="0 0 ${W} ${H}" width="100%" style="overflow:visible;display:block">
     <defs>
       <linearGradient id="ng${c.birthDate.replace(/-/g,'')}" x1="0" y1="0" x2="0" y2="1">
@@ -2197,8 +2197,8 @@ function renderNeuronChart(c,ageInDays){
     <text x="${W-pR}" y="${H-1}" font-size="9" fill="#9C9790" text-anchor="end" font-family="DM Sans,sans-serif">${t('neuron_today')}</text>
   </svg>
   <div style="display:flex;gap:16px;margin-top:10px">
-    <span style="font-size:12px;color:#9C9790">${t('neuron_peak')} <strong style="color:#3D5570">+${fmt(mx)}</strong></span>
-    <span style="font-size:12px;color:#9C9790">${t('neuron_avg')} <strong style="color:#5C5752">+${fmt(avg)}</strong></span>
+    <span style="font-size:0.75rem;color:#9C9790">${t('neuron_peak')} <strong style="color:#3D5570">+${fmt(mx)}</strong></span>
+    <span style="font-size:0.75rem;color:#9C9790">${t('neuron_avg')} <strong style="color:#5C5752">+${fmt(avg)}</strong></span>
   </div>
 </div>`;
 }
@@ -2206,7 +2206,7 @@ function renderNeuronChart(c,ageInDays){
 // ═══════════════════════ HISTORY ═══════════════════════
 function renderHistory(child){
   return`<div style="padding:20px 16px 12px">
-<h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500;margin-bottom:2px">${t('hist_title')}</h2>
+<h2 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500;margin-bottom:2px">${t('hist_title')}</h2>
 <p class="t-caption" style="margin-bottom:0">${t('hist_sub')}</p>
 </div>
 ${renderFavoritesUnified(child)}`;
@@ -2248,15 +2248,15 @@ function renderChat(child,data){
           <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="rgba(255,255,255,.92)" ${sw}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/><path d="M5 3v3M3 5h3M19 18v3M18 19h3"/></svg>
         </div>
         <div style="text-align:center">
-          <p style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:500;color:var(--c-ink);margin-bottom:6px">${t('chat_greeting')}</p>
-          <p style="font-size:13px;color:var(--c-t3);line-height:1.55">${t('chat_subtitle').replace('\n','<br>')}<br><strong style="color:var(--c-ink);font-weight:600">${e(child.firstName)}</strong> ?</p>
+          <p style="font-family:'Cormorant Garamond',serif;font-size:1.625rem;font-weight:500;color:var(--c-ink);margin-bottom:6px">${t('chat_greeting')}</p>
+          <p style="font-size:0.8125rem;color:var(--c-t3);line-height:1.55">${t('chat_subtitle').replace('\n','<br>')}<br><strong style="color:var(--c-ink);font-weight:600">${e(child.firstName)}</strong> ?</p>
         </div>
       </div>
       <div class="chat-prompt-grid">
         ${chips.slice(0,4).map(c=>`<button class="chat-prompt-card" data-q="${e(c.label)}"${c.template?' data-tpl="1"':''}><span class="chat-prompt-cat">${e(c.cat)}</span><span>${e(c.label)}</span></button>`).join('')}
       </div>
       ${chips.length>4?`<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:0 4px">
-        ${chips.slice(4).map(c=>`<button class="chip-btn" data-q="${e(c.label)}" style="font-size:12px">${e(c.cat)}</button>`).join('')}
+        ${chips.slice(4).map(c=>`<button class="chip-btn" data-q="${e(c.label)}" style="font-size:0.75rem">${e(c.cat)}</button>`).join('')}
       </div>`:''}
     </div>`:`
     ${msgs.map((m,i)=>renderMsgBlock(m,i,child,data)).join('')}
@@ -2266,7 +2266,7 @@ function renderChat(child,data){
         :`<div style="display:flex;gap:5px;padding:8px 0;align-items:center"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>`}
     </div>`:''}
     ${showFollowups?`<div style="display:flex;flex-wrap:wrap;gap:6px;padding:2px 0 4px">
-      ${followups.map(q=>`<button class="chip-btn" data-q="${e(q)}" style="font-size:12px;background:var(--c-card);border-color:var(--c-bd2);color:var(--c-t3)">${e(q)}</button>`).join('')}
+      ${followups.map(q=>`<button class="chip-btn" data-q="${e(q)}" style="font-size:0.75rem;background:var(--c-card);border-color:var(--c-bd2);color:var(--c-t3)">${e(q)}</button>`).join('')}
     </div>`:''}
     <div id="chat-end"></div>`}
   </div>
@@ -2310,13 +2310,13 @@ function renderProfileSettings(){
   const themeLabels={light:t('profile_theme_light'),auto:t('profile_theme_auto'),dark:t('profile_theme_dark')};
   return`<div style="padding:20px 16px">
 <div style="margin-bottom:20px">
-  <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t5);margin-bottom:10px">${t('profile_appearance')}</p>
+  <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t5);margin-bottom:10px">${t('profile_appearance')}</p>
   <div style="background:var(--c-card);border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.08)">
-    <p style="font-size:11px;font-weight:600;color:var(--c-t3);margin-bottom:8px;letter-spacing:.03em">${t('profile_theme')}</p>
+    <p style="font-size:0.6875rem;font-weight:600;color:var(--c-t3);margin-bottom:8px;letter-spacing:.03em">${t('profile_theme')}</p>
     <div style="display:flex;gap:8px;margin-bottom:16px">
       ${['light','auto','dark'].map(m=>`<button class="theme-opt${saved===m?' active':''}" data-theme-val="${m}" style="display:flex;align-items:center;justify-content:center;gap:5px">${themeIcons[m]}${themeLabels[m]}</button>`).join('')}
     </div>
-    <p style="font-size:11px;font-weight:600;color:var(--c-t3);margin-bottom:8px;letter-spacing:.03em">${t('profile_language')}</p>
+    <p style="font-size:0.6875rem;font-weight:600;color:var(--c-t3);margin-bottom:8px;letter-spacing:.03em">${t('profile_language')}</p>
     <div style="display:flex;gap:8px">
       <button class="lang-opt${S.lang==='fr'?' active':''}" data-lang-val="fr">🇫🇷 ${t('profile_lang_fr')}</button>
       <button class="lang-opt${S.lang==='en'?' active':''}" data-lang-val="en">🇬🇧 ${t('profile_lang_en')}</button>
@@ -2324,25 +2324,25 @@ function renderProfileSettings(){
   </div>
 </div>
 <div style="margin-bottom:8px">
-  <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t5);margin-bottom:10px">${t('profile_ai')}</p>
+  <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t5);margin-bottom:10px">${t('profile_ai')}</p>
   <div style="background:var(--c-card);border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.08)">
-    <p style="font-size:11px;font-weight:600;color:var(--c-t3);margin-bottom:8px;letter-spacing:.03em">Moteur IA</p>
+    <p style="font-size:0.6875rem;font-weight:600;color:var(--c-t3);margin-bottom:8px;letter-spacing:.03em">Moteur IA</p>
     <div style="display:flex;gap:8px;margin-bottom:18px">
       <button class="lang-opt${S.provider==='gemini'?' active':''}" data-prov="gemini">Gemini Flash</button>
       <button class="lang-opt${S.provider==='anthropic'?' active':''}" data-prov="anthropic">Claude Sonnet</button>
     </div>
-    <p style="font-size:11px;font-weight:600;color:var(--c-t3);margin-bottom:6px;letter-spacing:.03em">Clé API Gemini</p>
+    <p style="font-size:0.6875rem;font-weight:600;color:var(--c-t3);margin-bottom:6px;letter-spacing:.03em">Clé API Gemini</p>
     <input id="gemini-key-in" class="field" type="password" placeholder="AIza…" value="${e(S.apiKey)}" style="margin-bottom:14px"/>
-    <p style="font-size:11px;font-weight:600;color:var(--c-t3);margin-bottom:6px;letter-spacing:.03em">Clé API Claude (Anthropic)</p>
+    <p style="font-size:0.6875rem;font-weight:600;color:var(--c-t3);margin-bottom:6px;letter-spacing:.03em">Clé API Claude (Anthropic)</p>
     <input id="anthropic-key-in" class="field" type="password" placeholder="sk-ant-…" value="${e(S.anthropicKey)}" style="margin-bottom:8px"/>
-    <button id="btn-test-claude" style="width:100%;margin-bottom:14px;padding:9px;border-radius:10px;border:1.5px solid var(--c-bd2);background:var(--c-bg2);font-size:12px;cursor:pointer;font-family:inherit;font-weight:500;display:flex;align-items:center;justify-content:center;gap:6px;${S._claudeTest==='ok'?'color:#3A5E38':S._claudeTest==='err'?'color:#A03828':'color:var(--c-t2)'}">${S._claudeTest==='ok'?`${_svgIco.check}Connexion Claude OK`:S._claudeTest==='err'?`${_svgIco.x}${S._claudeTestMsg||'Erreur'}`:S._claudeTest==='loading'?`${_svgIco.loader}Test en cours…`:`${_svgIco.search}Tester la connexion Claude`}</button>
-    <div style="background:var(--c-bg2);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--c-t4);display:flex;align-items:center;gap:7px">
+    <button id="btn-test-claude" style="width:100%;margin-bottom:14px;padding:9px;border-radius:10px;border:1.5px solid var(--c-bd2);background:var(--c-bg2);font-size:0.75rem;cursor:pointer;font-family:inherit;font-weight:500;display:flex;align-items:center;justify-content:center;gap:6px;${S._claudeTest==='ok'?'color:#3A5E38':S._claudeTest==='err'?'color:#A03828':'color:var(--c-t2)'}">${S._claudeTest==='ok'?`${_svgIco.check}Connexion Claude OK`:S._claudeTest==='err'?`${_svgIco.x}${S._claudeTestMsg||'Erreur'}`:S._claudeTest==='loading'?`${_svgIco.loader}Test en cours…`:`${_svgIco.search}Tester la connexion Claude`}</button>
+    <div style="background:var(--c-bg2);border-radius:10px;padding:10px 12px;font-size:0.75rem;color:var(--c-t4);display:flex;align-items:center;gap:7px">
       <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       Clés stockées uniquement sur votre appareil
     </div>
   </div>
 </div>
-<p style="text-align:center;font-size:10px;color:var(--c-t5);padding:16px 0 4px;letter-spacing:.04em">BébéPilote v${VERSION}</p>
+<p style="text-align:center;font-size:0.625rem;color:var(--c-t5);padding:16px 0 4px;letter-spacing:.04em">BébéPilote v${VERSION}</p>
 </div>`;
 }
 
@@ -2355,7 +2355,7 @@ function renderRenameConvModal(){
         <div class="s-icon" style="background:var(--c-bg3);width:34px;height:34px;flex-shrink:0;border-radius:10px;display:flex;align-items:center;justify-content:center">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
         </div>
-        <span style="font-weight:600;font-size:14px">${S.lang==='en'?'Rename conversation':'Renommer la conversation'}</span>
+        <span style="font-weight:600;font-size:0.875rem">${S.lang==='en'?'Rename conversation':'Renommer la conversation'}</span>
       </div>
       ${xBtn()}
     </div>
@@ -2371,22 +2371,22 @@ function renderAllConvsModal(child){
   convs.forEach(c=>{const g=convDateGroup(c.updatedAt);if(!groups[g])groups[g]=[];groups[g].push(c);});
   const order=["Aujourd'hui","Hier","7 derniers jours","Ce mois","Plus ancien"];
   const rows=order.filter(g=>groups[g]?.length).map(g=>`
-    <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t4);padding:12px 16px 4px">${g}</p>
+    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t4);padding:12px 16px 4px">${g}</p>
     ${groups[g].map(c=>`<button class="drawer-conv-item${S.chat.currentConvId===c.id?' active':''}" data-conv-id="${c.id}" style="border-radius:0;padding:10px 16px;border-bottom:1px solid var(--c-bg3)">
-      <span class="drawer-conv-title" style="font-size:14px">${e(c.title)}</span>
+      <span class="drawer-conv-title" style="font-size:0.875rem">${e(c.title)}</span>
     </button>`).join('')}`).join('');
   return`<div class="overlay" id="modal-overlay">
   <div class="sheet" style="max-height:90dvh">
     <div class="sheet-handle"></div>
     <div class="sheet-head">
       <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
-        <span style="font-weight:600;font-size:14px">${S.lang==='en'?'All conversations':'Toutes les conversations'}</span>
-        <span style="font-size:12px;color:var(--c-t4)">${convs.length}</span>
+        <span style="font-weight:600;font-size:0.875rem">${S.lang==='en'?'All conversations':'Toutes les conversations'}</span>
+        <span style="font-size:0.75rem;color:var(--c-t4)">${convs.length}</span>
       </div>
       ${xBtn()}
     </div>
     <div class="sheet-body" style="padding:0;overflow-y:auto">
-      ${convs.length?rows:`<p style="padding:24px 16px;color:var(--c-t4);font-size:14px">${S.lang==='en'?'No conversations yet.':'Aucune conversation.'}</p>`}
+      ${convs.length?rows:`<p style="padding:24px 16px;color:var(--c-t4);font-size:0.875rem">${S.lang==='en'?'No conversations yet.':'Aucune conversation.'}</p>`}
     </div>
   </div></div>`;
 }
@@ -2399,11 +2399,11 @@ function renderAllCtrvModal(child){
   const learnedBadge=`<span class="ctrv-learned-badge"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.5.4.8 1 .9 1.6h5.4c.1-.6.4-1.2.9-1.6A6 6 0 0 0 12 3z"/></svg>${S.lang==='en'?'Learned':'Appris'}</span>`;
   const starBadge=`<span class="ctrv-learned-badge" style="color:#A06C2A;background:#FBF3E5"><svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor" stroke="none"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.6 6.8L12 17.3 5.8 20.9l1.6-6.8L2.2 8.9l6.9-.6z"/></svg>${S.lang==='en'?'Saved':'Favori'}</span>`;
   const rows=order.filter(g=>groups[g]?.length).map(g=>`
-    <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t4);padding:14px 16px 4px">${g}</p>
+    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t4);padding:14px 16px 4px">${g}</p>
     ${groups[g].map(c=>{const faved=favIds.includes(`${child.firstName}|controverse|${c.data.topic}|${c.date}`);return`<button class="drawer-conv-item" data-ctrv-hist="${c.date}" style="border-radius:0;padding:11px 16px;border-bottom:1px solid var(--c-bg3);align-items:flex-start">
       <div style="flex:1;min-width:0">
-        <p style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#A06C2A;margin-bottom:3px">${e(c.data.topic||'')}</p>
-        <p style="font-size:14px;color:var(--c-ink);line-height:1.35;font-weight:500">${e(c.question||c.data.question)}</p>
+        <p style="font-size:0.625rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#A06C2A;margin-bottom:3px">${e(c.data.topic||'')}</p>
+        <p style="font-size:0.875rem;color:var(--c-ink);line-height:1.35;font-weight:500">${e(c.question||c.data.question)}</p>
         ${(c.signal==='learned'||faved)?`<div style="display:flex;gap:5px;margin-top:6px">${c.signal==='learned'?learnedBadge:''}${faved?starBadge:''}</div>`:''}
       </div>
     </button>`}).join('')}`).join('');
@@ -2412,13 +2412,13 @@ function renderAllCtrvModal(child){
     <div class="sheet-handle"></div>
     <div class="sheet-head">
       <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
-        <span style="font-weight:600;font-size:14px">${S.lang==='en'?'All debates':'Toutes les controverses'}</span>
-        <span style="font-size:12px;color:var(--c-t4)">${hist.length}</span>
+        <span style="font-weight:600;font-size:0.875rem">${S.lang==='en'?'All debates':'Toutes les controverses'}</span>
+        <span style="font-size:0.75rem;color:var(--c-t4)">${hist.length}</span>
       </div>
       ${xBtn()}
     </div>
     <div class="sheet-body" style="padding:0;overflow-y:auto">
-      ${hist.length?rows:`<p style="padding:24px 16px;color:var(--c-t4);font-size:14px">${S.lang==='en'?'No debates yet.':'Aucune controverse.'}</p>`}
+      ${hist.length?rows:`<p style="padding:24px 16px;color:var(--c-t4);font-size:0.875rem">${S.lang==='en'?'No debates yet.':'Aucune controverse.'}</p>`}
     </div>
   </div></div>`;
 }
@@ -2432,7 +2432,7 @@ function renderCtrvViewModal(child){
   <div class="sheet-head">
     <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
       <div class="s-icon acc-plum" style="width:34px;height:34px;flex-shrink:0"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="20" x2="6" y2="14"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="18" y1="20" x2="18" y2="10"/></svg></div>
-      <span style="font-weight:600;font-size:14px">Controverse · ${e(d.topic||'')}</span>
+      <span style="font-weight:600;font-size:0.875rem">Controverse · ${e(d.topic||'')}</span>
     </div>
     <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
       ${modalActBtns('data-fav-ctrvview','1','data-share-ctrvview','1',faved)}
@@ -2449,7 +2449,7 @@ function renderSettingsModal(){
   <div class="sheet-head">
     <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
       <div class="s-icon" style="background:var(--c-bg3);width:34px;height:34px;flex-shrink:0"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
-      <span style="font-weight:600;font-size:14px">${S.lang==='en'?'Settings':'Paramètres'}</span>
+      <span style="font-weight:600;font-size:0.875rem">${S.lang==='en'?'Settings':'Paramètres'}</span>
     </div>
     ${xBtn()}
   </div>
@@ -2488,12 +2488,12 @@ ${S.children.map((c,i)=>{
       }
       return sep+`
       <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px">
-        <span style="font-size:12px;color:var(--c-t3);font-weight:500">${S.lang==='en'?'Arrives in':'Arrive dans'}</span>
-        <span style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--c-ink)">${countdown}</span>
+        <span style="font-size:0.75rem;color:var(--c-t3);font-weight:500">${S.lang==='en'?'Arrives in':'Arrive dans'}</span>
+        <span style="font-family:'Cormorant Garamond',serif;font-size:1.375rem;font-weight:500;color:var(--c-ink)">${countdown}</span>
       </div>
       <div style="display:flex;align-items:center;gap:7px;background:rgba(27,112,96,.08);border-radius:10px;padding:8px 11px">
         <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#1B7060" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-        <span style="font-size:11px;color:#1B7060;font-weight:500">${S.lang==='en'?`W${gw}`:`SA ${gw}`} &nbsp;·&nbsp; ${S.lang==='en'?'Due':'Terme'} ${new Date(c.birthDate+'T12:00:00').toLocaleDateString(S.lang==='en'?'en-GB':'fr-FR',{day:'numeric',month:'short',year:'numeric'})}</span>
+        <span style="font-size:0.6875rem;color:#1B7060;font-weight:500">${S.lang==='en'?`W${gw}`:`SA ${gw}`} &nbsp;·&nbsp; ${S.lang==='en'?'Due':'Terme'} ${new Date(c.birthDate+'T12:00:00').toLocaleDateString(S.lang==='en'?'en-GB':'fr-FR',{day:'numeric',month:'short',year:'numeric'})}</span>
       </div>`;
     }
     const d=Math.floor((new Date()-new Date(c.birthDate+'T12:00:00'))/86400000);
@@ -2502,29 +2502,29 @@ ${S.children.map((c,i)=>{
     const ns=getNeuronStats(d,c.birthDate);
     return sep+`
     <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px">
-      <span style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--c-ink)">${e(ageLbl)}</span>
-      <span style="font-size:12px;color:var(--c-t4)">·</span>
-      <span style="font-size:12px;color:var(--c-t3);font-weight:500">${t('today_day')} ${d}</span>
+      <span style="font-family:'Cormorant Garamond',serif;font-size:1.375rem;font-weight:500;color:var(--c-ink)">${e(ageLbl)}</span>
+      <span style="font-size:0.75rem;color:var(--c-t4)">·</span>
+      <span style="font-size:0.75rem;color:var(--c-t3);font-weight:500">${t('today_day')} ${d}</span>
     </div>
     <div style="display:flex;align-items:center;gap:7px;background:rgba(61,85,112,.07);border-radius:10px;padding:8px 11px">
       <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#3D5570" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="17" r="2"/><circle cx="19" cy="17" r="2"/><line x1="12" y1="7" x2="5" y2="15"/><line x1="12" y1="7" x2="19" y2="15"/><line x1="5" y1="17" x2="19" y2="17"/></svg>
-      <span style="font-size:11px;color:#3D5570;font-weight:500">${S.lang==='en'?'Today':'Aujourd\'hui'} <strong>+${fmt(ns.daily)}</strong> &nbsp;·&nbsp; Total <strong>${fmt(ns.total)}</strong></span>
+      <span style="font-size:0.6875rem;color:#3D5570;font-weight:500">${S.lang==='en'?'Today':'Aujourd\'hui'} <strong>+${fmt(ns.daily)}</strong> &nbsp;·&nbsp; Total <strong>${fmt(ns.total)}</strong></span>
     </div>`;
   })();
   // ── avatar ─────────────────────────────────────────────────────
   const avatarBg=unb?'rgba(27,112,96,.1)':'var(--c-fbd)';
   const avatarContent=unb
     ?`<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#1B7060" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="10" rx="5" ry="6"/><path d="M7 16c0 2.5 2.2 5 5 5s5-2.5 5-5"/><path d="M9 10c.5-1.5 3.5-1.5 4 0"/></svg>`
-    :`<span style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--c-t2);line-height:1">${e(c.firstName.charAt(0).toUpperCase())}</span>`;
+    :`<span style="font-family:'Cormorant Garamond',serif;font-size:1.75rem;font-weight:600;color:var(--c-t2);line-height:1">${e(c.firstName.charAt(0).toUpperCase())}</span>`;
   return`<button class="profile-row${i===S.childIdx?' active-p':''}" data-edit="${i}" style="display:block;padding:18px 18px 16px">
   <div style="display:flex;align-items:center;gap:14px">
     <div style="width:54px;height:54px;border-radius:16px;background:${avatarBg};display:flex;align-items:center;justify-content:center;flex-shrink:0">${avatarContent}</div>
     <div style="flex:1;min-width:0;text-align:left">
-      <p style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--c-ink);line-height:1.15">${e(c.firstName)}</p>
+      <p style="font-family:'Cormorant Garamond',serif;font-size:1.375rem;font-weight:500;color:var(--c-ink);line-height:1.15">${e(c.firstName)}</p>
       <div style="display:flex;align-items:center;gap:5px;margin-top:4px;flex-wrap:wrap">
         <div style="display:flex;align-items:center;gap:4px">
           <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="var(--c-t4)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M2 21h20"/><line x1="12" y1="6" x2="12" y2="11"/><path d="M10 6c0-1 1-2.5 2-3 1 .5 2 2 2 3"/></svg>
-          <span style="font-size:12px;color:var(--c-t3)">${dateLabel}</span>
+          <span style="font-size:0.75rem;color:var(--c-t3)">${dateLabel}</span>
         </div>
         ${S.children.length>1?`<span class="badge-sibling">${i===0?t('badge_eldest'):t('badge_youngest')}</span>`:''}
       </div>
@@ -2558,18 +2558,18 @@ function renderFratriePrepModal(sibIdx,currentChild){
   <div class="sheet-head">
     <div style="display:flex;align-items:center;gap:10px">
       <div class="s-icon acc-coral" style="width:34px;height:34px"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-      <span style="font-weight:600;font-size:14px">${e(currentChild.firstName)} · ${S.lang==='en'?'Preparing arrival of':'Préparer l\'arrivée de'} ${e(sib.firstName)}</span>
+      <span style="font-weight:600;font-size:0.875rem">${e(currentChild.firstName)} · ${S.lang==='en'?'Preparing arrival of':'Préparer l\'arrivée de'} ${e(sib.firstName)}</span>
     </div>
     ${xBtn()}
   </div>
   <div class="sheet-body">
     ${sibUnborn?`<div class="prenatal-alert" style="margin:0 0 16px"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg><span>${e(sib.firstName)} arrive dans <strong>${dtu} jour${dtu>1?'s':''}</strong>.</span></div>`:''}
-    <span class="acc-coral" style="display:inline-block;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;margin-bottom:14px">${e(S.lang==='en'?(fp.category_en||fp.category):fp.category)}</span>
-    <h2 style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:500;margin-bottom:12px;line-height:1.25">${e(S.lang==='en'?(fp.title_en||fp.title):fp.title)}</h2>
-    <p style="font-size:14px;color:#5C5752;line-height:1.75;margin-bottom:20px">${e(S.lang==='en'?(fp.body_en||fp.body):fp.body)}</p>
+    <span class="acc-coral" style="display:inline-block;padding:3px 10px;border-radius:99px;font-size:0.6875rem;font-weight:600;margin-bottom:14px">${e(S.lang==='en'?(fp.category_en||fp.category):fp.category)}</span>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.75rem;font-weight:500;margin-bottom:12px;line-height:1.25">${e(S.lang==='en'?(fp.title_en||fp.title):fp.title)}</h2>
+    <p style="font-size:0.875rem;color:#5C5752;line-height:1.75;margin-bottom:20px">${e(S.lang==='en'?(fp.body_en||fp.body):fp.body)}</p>
     <div class="refs-block acc-coral">
-      <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">${t('to_remember')}</p>
-      <p style="font-size:13px;color:#5C3020;line-height:1.65">${e(S.lang==='en'?(fp.tip_en||fp.tip):fp.tip)}</p>
+      <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">${t('to_remember')}</p>
+      <p style="font-size:0.8125rem;color:#5C3020;line-height:1.65">${e(S.lang==='en'?(fp.tip_en||fp.tip):fp.tip)}</p>
     </div>
     <div style="height:16px"></div>
   </div>
@@ -2586,17 +2586,17 @@ function renderFratrieBondModal(sibIdx,currentChild){
   <div class="sheet-head">
     <div style="display:flex;align-items:center;gap:10px">
       <div class="s-icon acc-coral" style="width:34px;height:34px"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-      <span style="font-weight:600;font-size:14px">${e(currentChild.firstName)} & ${e(sib.firstName)} · Fratrie</span>
+      <span style="font-weight:600;font-size:0.875rem">${e(currentChild.firstName)} & ${e(sib.firstName)} · Fratrie</span>
     </div>
     ${xBtn()}
   </div>
   <div class="sheet-body">
-    <span class="acc-coral" style="display:inline-block;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;margin-bottom:14px">${e(S.lang==='en'?(fb.category_en||fb.category):fb.category)}</span>
-    <h2 style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:500;margin-bottom:12px;line-height:1.25">${e(S.lang==='en'?(fb.title_en||fb.title):fb.title)}</h2>
-    <p style="font-size:14px;color:#5C5752;line-height:1.75;margin-bottom:20px">${e(S.lang==='en'?(fb.body_en||fb.body):fb.body)}</p>
+    <span class="acc-coral" style="display:inline-block;padding:3px 10px;border-radius:99px;font-size:0.6875rem;font-weight:600;margin-bottom:14px">${e(S.lang==='en'?(fb.category_en||fb.category):fb.category)}</span>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.75rem;font-weight:500;margin-bottom:12px;line-height:1.25">${e(S.lang==='en'?(fb.title_en||fb.title):fb.title)}</h2>
+    <p style="font-size:0.875rem;color:#5C5752;line-height:1.75;margin-bottom:20px">${e(S.lang==='en'?(fb.body_en||fb.body):fb.body)}</p>
     <div class="refs-block acc-coral">
-      <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">${t('to_remember')}</p>
-      <p style="font-size:13px;color:#5C3020;line-height:1.65">${e(S.lang==='en'?(fb.tip_en||fb.tip):fb.tip)}</p>
+      <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">${t('to_remember')}</p>
+      <p style="font-size:0.8125rem;color:#5C3020;line-height:1.65">${e(S.lang==='en'?(fb.tip_en||fb.tip):fb.tip)}</p>
     </div>
     <div style="height:16px"></div>
   </div>
@@ -2612,17 +2612,17 @@ function renderPrenatalDetailModal(child){
   <div class="sheet-head">
     <div style="display:flex;align-items:center;gap:10px">
       <div class="s-icon acc-teal" style="width:34px;height:34px"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 1 5 5c0 1-.3 2-.8 2.7A4 4 0 0 1 20 13a4 4 0 0 1-4 4h-1v3H9v-3H8a4 4 0 0 1-4-4 4 4 0 0 1 3.8-3.3A5 5 0 0 1 7 7a5 5 0 0 1 5-5z"/></svg></div>
-      <span style="font-weight:600;font-size:14px">${S.lang==='en'?'Development · W':'Développement · SA'} ${gw}</span>
+      <span style="font-weight:600;font-size:0.875rem">${S.lang==='en'?'Development · W':'Développement · SA'} ${gw}</span>
     </div>
     ${xBtn()}
   </div>
   <div class="sheet-body">
-    <span class="acc-teal" style="display:inline-block;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;margin-bottom:14px">${e(pd.category)}</span>
-    <h2 style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:500;margin-bottom:12px;line-height:1.25">${e(pd.fact)}</h2>
-    <p style="font-size:14px;color:#5C5752;line-height:1.75;margin-bottom:16px">${e(pd.details)}</p>
+    <span class="acc-teal" style="display:inline-block;padding:3px 10px;border-radius:99px;font-size:0.6875rem;font-weight:600;margin-bottom:14px">${e(pd.category)}</span>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.75rem;font-weight:500;margin-bottom:12px;line-height:1.25">${e(pd.fact)}</h2>
+    <p style="font-size:0.875rem;color:#5C5752;line-height:1.75;margin-bottom:16px">${e(pd.details)}</p>
     <div class="refs-block acc-teal" style="margin-bottom:8px">
-      <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">${t('prenatal_senses_awake')}</p>
-      <p style="font-size:13px;color:#1B4A3A;line-height:1.65">${e(pd.sens||'')}</p>
+      <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">${t('prenatal_senses_awake')}</p>
+      <p style="font-size:0.8125rem;color:#1B4A3A;line-height:1.65">${e(pd.sens||'')}</p>
     </div>
     <div style="height:8px"></div>
   </div>
@@ -2643,20 +2643,20 @@ function renderPrenatalSectionModal(sectionKey,child){
   <div class="sheet-head">
     <div style="display:flex;align-items:center;gap:10px">
       <div class="s-icon acc-honey" style="width:34px;height:34px"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="21" x2="14" y2="21"/><path d="M15.1 14.2c.2-1 .7-1.8 1.5-2.6A6 6 0 1 0 7.4 11.6c.8.8 1.3 1.6 1.5 2.6"/></svg></div>
-      <span style="font-weight:600;font-size:14px">Préparer la venue · SA ${gw}</span>
+      <span style="font-weight:600;font-size:0.875rem">Préparer la venue · SA ${gw}</span>
     </div>
     ${xBtn()}
   </div>
   <div class="sheet-body">
-    <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#A06C2A;margin-bottom:10px">Conseil du jour</p>
+    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#A06C2A;margin-bottom:10px">Conseil du jour</p>
     <div style="background:#FFFBF2;border-radius:12px;padding:14px 16px;margin-bottom:20px;border:1px solid #F0E0B0">
-      <p style="font-size:15px;color:#3A2A0A;line-height:1.7;font-weight:500">${e(dailyTip)}</p>
+      <p style="font-size:0.9375rem;color:#3A2A0A;line-height:1.7;font-weight:500">${e(dailyTip)}</p>
     </div>
-    <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#9C9790;margin-bottom:12px">Tous les conseils de ce stade</p>
+    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#9C9790;margin-bottom:12px">Tous les conseils de ce stade</p>
     <div style="display:flex;flex-direction:column;gap:10px">
       ${pd.tips.map((t,i)=>`<div style="display:flex;gap:10px;align-items:flex-start;${i===tipIdx?'opacity:1':'opacity:.55'}">
         <div style="width:7px;height:7px;border-radius:50%;background:${i===tipIdx?'#A06C2A':'#C4BFB8'};flex-shrink:0;margin-top:6px"></div>
-        <p style="font-size:13px;color:#5C4A2A;line-height:1.65">${e(t)}</p>
+        <p style="font-size:0.8125rem;color:#5C4A2A;line-height:1.65">${e(t)}</p>
       </div>`).join('')}
     </div>
     <div style="height:20px"></div>
@@ -2674,12 +2674,12 @@ function renderPrenatalSectionModal(sectionKey,child){
   <div class="sheet-head">
     <div style="display:flex;align-items:center;gap:10px">
       <div class="s-icon ${sec.color}" style="width:34px;height:34px"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg></div>
-      <span style="font-weight:600;font-size:14px">${e(sec.label)} · SA ${gw}</span>
+      <span style="font-weight:600;font-size:0.875rem">${e(sec.label)} · SA ${gw}</span>
     </div>
     ${xBtn()}
   </div>
   <div class="sheet-body">
-    <p style="font-size:14px;color:#5C5752;line-height:1.75;margin-bottom:20px">${e(sec.content)}</p>
+    <p style="font-size:0.875rem;color:#5C5752;line-height:1.75;margin-bottom:20px">${e(sec.content)}</p>
     <div style="height:8px"></div>
   </div>
 </div></div>`;
@@ -2694,14 +2694,14 @@ function renderSavedChatsModal(child){
   <div class="sheet-head">
     <div style="display:flex;align-items:center;gap:10px">
       <div class="s-icon acc-blue" style="width:34px;height:34px"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
-      <span style="font-weight:600;font-size:14px">Réponses sauvegardées · ${e(child.firstName)}</span>
+      <span style="font-weight:600;font-size:0.875rem">Réponses sauvegardées · ${e(child.firstName)}</span>
     </div>
     ${xBtn()}
   </div>
   <div class="sheet-body">
     ${empty?`<div style="text-align:center;padding:40px 0;color:#B0A89E">
       <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#D4D0CA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:12px"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-      <p style="font-size:14px">Aucune réponse sauvegardée.<br>Utilisez <svg viewBox="0 0 24 24" width="12" height="12" fill="#3D5570" stroke="#3D5570" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> sous une réponse de Zoé.</p>
+      <p style="font-size:0.875rem">Aucune réponse sauvegardée.<br>Utilisez <svg viewBox="0 0 24 24" width="12" height="12" fill="#3D5570" stroke="#3D5570" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> sous une réponse de Zoé.</p>
     </div>`:`<div style="display:flex;flex-direction:column;gap:10px">
       ${saves.map(s=>`<div class="saved-card">
         <div class="saved-q">
@@ -2710,13 +2710,13 @@ function renderSavedChatsModal(child){
         <p class="saved-a">${e(s.answer)}</p>
         ${s.refs&&s.refs.length?`<div style="display:flex;flex-direction:column;gap:4px;margin-top:8px">${s.refs.map(r=>`<a href="https://www.google.com/search?q=${encodeURIComponent(r)}" target="_blank" rel="noopener" class="msg-ref-link"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>${e(r)}</a>`).join('')}</div>`:''}
         <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:8px;border-top:1px solid #F2F0EB">
-          <span style="font-size:11px;color:#B0A89E">${new Date(s.date).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}</span>
+          <span style="font-size:0.6875rem;color:#B0A89E">${new Date(s.date).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}</span>
           <div style="display:flex;gap:6px">
-            <button class="msg-act" data-share-saved="${s.id}" title="Partager" style="width:auto;padding:0 8px;font-size:12px;color:#3D5570;gap:4px">
+            <button class="msg-act" data-share-saved="${s.id}" title="Partager" style="width:auto;padding:0 8px;font-size:0.75rem;color:#3D5570;gap:4px">
               <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
               Partager
             </button>
-            <button class="msg-act" data-del-saved="${s.id}" title="Supprimer" style="width:auto;padding:0 6px;font-size:12px;color:#C45A5A;gap:4px">
+            <button class="msg-act" data-del-saved="${s.id}" title="Supprimer" style="width:auto;padding:0 6px;font-size:0.75rem;color:#C45A5A;gap:4px">
               <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
               Supprimer
             </button>
@@ -2740,7 +2740,7 @@ function renderCarolineModal(data,child){
   <div class="sheet-head">
     <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
       <div class="s-icon acc-sage" style="width:34px;height:34px;flex-shrink:0"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
-      <span style="font-weight:600;font-size:14px">${t('caroline_title')}</span>
+      <span style="font-weight:600;font-size:0.875rem">${t('caroline_title')}</span>
     </div>
     <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
       ${child?modalActBtns('data-fav-caroline','true','data-share-caroline','true',faved):''}
@@ -2748,20 +2748,20 @@ function renderCarolineModal(data,child){
     </div>
   </div>
   <div class="sheet-body">
-    <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#3A5E38;margin-bottom:10px">${t('caroline_sub')}</p>
-    <h2 style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:500;line-height:1.25;margin-bottom:16px">${e(S.lang==='en'?(entry.topic_en||entry.topic):entry.topic)}</h2>
-    <p style="font-size:14px;color:#3A3835;line-height:1.75;margin-bottom:20px">${e(S.lang==='en'?(entry.advice_en||entry.advice):entry.advice)}</p>
+    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#3A5E38;margin-bottom:10px">${t('caroline_sub')}</p>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.625rem;font-weight:500;line-height:1.25;margin-bottom:16px">${e(S.lang==='en'?(entry.topic_en||entry.topic):entry.topic)}</h2>
+    <p style="font-size:0.875rem;color:#3A3835;line-height:1.75;margin-bottom:20px">${e(S.lang==='en'?(entry.advice_en||entry.advice):entry.advice)}</p>
     <div class="conseil-btn" style="margin:0 0 20px;cursor:default">
       <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#3A5E38" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
       <div style="flex:1">
-        <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#3A5E38;margin-bottom:4px">${t('to_remember')}</p>
-        <p style="font-size:14px;color:#2A3A2A;line-height:1.6">${e(S.lang==='en'?(entry.tip_en||entry.tip):entry.tip)}</p>
+        <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#3A5E38;margin-bottom:4px">${t('to_remember')}</p>
+        <p style="font-size:0.875rem;color:#2A3A2A;line-height:1.6">${e(S.lang==='en'?(entry.tip_en||entry.tip):entry.tip)}</p>
       </div>
     </div>
     <div class="refs-block acc-sage">
-      <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px">${t('source')}</p>
+      <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px">${t('source')}</p>
       ${refLink(entry.ref.label.includes('Comprendre et accompagner')?'Caroline Goldman — Comprendre et accompagner les enfants difficiles (Odile Jacob)':entry.ref.label,'Caroline Goldman '+entry.ref.label)}
-      <p style="font-size:12px;color:#5C5752;line-height:1.65;margin-top:8px;padding:0 4px">${e(S.lang==='en'?(entry.ref.detail_en||entry.ref.detail):entry.ref.detail)}</p>
+      <p style="font-size:0.75rem;color:#5C5752;line-height:1.65;margin-top:8px;padding:0 4px">${e(S.lang==='en'?(entry.ref.detail_en||entry.ref.detail):entry.ref.detail)}</p>
     </div>
     <div style="height:16px"></div>
   </div>
@@ -2778,8 +2778,8 @@ function renderSectionModal(id,data,child){
   <div class="sheet-handle"></div>
   <div class="sheet-head">
     <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
-      <div class="s-icon ${s.colorBg}" style="width:34px;height:34px;font-size:16px;flex-shrink:0">${s.icon}</div>
-      <span style="font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(S.lang==='en'?(s.label_en||s.label):s.label)}</span>
+      <div class="s-icon ${s.colorBg}" style="width:34px;height:34px;font-size:1rem;flex-shrink:0">${s.icon}</div>
+      <span style="font-weight:600;font-size:0.875rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(S.lang==='en'?(s.label_en||s.label):s.label)}</span>
     </div>
     <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
       ${child?modalActBtns('data-fav-section',id,'data-share-section',id,faved):''}
@@ -2788,13 +2788,13 @@ function renderSectionModal(id,data,child){
   </div>
   <div class="sheet-body">
     <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:14px">
-      <span style="font-size:38px;flex-shrink:0;line-height:1">${entry.emoji}</span>
-      <h2 style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:500;padding-top:4px;line-height:1.25">${e(S.lang==='en'?(entry.title_en||entry.title):entry.title)}</h2>
+      <span style="font-size:2.375rem;flex-shrink:0;line-height:1">${entry.emoji}</span>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.625rem;font-weight:500;padding-top:4px;line-height:1.25">${e(S.lang==='en'?(entry.title_en||entry.title):entry.title)}</h2>
     </div>
-    <p style="font-size:14px;font-weight:500;color:#3D5A8A;margin-bottom:14px;line-height:1.6">${e(S.lang==='en'?(entry.summary_en||entry.summary):entry.summary)}</p>
-    <p style="font-size:14px;color:#5C5752;line-height:1.7;margin-bottom:20px">${e(S.lang==='en'?(entry.detail_en||entry.detail):entry.detail)}</p>
+    <p style="font-size:0.875rem;font-weight:500;color:#3D5A8A;margin-bottom:14px;line-height:1.6">${e(S.lang==='en'?(entry.summary_en||entry.summary):entry.summary)}</p>
+    <p style="font-size:0.875rem;color:#5C5752;line-height:1.7;margin-bottom:20px">${e(S.lang==='en'?(entry.detail_en||entry.detail):entry.detail)}</p>
     <div class="refs-block ${s.colorBg}">
-      <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:5px">${_svgIco.book}${t('further')}</p>
+      <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:5px">${_svgIco.book}${t('further')}</p>
       ${entry.references.map(r=>refLink(r)).join('')}
     </div>
     <div style="height:16px"></div>
@@ -2812,7 +2812,7 @@ function renderConseilModal(milestone,data,child){
   <div class="sheet-head">
     <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
       <div class="s-icon acc-amber" style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="21" x2="14" y2="21"/><path d="M15.1 14.2c.2-1 .7-1.8 1.5-2.6A6 6 0 1 0 7.4 11.6c.8.8 1.3 1.6 1.5 2.6"/></svg></div>
-      <span style="font-weight:600;font-size:14px;color:#A06C2A">${t('today_conseil')}</span>
+      <span style="font-weight:600;font-size:0.875rem;color:#A06C2A">${t('today_conseil')}</span>
     </div>
     <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
       ${child?modalActBtns('data-fav-conseil','true','data-share-conseil','true',faved):''}
@@ -2821,17 +2821,17 @@ function renderConseilModal(milestone,data,child){
   </div>
   <div class="sheet-body">
     <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:14px">
-      <span style="font-size:38px;flex-shrink:0;line-height:1">${milestone.emoji}</span>
-      <h2 style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:500;padding-top:4px;line-height:1.25">${e(S.lang==='en'?(milestone.en?.fact||milestone.fact):milestone.fact)}</h2>
+      <span style="font-size:2.375rem;flex-shrink:0;line-height:1">${milestone.emoji}</span>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.625rem;font-weight:500;padding-top:4px;line-height:1.25">${e(S.lang==='en'?(milestone.en?.fact||milestone.fact):milestone.fact)}</h2>
     </div>
     <div style="background:#FBF8F3;border:1px solid #EDE5D8;border-radius:12px;padding:14px;margin-bottom:16px">
-      <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#A06C2A;margin-bottom:6px">${t('conseil_conseil')}</p>
-      <p style="font-size:14px;color:#5C4A2A;line-height:1.65">${e(S.lang==='en'?(milestone.en?.tip||milestone.tip):milestone.tip)}</p>
+      <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#A06C2A;margin-bottom:6px">${t('conseil_conseil')}</p>
+      <p style="font-size:0.875rem;color:#5C4A2A;line-height:1.65">${e(S.lang==='en'?(milestone.en?.tip||milestone.tip):milestone.tip)}</p>
     </div>
-    <p style="font-size:14px;color:#5C5752;line-height:1.7;margin-bottom:14px">${e(S.lang==='en'?(milestone.en?.details||milestone.details):milestone.details)}</p>
-    <span style="display:inline-block;background:#F5F0E8;color:#A06C2A;font-size:12px;font-weight:600;padding:4px 12px;border-radius:99px;margin-bottom:16px">${e(S.lang==='en'?(milestone.en?.category||milestone.category):milestone.category)}</span>
+    <p style="font-size:0.875rem;color:#5C5752;line-height:1.7;margin-bottom:14px">${e(S.lang==='en'?(milestone.en?.details||milestone.details):milestone.details)}</p>
+    <span style="display:inline-block;background:#F5F0E8;color:#A06C2A;font-size:0.75rem;font-weight:600;padding:4px 12px;border-radius:99px;margin-bottom:16px">${e(S.lang==='en'?(milestone.en?.category||milestone.category):milestone.category)}</span>
     <div class="refs-block acc-amber">
-      <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:5px">${_svgIco.book}${t('further')}</p>
+      <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:5px">${_svgIco.book}${t('further')}</p>
       ${refLink('Brazelton, T. B. & Greenspan, S. I. (2000). The Irreducible Needs of Children.')}
       ${refLink('Gopnik, A., Meltzoff, A. N. & Kuhl, P. K. (1999). The Scientist in the Crib.')}
       ${refLink('AAP (2023). Caring for Your Baby and Young Child.')}
@@ -2854,11 +2854,11 @@ function renderApiKeyModal(){
 <div class="modal-box">
   <div style="text-align:center;margin-bottom:20px">
     <div style="margin-bottom:12px;display:flex;justify-content:center"><svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="#8B7355" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div>
-    <h3 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500">${title}</h3>
-    <p class="t-body" style="margin-top:6px;font-size:13px">Obtenez votre clé sur <a href="${link}" target="_blank">${linkLabel}</a></p>
+    <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500">${title}</h3>
+    <p class="t-body" style="margin-top:6px;font-size:0.8125rem">Obtenez votre clé sur <a href="${link}" target="_blank">${linkLabel}</a></p>
   </div>
   <input id="${inputId}" class="field" type="password" placeholder="${placeholder}" value="${val}" style="margin-bottom:6px"/>
-  <div style="background:#F5F4F0;border-radius:10px;padding:11px 13px;margin-bottom:18px;font-size:13px;color:#7A7570;display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>${t('modal_api_stored')}</div>
+  <div style="background:#F5F4F0;border-radius:10px;padding:11px 13px;margin-bottom:18px;font-size:0.8125rem;color:#7A7570;display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>${t('modal_api_stored')}</div>
   <div style="display:flex;gap:8px">
     <button class="btn btn-ghost" id="modal-close" style="flex:1;padding:12px">${t('modal_api_cancel')}</button>
     <button class="btn btn-dark" id="apikey-save" style="flex:1;padding:12px">${t('modal_api_save')}</button>
@@ -2875,7 +2875,7 @@ function renderChildModal(idx){
 <div class="modal-box">
   <div style="text-align:center;margin-bottom:22px">
     <div style="margin-bottom:12px;display:flex;justify-content:center">${isEdit?`<svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#5C5752" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>`:`<svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="#3D5570" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="3.5"/><path d="M9 22l3-9.5 3 9.5"/><path d="M5.5 11.5l6.5-2 6.5 2"/></svg>`}</div>
-    <h3 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500">${isEdit?t('modal_child_edit'):t('modal_child_add')}</h3>
+    <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500">${isEdit?t('modal_child_edit'):t('modal_child_add')}</h3>
   </div>
   <div style="margin-bottom:14px">
     <p class="t-label" style="margin-bottom:6px">${t('modal_child_firstname')}</p>
@@ -2884,7 +2884,7 @@ function renderChildModal(idx){
   <div style="margin-bottom:14px">
     <p class="t-label" style="margin-bottom:6px" id="cf-date-label">${t('modal_child_birthdate')}</p>
     <input id="cf-date" class="field" type="date" value="${c.birthDate}"/>
-    <p style="font-size:11px;color:#9C9790;margin-top:5px">${t('modal_child_future')}</p>
+    <p style="font-size:0.6875rem;color:#9C9790;margin-top:5px">${t('modal_child_future')}</p>
   </div>
   <div style="margin-bottom:22px">
     <p class="t-label" style="margin-bottom:8px">${t('modal_child_gender')}</p>
@@ -2943,10 +2943,10 @@ function render(){
     const ageLbl=cd.unborn?(S.lang==='en'?'Coming soon':'À venir'):cd.ageLabel;
     const chk=i===S.childIdx?`<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`:'';
     return`<button class="child-drop-item${i===S.childIdx?' active-c':''}" data-switch="${i}">
-      <div style="width:32px;height:32px;border-radius:10px;background:var(--c-fbd);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--c-t2);flex-shrink:0">${e(c.firstName.charAt(0))}</div>
+      <div style="width:32px;height:32px;border-radius:10px;background:var(--c-fbd);display:flex;align-items:center;justify-content:center;font-size:0.875rem;font-weight:700;color:var(--c-t2);flex-shrink:0">${e(c.firstName.charAt(0))}</div>
       <div style="flex:1;text-align:left">
-        <p style="font-size:14px;font-weight:600;color:var(--c-ink)">${e(c.firstName)}</p>
-        <p style="font-size:11px;color:var(--c-t3);margin-top:1px">${e(ageLbl||'')}</p>
+        <p style="font-size:0.875rem;font-weight:600;color:var(--c-ink)">${e(c.firstName)}</p>
+        <p style="font-size:0.6875rem;color:var(--c-t3);margin-top:1px">${e(ageLbl||'')}</p>
       </div>
       <span style="color:var(--c-t3)">${chk}</span>
     </button>`;
@@ -3011,7 +3011,7 @@ function render(){
     <div style="display:flex;align-items:center;justify-content:space-between">
       <div style="display:flex;align-items:center;gap:10px">
         <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--c-ink);transform:rotate(35deg)"><path d="M10 5V3a2 2 0 0 1 4 0v2"/><path d="M9 5h6v2H9z"/><path d="M7 7h10v12a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V7z"/><line x1="7" y1="13" x2="17" y2="13"/></svg>
-        <span style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--c-ink)">BébéPilote</span>
+        <span style="font-family:'Cormorant Garamond',serif;font-size:1.375rem;font-weight:500;color:var(--c-ink)">BébéPilote</span>
       </div>
       <button id="btn-new-conv" title="Nouvelle conversation" style="width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--c-t2);background:var(--c-bg3);flex-shrink:0;transition:background .15s">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
@@ -3188,7 +3188,7 @@ function bind(child,data){
     const refLabel=ce?.ref?.label||'';
     const refSearch='Caroline Goldman '+refLabel;
     const refText=refLabel.includes('Comprendre et accompagner')?'Caroline Goldman — Comprendre et accompagner les enfants difficiles (Odile Jacob)':refLabel;
-    const refsHtml=refLink(refText,refSearch)+(ce?.ref?.detail?`<p style="font-size:12px;color:#5C5752;line-height:1.65;margin-top:6px;padding:0 4px">${e(ce.ref.detail)}</p>`:'');
+    const refsHtml=refLink(refText,refSearch)+(ce?.ref?.detail?`<p style="font-size:0.75rem;color:#5C5752;line-height:1.65;margin-top:6px;padding:0 4px">${e(ce.ref.detail)}</p>`:'');
     toggleFavorite({id,childName:child.firstName,childAge:data.ageLabel,type:'caroline',typeLabel:'Caroline Goldman',title:ce?.topic||'',summary:ce?.advice||ce?.tip||'',refsHtml,refsColorBg:'acc-sage',date:new Date().toISOString(),canShare:true,shareData:{headerBg:'#3A5E38',accentColor:'#3A5E38',categoryLabel:'Conseil de Caroline Goldman',title:ce?.topic||'',body:ce?.advice||ce?.tip||'',ageLabel:data.ageLabel}});
     render();
   });
