@@ -659,7 +659,7 @@ activite:[
 
 const _sw='stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
 const _ico=(path,extra='')=>`<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" ${_sw} ${extra}>${path}</svg>`;
-const VERSION='1.0.4';
+const VERSION='1.0.5';
 const ALL_SECTIONS=[
   {id:'langage',  label:'Langage & Communication',  label_en:'Language & Communication', icon:_ico('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/>'),colorBg:'acc-blue',  colorText:'acc-blue'},
   {id:'motricite',label:'La Motricité',              label_en:'Motor Skills',              icon:_ico('<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>'),colorBg:'acc-green', colorText:'acc-green'},
@@ -1394,13 +1394,15 @@ const CTRV_TOOL_SCHEMA={type:'object',properties:{
 },required:['topic','question','why_now','camps','known','believed','unknown','bridge','tomorrow_teaser','deep_questions']};
 
 const ANTHROPIC_MODEL='claude-sonnet-4-6';
-const GEMINI_MODEL='gemini-2.0-flash';
+const GEMINI_MODEL='gemini-1.5-flash-latest';
 function geminiUrl(method){return`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:${method}?key=${S.apiKey}`;}
 function anthropicHeaders(){return{'content-type':'application/json','x-api-key':S.anthropicKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};}
 function netErrMsg(err){
   // TypeError = network failure (CORS, offline, SSL…)
   if(err instanceof TypeError)return`Erreur réseau — vérifie ta connexion et que la clé ${S.provider==='anthropic'?'Claude':'Gemini'} est correcte. (${err.message})`;
-  return err.message;
+  const m=err.message||'';
+  if(m.toLowerCase().includes('quota'))return`Quota Gemini dépassé — soit attendre demain (limite gratuite), soit activer la facturation sur aistudio.google.com, soit basculer sur Claude (Paramètres).`;
+  return m;
 }
 
 // Génère la controverse structurée selon le moteur choisi
