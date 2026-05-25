@@ -419,7 +419,7 @@ fr:{
   modal_child_future:'Entrez une date future pour un bébé à venir.',
   modal_child_gender:'Genre',modal_child_gender_boy:'Garçon',modal_child_gender_girl:'Fille',
   modal_child_save:'Ajouter',modal_child_save_edit:'Enregistrer',modal_child_delete:'Supprimer ce profil',
-  modal_child_delete_confirm:'⚠️ Confirmer la suppression',
+  modal_child_delete_confirm:'Confirmer la suppression',
   modal_event_title:'Ajouter un événement',modal_event_cancel:'Annuler',
   modal_api_title:'Clé API Gemini',modal_api_desc:'Obtenez votre clé sur',
   modal_api_stored:'Stockée uniquement sur votre appareil.',
@@ -436,7 +436,7 @@ fr:{
   cancel:'Annuler',save:'Enregistrer',close:'Fermer',delete:'Supprimer',
   confirm_reset:'Réinitialiser ?',loading:'Chargement…',error_generic:'Une erreur s\'est produite',
   copy:'Copier',copied:'Copié !',save_response:'Sauvegarder',saved_responses:'Sauvegardé',
-  share:'Partager',remove_fav:'Retirer',further:'📖 Pour aller plus loin',
+  share:'Partager',remove_fav:'Retirer',further:'Pour aller plus loin',
   to_remember:'À retenir',source:'Source',
   conseil_conseil:'Le conseil',
   caroline_goldman:'Caroline Goldman',
@@ -497,7 +497,7 @@ en:{
   modal_child_future:'Enter a future date for an upcoming baby.',
   modal_child_gender:'Gender',modal_child_gender_boy:'Boy',modal_child_gender_girl:'Girl',
   modal_child_save:'Add',modal_child_save_edit:'Save',modal_child_delete:'Delete profile',
-  modal_child_delete_confirm:'⚠️ Confirm deletion',
+  modal_child_delete_confirm:'Confirm deletion',
   modal_event_title:'Add an event',modal_event_cancel:'Cancel',
   modal_api_title:'Gemini API Key',modal_api_desc:'Get your key at',
   modal_api_stored:'Stored only on your device.',
@@ -514,7 +514,7 @@ en:{
   cancel:'Cancel',save:'Save',close:'Close',delete:'Delete',
   confirm_reset:'Reset?',loading:'Loading…',error_generic:'An error occurred',
   copy:'Copy',copied:'Copied!',save_response:'Save',saved_responses:'Saved',
-  share:'Share',remove_fav:'Remove',further:'📖 Further reading',
+  share:'Share',remove_fav:'Remove',further:'Further reading',
   to_remember:'Key takeaway',source:'Source',
   conseil_conseil:'The tip',
   caroline_goldman:'Caroline Goldman',
@@ -659,7 +659,7 @@ activite:[
 
 const _sw='stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
 const _ico=(path,extra='')=>`<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" ${_sw} ${extra}>${path}</svg>`;
-const VERSION='1.0.9';
+const VERSION='1.1.0';
 const ALL_SECTIONS=[
   {id:'langage',  label:'Langage & Communication',  label_en:'Language & Communication', icon:_ico('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/>'),colorBg:'acc-blue',  colorText:'acc-blue'},
   {id:'motricite',label:'La Motricité',              label_en:'Motor Skills',              icon:_ico('<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>'),colorBg:'acc-green', colorText:'acc-green'},
@@ -1157,6 +1157,35 @@ function md(s){
     .replace(/\n{2,}/g,'<br><br>')
     .replace(/\n/g,'<br>');
 }
+// Renders the bridge field (2-part "Observer / Essayer") with SVG icons
+function renderBridge(txt,fs){
+  if(!txt)return'';
+  const sw='stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
+  const iconObs=`<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" ${sw}><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+  const iconEss=`<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" ${sw}><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
+  const sections=[
+    {re:/^Observer\s*:\s*/i,label:'Observer',icon:iconObs,color:'#2D4A8A'},
+    {re:/^Essayer\s*:\s*/i,  label:'Essayer', icon:iconEss,color:'#3A5E38'},
+  ];
+  const fontSize=fs||'13px';
+  return txt.split(/\n\n+/).filter(Boolean).map((seg,i)=>{
+    const match=sections.find(s=>s.re.test(seg.replace(/^\*\*?/,'')));
+    const clean=seg.replace(/^\*?\*?\w[\w ]*\*?\*?\s*:\s*/,'');
+    if(match){
+      return `<div style="margin-bottom:10px"><div style="display:flex;align-items:center;gap:5px;color:${match.color};margin-bottom:5px">${match.icon}<span style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">${match.label}</span></div><div style="font-size:${fontSize};color:var(--c-t2);line-height:1.65">${md(clean)}</div></div>`;
+    }
+    return `<div style="font-size:${fontSize};color:var(--c-t2);line-height:1.65;margin-bottom:8px">${md(seg)}</div>`;
+  }).join('');
+}
+// SVG icon helpers (stroke-width 1.5, matching app style)
+const _ico={
+  book:`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+  warn:`<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+  check:`<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+  x:`<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+  loader:`<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9" style="opacity:.2"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>`,
+  search:`<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`,
+};
 // Clickable reference link → Google Scholar
 function refLink(text,searchOverride){
   const q=encodeURIComponent(searchOverride||text);
@@ -1282,7 +1311,7 @@ function renderFavCard(it){
   else if(it.type==='creuser'&&it.blocks){body=renderDiveFavBody(it);}
   else if(it.type==='zoecamps'&&it.campsData){body=renderZoeCampsFavBody(it);}
   else{body=`<p style="font-size:13px;color:#5C5752;line-height:1.65;margin-bottom:${it.refsHtml?'12px':'0'}">${e(it.summary)}</p>
-  ${it.refsHtml?`<div class="refs-block ${it.refsColorBg||'acc-blue'}"><p style="font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;opacity:.75">📖 Pour aller plus loin</p>${it.refsHtml}</div>`:''}`;}
+  ${it.refsHtml?`<div class="refs-block ${it.refsColorBg||'acc-blue'}"><p style="font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;opacity:.75;display:flex;align-items:center;gap:5px">${_ico.book}Pour aller plus loin</p>${it.refsHtml}</div>`:''}`;}
   const actions=`<div style="display:flex;gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid var(--c-bd)">
     ${it._kind==='saved'
       ?`<button class="msg-act" data-share-saved="${it.id}" style="width:auto;padding:0 8px;font-size:12px;color:#3D5570;gap:4px">${shareSvg}${S.lang==='en'?'Share':'Partager'}</button>
@@ -1532,7 +1561,7 @@ ${sibCtx}
 - "believed" : ce qui relève de la croyance/idéologie des deux bords, présenté comme tel — pas comme un fait.
 - "unknown" : ce que la science ne tranche honnêtement pas.
 - "bridge" : c'est le "donc concrètement, cette semaine ?" du parent. OBLIGATOIREMENT structuré en 2 blocs séparés par \n\n — utilise ce format exact :
-  "**👁 Observer** : [un signal OBSERVABLE et concret à surveiller chez cet enfant précis à cet âge précis — comportement, réaction, timing]\n\n**🎯 Essayer** : [une micro-action ou ajustement que le parent peut tester dès aujourd'hui ou cette semaine]"
+  "Observer : [un signal OBSERVABLE et concret à surveiller chez cet enfant précis à cet âge précis — comportement, réaction, timing]\n\nEssayer : [une micro-action ou ajustement que le parent peut tester dès aujourd'hui ou cette semaine]"
   Jamais une platitude ("faites confiance à votre instinct"), jamais une conclusion idéologique. Le parent doit sortir avec quelque chose à FAIRE ou à REGARDER.
 - "tomorrow_teaser" : une question alléchante mais honnête pour demain (une phrase).
 - "deep_questions" : 3 questions d'approfondissement précises, pointues et alléchantes pour creuser CETTE controverse (elles alimenteront un bouton "Creuser"). Ancrées sur les camps ci-dessus, pas génériques.
@@ -1754,7 +1783,7 @@ function renderCtrvFavBody(d){
     <p style="font-size:10px;font-weight:700;text-transform:uppercase;color:#A06C2A;margin-bottom:2px">◇ Ce qu'on croit</p><p style="font-size:12px;color:#5C5752;line-height:1.5;margin-bottom:8px">${md(d.believed)}</p>
     <p style="font-size:10px;font-weight:700;text-transform:uppercase;color:#C48A40;margin-bottom:2px">○ Ce qu'on ne sait pas</p><p style="font-size:12px;color:#5C5752;line-height:1.5">${md(d.unknown)}</p>
   </div>
-  <div class="refs-block acc-plum"><p style="font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px">Et pour bébé ?</p><p style="font-size:13px;color:#5C5752;line-height:1.6">${md(d.bridge)}</p></div>`;
+  <div class="refs-block acc-plum"><p style="font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">Et pour bébé ?</p>${renderBridge(d.bridge,'12px')}</div>`;
 }
 
 function renderDiveFavBody(f){
@@ -1835,7 +1864,7 @@ function renderControverseModal(child,data){
 
     <div class="refs-block acc-plum" style="margin-bottom:24px">
       <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">Et pour ${e(child.firstName)} ?</p>
-      <p style="font-size:14px;color:#5C5752;line-height:1.7">${md(d.bridge)}</p>
+      <div style="font-size:14px">${renderBridge(d.bridge,'14px')}</div>
     </div>
 
     <button id="btn-ctrv-creuser" class="ctrv-creuser-btn"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/></svg>Creuser ce sujet</button>
@@ -1874,7 +1903,7 @@ function renderOnboarding(){
   if(ob.step===1){
     app.innerHTML=`<div class="ob-wrap">
 <div style="text-align:center;margin-bottom:32px">
-  <div style="font-size:56px;margin-bottom:8px">🍼</div>
+  <div style="margin-bottom:16px;display:flex;justify-content:center"><svg viewBox="0 0 48 48" width="56" height="56" fill="none" stroke="#A06C2A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="20"/><path d="M16 28c0-4.4 3.6-8 8-8s8 3.6 8 8"/><circle cx="24" cy="20" r="2" fill="#A06C2A" stroke="none"/><path d="M20 34h8"/></svg></div>
   <h1 style="font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:500;letter-spacing:.02em;color:#1A1918">BébéPilote</h1>
   <p class="t-body" style="margin-top:6px">Le suivi de développement de votre enfant</p>
 </div>
@@ -2302,7 +2331,7 @@ function renderProfileSettings(){
     <input id="gemini-key-in" class="field" type="password" placeholder="AIza…" value="${e(S.apiKey)}" style="margin-bottom:14px"/>
     <p style="font-size:11px;font-weight:600;color:var(--c-t3);margin-bottom:6px;letter-spacing:.03em">Clé API Claude (Anthropic)</p>
     <input id="anthropic-key-in" class="field" type="password" placeholder="sk-ant-…" value="${e(S.anthropicKey)}" style="margin-bottom:8px"/>
-    <button id="btn-test-claude" style="width:100%;margin-bottom:14px;padding:9px;border-radius:10px;border:1.5px solid var(--c-bd2);background:var(--c-bg2);font-size:12px;color:var(--c-t2);cursor:pointer;font-family:inherit;font-weight:500">${S._claudeTest==='ok'?'✅ Connexion Claude OK':S._claudeTest==='err'?`❌ ${S._claudeTestMsg||'Erreur'}`:S._claudeTest==='loading'?'⏳ Test en cours…':'🔍 Tester la connexion Claude'}</button>
+    <button id="btn-test-claude" style="width:100%;margin-bottom:14px;padding:9px;border-radius:10px;border:1.5px solid var(--c-bd2);background:var(--c-bg2);font-size:12px;cursor:pointer;font-family:inherit;font-weight:500;display:flex;align-items:center;justify-content:center;gap:6px;${S._claudeTest==='ok'?'color:#3A5E38':S._claudeTest==='err'?'color:#A03828':'color:var(--c-t2)'}">${S._claudeTest==='ok'?`${_ico.check}Connexion Claude OK`:S._claudeTest==='err'?`${_ico.x}${S._claudeTestMsg||'Erreur'}`:S._claudeTest==='loading'?`${_ico.loader}Test en cours…`:`${_ico.search}Tester la connexion Claude`}</button>
     <div style="background:var(--c-bg2);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--c-t4);display:flex;align-items:center;gap:7px">
       <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       Clés stockées uniquement sur votre appareil
@@ -2761,7 +2790,7 @@ function renderSectionModal(id,data,child){
     <p style="font-size:14px;font-weight:500;color:#3D5A8A;margin-bottom:14px;line-height:1.6">${e(S.lang==='en'?(entry.summary_en||entry.summary):entry.summary)}</p>
     <p style="font-size:14px;color:#5C5752;line-height:1.7;margin-bottom:20px">${e(S.lang==='en'?(entry.detail_en||entry.detail):entry.detail)}</p>
     <div class="refs-block ${s.colorBg}">
-      <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px">${t('further')}</p>
+      <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:5px">${_ico.book}${t('further')}</p>
       ${entry.references.map(r=>refLink(r)).join('')}
     </div>
     <div style="height:16px"></div>
@@ -2798,7 +2827,7 @@ function renderConseilModal(milestone,data,child){
     <p style="font-size:14px;color:#5C5752;line-height:1.7;margin-bottom:14px">${e(S.lang==='en'?(milestone.en?.details||milestone.details):milestone.details)}</p>
     <span style="display:inline-block;background:#F5F0E8;color:#A06C2A;font-size:12px;font-weight:600;padding:4px 12px;border-radius:99px;margin-bottom:16px">${e(S.lang==='en'?(milestone.en?.category||milestone.category):milestone.category)}</span>
     <div class="refs-block acc-amber">
-      <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px">${t('further')}</p>
+      <p style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:5px">${_ico.book}${t('further')}</p>
       ${refLink('Brazelton, T. B. & Greenspan, S. I. (2000). The Irreducible Needs of Children.')}
       ${refLink('Gopnik, A., Meltzoff, A. N. & Kuhl, P. K. (1999). The Scientist in the Crib.')}
       ${refLink('AAP (2023). Caring for Your Baby and Young Child.')}
