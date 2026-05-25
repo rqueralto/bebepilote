@@ -663,7 +663,7 @@ activite:[
 
 const _sw='stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
 const _ico=(path,extra='')=>`<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" ${_sw} ${extra}>${path}</svg>`;
-const VERSION='1.1.4';
+const VERSION='1.1.5';
 const ALL_SECTIONS=[
   {id:'langage',  label:'Langage & Communication',  label_en:'Language & Communication', icon:_ico('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/>'),colorBg:'acc-blue',  colorText:'acc-blue'},
   {id:'motricite',label:'La Motricité',              label_en:'Motor Skills',              icon:_ico('<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>'),colorBg:'acc-green', colorText:'acc-green'},
@@ -1804,7 +1804,7 @@ function renderCtrvFavBody(d){
     <p style="font-size:0.625rem;font-weight:700;text-transform:uppercase;color:#A06C2A;margin-bottom:2px">◇ Ce qu'on croit</p><p style="font-size:0.75rem;color:#5C5752;line-height:1.5;margin-bottom:8px">${md(d.believed)}</p>
     <p style="font-size:0.625rem;font-weight:700;text-transform:uppercase;color:#C48A40;margin-bottom:2px">○ Ce qu'on ne sait pas</p><p style="font-size:0.75rem;color:#5C5752;line-height:1.5">${md(d.unknown)}</p>
   </div>
-  <div class="refs-block acc-plum"><p style="font-size:0.625rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">Et pour bébé ?</p>${renderBridge(d.bridge,'12px')}</div>`;
+  <div class="refs-block acc-plum"><p style="font-size:0.625rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">Et pour bébé ?</p>${renderBridge(d.bridge,'0.75rem')}</div>`;
 }
 
 function renderDiveFavBody(f){
@@ -1885,7 +1885,7 @@ function renderControverseModal(child,data){
 
     <div class="refs-block acc-plum" style="margin-bottom:24px">
       <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">Et pour ${e(child.firstName)} ?</p>
-      <div style="font-size:0.875rem">${renderBridge(d.bridge,'14px')}</div>
+      <div>${renderBridge(d.bridge,'0.875rem')}</div>
     </div>
 
     <button id="btn-ctrv-creuser" class="ctrv-creuser-btn"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/></svg>Creuser ce sujet</button>
