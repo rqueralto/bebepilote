@@ -266,6 +266,10 @@ a{color:#2D4A8A}
 .lang-opt{flex:1;padding:9px 6px;border-radius:10px;font-size:0.8125rem;font-weight:600;background:var(--c-bg3);color:var(--c-t2);border:1.5px solid transparent;transition:all .15s;text-align:center}
 .lang-opt.active{background:var(--c-card);color:var(--c-ink);border-color:var(--c-bd2);box-shadow:0 1px 3px rgba(0,0,0,.08)}
 
+/* ── Font size selector ── */
+.fz-opt{flex:1;padding:9px 6px;border-radius:10px;background:var(--c-bg3);color:var(--c-t2);border:1.5px solid transparent;transition:all .15s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px}
+.fz-opt.active{background:var(--c-card);color:var(--c-ink);border-color:var(--c-bd2);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
 /* ── Chevron ── */
 .chev{width:16px;height:16px;color:var(--c-t6);flex-shrink:0}
 .chev-open{transform:rotate(90deg)}
@@ -659,7 +663,7 @@ activite:[
 
 const _sw='stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
 const _ico=(path,extra='')=>`<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" ${_sw} ${extra}>${path}</svg>`;
-const VERSION='1.1.3';
+const VERSION='1.1.4';
 const ALL_SECTIONS=[
   {id:'langage',  label:'Langage & Communication',  label_en:'Language & Communication', icon:_ico('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/>'),colorBg:'acc-blue',  colorText:'acc-blue'},
   {id:'motricite',label:'La Motricité',              label_en:'Motor Skills',              icon:_ico('<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>'),colorBg:'acc-green', colorText:'acc-green'},
@@ -871,6 +875,19 @@ function initTheme(){
   window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>{
     if((localStorage.getItem('bebe_theme')||'auto')==='auto')applyTheme('auto');
   });
+}
+
+const FZ_MAP={xs:'87.5%',md:'100%',lg:'112.5%',xl:'125%'};
+function applyFontSize(sz){
+  document.documentElement.style.fontSize=FZ_MAP[sz]||'100%';
+}
+function setFontSize(sz){
+  localStorage.setItem('bebe_fz',sz);
+  applyFontSize(sz);
+  render();
+}
+function initFontSize(){
+  applyFontSize(localStorage.getItem('bebe_fz')||'md');
 }
 
 // ═══════════════════════ HELPERS ═══════════════════════
@@ -2321,6 +2338,13 @@ function renderProfileSettings(){
       <button class="lang-opt${S.lang==='fr'?' active':''}" data-lang-val="fr">🇫🇷 ${t('profile_lang_fr')}</button>
       <button class="lang-opt${S.lang==='en'?' active':''}" data-lang-val="en">🇬🇧 ${t('profile_lang_en')}</button>
     </div>
+    <p style="font-size:0.6875rem;font-weight:600;color:var(--c-t3);margin-bottom:8px;letter-spacing:.03em;margin-top:16px">${S.lang==='en'?'Text size':'Taille du texte'}</p>
+    <div style="display:flex;gap:8px">${(()=>{
+      const labels=S.lang==='en'?{xs:'Small',md:'Default',lg:'Large',xl:'XLarge'}:{xs:'Petit',md:'Normal',lg:'Grand',xl:'Maxi'};
+      const aSize={xs:'14px',md:'18px',lg:'22px',xl:'27px'};
+      const curr=localStorage.getItem('bebe_fz')||'md';
+      return ['xs','md','lg','xl'].map(sz=>`<button class="fz-opt${curr===sz?' active':''}" data-fz-val="${sz}"><span style="font-size:${aSize[sz]};font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;line-height:1">A</span><span style="font-size:0.5625rem;color:var(--c-t4);font-weight:500">${labels[sz]}</span></button>`).join('');
+    })()}</div>
   </div>
 </div>
 <div style="margin-bottom:8px">
@@ -3281,6 +3305,7 @@ function bind(child,data){
   });
   document.querySelectorAll('[data-theme-val]').forEach(b=>b.addEventListener('click',()=>setTheme(b.dataset.themeVal)));
   document.querySelectorAll('[data-lang-val]').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.langVal)));
+  document.querySelectorAll('[data-fz-val]').forEach(b=>b.addEventListener('click',()=>setFontSize(b.dataset.fzVal)));
   document.querySelectorAll('[data-prov]').forEach(b=>b.addEventListener('click',()=>{saveProvider(b.dataset.prov);render();}));
   document.getElementById('anthropic-key-in')?.addEventListener('change',ev=>{saveAnthropicKey(ev.target.value.trim());S._claudeTest=null;S._claudeTestMsg=null;});
   document.getElementById('btn-test-claude')?.addEventListener('click',async()=>{
@@ -3722,6 +3747,7 @@ async function shareHighlight(child,data){
 
 initTheme();
 initLang();
+initFontSize();
 initKeyboardAwareness();
 render();
 
