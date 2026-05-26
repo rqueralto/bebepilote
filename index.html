@@ -2342,23 +2342,24 @@ function renderChat(child,data){
       <!-- Accordéon -->
       <div class="chat-acc">${(()=>{
         const chev=`<svg class="chat-acc-chevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`;
+        const icoNow=`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`;const icoExplore=`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`;const icoCtrv=`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="20" x2="6" y2="14"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="18" y1="20" x2="18" y2="10"/></svg>`;
         const open=S.chat.openSections;
         const sections=[
           {
             id:'now',
-            icon:'⚡',
+            icon:icoNow,
             label:S.lang==='en'?'Right now':'Là, maintenant',
             chips:getCoachSituations(ageInDays).map(s=>({txt:s.label,q:`Moment difficile avec ${child.firstName} là maintenant : ${s.label}. Aide-moi concrètement — qu'est-ce que je peux faire dans les 30 prochaines secondes ?`}))
           },
           {
             id:'explore',
-            icon:'💡',
+            icon:icoExplore,
             label:S.lang==='en'?'Explore':'Explorer',
             chips:chips.filter(c=>!c.sos).map(c=>({txt:c.label,q:c.label,tpl:c.template}))
           },
           {
             id:'ctrv',
-            icon:'🎯',
+            icon:icoCtrv,
             label:S.lang==='en'?'Controversy of the day':'Controverse du jour',
             chips:S.controverse.data?[
               {txt:`Résume-moi les camps : « ${e(S.controverse.data.question).substring(0,55)}… »`,q:`Résume-moi les différentes positions sur la controverse suivante : « ${S.controverse.data.question} »`},
@@ -2371,7 +2372,7 @@ function renderChat(child,data){
           const isOpen=open.includes(sec.id);
           return`<div>
             <button class="chat-acc-btn${isOpen?' open':''}" data-acc="${sec.id}">
-              <span class="chat-acc-lbl"><span>${sec.icon}</span>${e(sec.label)}</span>
+              <span class="chat-acc-lbl">${sec.icon}${e(sec.label)}</span>
               ${chev}
             </button>
             ${isOpen?`<div class="chat-acc-body">
