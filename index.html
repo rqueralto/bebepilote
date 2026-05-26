@@ -663,7 +663,7 @@ activite:[
 
 const _sw='stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
 const _ico=(path,extra='')=>`<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" ${_sw} ${extra}>${path}</svg>`;
-const VERSION='1.1.6';
+const VERSION='1.1.7';
 const ALL_SECTIONS=[
   {id:'langage',  label:'Langage & Communication',  label_en:'Language & Communication', icon:_ico('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/>'),colorBg:'acc-blue',  colorText:'acc-blue'},
   {id:'motricite',label:'La Motricité',              label_en:'Motor Skills',              icon:_ico('<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>'),colorBg:'acc-green', colorText:'acc-green'},
@@ -1465,23 +1465,43 @@ function netErrMsg(err){
 async function aiControverse(sys){
   if(S.provider==='anthropic'){
     if(!S.anthropicKey)throw new Error('Clé Claude manquante (Paramètres).');
-    const ac=new AbortController();const tid=setTimeout(()=>ac.abort(),55000);
+    // 20s to establish the connection — once streaming starts, no further timer needed
+    const ac=new AbortController();const tid=setTimeout(()=>ac.abort(),20000);
     let res;
     try{res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',headers:anthropicHeaders(),signal:ac.signal,
+      method:'POST',
+      headers:{...anthropicHeaders(),'accept':'text/event-stream'},
+      signal:ac.signal,
       body:JSON.stringify({
-        model:ANTHROPIC_MODEL,max_tokens:2500,system:sys,
+        model:ANTHROPIC_MODEL,max_tokens:2500,stream:true,system:sys,
         messages:[{role:'user',content:'Génère la controverse du jour.'}],
         tools:[{name:'controverse',description:'Renvoie la controverse du jour, structurée.',input_schema:CTRV_TOOL_SCHEMA}],
         tool_choice:{type:'tool',name:'controverse'}
       })
-    });}catch(e){clearTimeout(tid);console.error('[aiControverse Anthropic]',e);if(e.name==='AbortError')throw new Error('Délai dépassé — réessaie.');throw new TypeError(e.message);}
+    });}catch(e){clearTimeout(tid);console.error('[aiControverse connect]',e);if(e.name==='AbortError')throw new Error('Délai dépassé — réessaie.');throw new TypeError(e.message);}
     clearTimeout(tid);
     if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`Erreur ${res.status}`);}
-    const j=await res.json();
-    const tu=(j.content||[]).find(b=>b.type==='tool_use');
-    if(!tu||!tu.input)throw new Error('Réponse Claude sans bloc structuré');
-    return tu.input;
+    // Read the SSE stream — iOS keeps active streaming connections alive
+    const reader=res.body.getReader();const dec=new TextDecoder();
+    let buf='';let inputJson='';
+    try{
+      while(true){
+        const{done,value}=await reader.read();
+        if(done)break;
+        buf+=dec.decode(value,{stream:true});
+        const lines=buf.split('\n');buf=lines.pop()||'';
+        for(const line of lines){
+          if(!line.startsWith('data: '))continue;
+          const raw=line.slice(6).trim();
+          if(!raw||raw==='[DONE]')continue;
+          let ev;try{ev=JSON.parse(raw);}catch{continue;}
+          if(ev.type==='content_block_delta'&&ev.delta?.type==='input_json_delta')inputJson+=ev.delta.partial_json||'';
+          if(ev.type==='error')throw new Error(ev.error?.message||'Erreur streaming Claude');
+        }
+      }
+    }catch(e){console.error('[aiControverse stream]',e);throw e.name==='AbortError'?new Error('Délai dépassé — réessaie.'):e;}
+    if(!inputJson)throw new Error('Réponse Claude sans données');
+    return JSON.parse(inputJson);
   }
   if(!S.apiKey)throw new Error('Clé Gemini manquante (Paramètres).');
   const ac2=new AbortController();const tid2=setTimeout(()=>ac2.abort(),55000);
@@ -1530,6 +1550,7 @@ async function aiDeepDive(sys,q,grounded){
 }
 
 async function generateControverse(child,data,force){
+  if(S.controverse.loading)return; // prevent concurrent calls
   if(S.provider==='anthropic'){if(!S.anthropicKey){S.controverse.error='Ajoute ta clé Claude dans les Paramètres.';S.controverse.childKey=ctrvIdent(child);render();return;}}
   else if(!S.apiKey){S.modal='apikey';render();return;}
   S.controverse.dive={open:false,items:[],loading:false,error:null};
