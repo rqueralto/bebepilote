@@ -1640,6 +1640,266 @@ Réponds UNIQUEMENT avec le JSON structuré demandé.`;
   }
 }
 
+// ── Creuser : parsing des registres + appel Gemini grounded ──
+function parseDiveAnswer(txt){
+  const re=/(◆\s*FAIT|◇\s*INTERPR[ÉE]TATION|○\s*POSITION|⚠\s*S[ÉE]CURIT[ÉE])\s*:?\s*/gi;
+  const idxs=[];let m;
+  while((m=re.exec(txt))){idxs.push({tag:m[1].toUpperCase(),start:m.index,end:re.lastIndex});}
+  if(!idxs.length)return[{type:'plain',text:txt.trim()}];
+  const out=[];
+  const pre=txt.slice(0,idxs[0].start).trim();
+  if(pre)out.push({type:'plain',text:pre});
+  for(let i=0;i<idxs.length;i++){
+    const cur=idxs[i],next=idxs[i+1];
+    const body=txt.slice(cur.end,next?next.start:undefined).trim();
+    let type='position';
+    if(cur.tag.includes('FAIT'))type='fait';
+    else if(cur.tag.includes('INTERPR'))type='interp';
+    else if(cur.tag.includes('POSITION'))type='position';
+    else type='safety';
+    if(body)out.push({type,text:body});
+  }
+  return out;
+}
+
+async function askDeepDive(child,data,q){
+  const keyMissing=S.provider==='anthropic'?!S.anthropicKey:!S.apiKey;
+  if(keyMissing){
+    if(S.provider==='anthropic'){S.controverse.dive.open=true;S.controverse.dive.error='Ajoute ta clé Claude dans les Paramètres.';render();return;}
+    S.modal='apikey';render();return;
+  }
+  if(S.controverse.dive.loading)return;
+  const d=S.controverse.data;if(!d||!q||!q.trim())return;
+  S.controverse.dive.open=true;S.controverse.dive.loading=true;S.controverse.dive.error=null;render();
+  const campsTxt=d.camps.map(c=>`${c.name} — ${c.logic}`).join(' || ');
+  const sys=`Tu approfondis une controverse parentale pour un parent universitaire exigeant, dans l'app BébéPilote.
+
+## Controverse en cours (reste ancré dessus, ne dérive pas)
+Question : ${d.question}
+Camps : ${campsTxt}
+
+## Enfant
+${child.firstName}, ${child.gender==='girl'?'fille':'garçon'}, ${data.ageLabel}.
+
+## Ta mission
+Réponds à la question de suivi du parent de façon rigoureuse, nuancée et HONNÊTE sur le statut épistémique de chaque affirmation.
+
+## Format OBLIGATOIRE
+Structure ta réponse en 2 à 5 blocs. Chaque bloc commence sur une NOUVELLE LIGNE par EXACTEMENT l'un de ces tags, suivi de ":" puis du texte :
+◆FAIT : une affirmation empirique établie, appuyée par une source que tu as réellement trouvée via la recherche.
+◇INTERPRÉTATION : une lecture plausible mais non tranchée par les données.
+○POSITION : une recommandation ou doctrine — nomme qui la porte (école, institution, auteur).
+⚠SÉCURITÉ : UNIQUEMENT si le sujet touche un risque vital (mort subite, étouffement, fièvre grave, allergie, sécurité physique). Invite alors à se référer à une autorité médicale (AAP, HAS, OMS) plutôt qu'à te croire.
+
+## Règles dures
+- Sers-toi de la recherche web pour fonder chaque ◆FAIT. N'invente JAMAIS d'étude, de chiffre ni de date.
+- Si tu ne trouves pas de source fiable, n'utilise PAS ◆FAIT — bascule en ◇INTERPRÉTATION.
+- Français, dense, sans remplissage. Ne commence pas par "Bien sûr" ni "Absolument".`;
+  const callDive=async(grounded)=>{
+    const {text,sources}=await aiDeepDive(sys,q.trim(),grounded);
+    return {blocks:parseDiveAnswer(text),sources,grounded};
+  };
+  let result=null;
+  try{result=await callDive(true);}
+  catch(err){
+    // Grounding indisponible (quota séparé sur tier gratuit, ou outil non supporté) → repli sans recherche web
+    try{result=await callDive(false);}
+    catch(err2){S.controverse.dive.loading=false;S.controverse.dive.error=netErrMsg(err2);render();return;}
+  }
+  S.controverse.dive.items.push({q:q.trim(),...result});
+  S.controverse.dive.loading=false;render();
+}
+
+function renderDiveBlock(b){
+  const cfg={
+    fait:{c:'#3A5E38',sym:'◆',label:'Fait établi · sourcé'},
+    interp:{c:'#A06C2A',sym:'◇',label:'Interprétation'},
+    position:{c:'#C48A40',sym:'○',label:'Position / recommandation'},
+    safety:{c:'#A03828',sym:'⚠',label:'Sécurité'}
+  };
+  if(b.type==='plain')return`<p style="font-size:0.8438rem;color:#5C5752;line-height:1.7;margin-bottom:12px">${e(b.text)}</p>`;
+  const k=cfg[b.type]||cfg.position;
+  if(b.type==='safety')return`<div style="background:rgba(160,56,40,.07);border-radius:10px;padding:11px 13px;margin-bottom:12px">
+    <p style="font-size:0.625rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:${k.c};margin-bottom:4px">${k.sym} ${k.label}</p>
+    <p style="font-size:0.8125rem;color:#5C5752;line-height:1.6">${e(b.text)}</p>
+  </div>`;
+  return`<div style="margin-bottom:13px">
+    <p style="font-size:0.625rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:${k.c};margin-bottom:3px">${k.sym} ${k.label}</p>
+    <p style="font-size:0.8438rem;color:#5C5752;line-height:1.65">${e(b.text)}</p>
+  </div>`;
+}
+
+function renderDiveItem(it,child,data,idx){
+  const faved=child?isFavorited(favId(child.firstName,'creuser',it.q)):false;
+  return`<div style="margin-bottom:24px">
+    <div style="display:flex;gap:7px;align-items:flex-start;margin-bottom:13px;padding-bottom:11px;border-bottom:1px solid var(--c-bd)">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#A06C2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:3px"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+      <p style="font-size:0.875rem;font-weight:600;color:var(--c-ink);line-height:1.4">${e(it.q)}</p>
+    </div>
+    ${it.blocks.map(renderDiveBlock).join('')}
+    ${it.grounded===false?`<p style="font-size:0.6875rem;color:#B0A89E;font-style:italic;margin-top:4px">Réponse sans recherche web (mode prudent — sans citation chiffrée). Le grounding s'activera avec un quota Google Search.</p>`:''}
+    ${it.sources&&it.sources.length?`<div style="margin-top:12px;padding-top:10px;border-top:1px dashed var(--c-bd)">
+      <p style="font-size:0.625rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#9C9790;margin-bottom:7px">Sources</p>
+      ${it.sources.map(s=>`<a href="${e(s.uri)}" target="_blank" rel="noopener" class="msg-ref-link"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>${e(s.title)}</a>`).join('')}
+    </div>`:''}
+    ${child?`<div style="display:flex;gap:6px;margin-top:12px;padding-top:8px;border-top:1px solid var(--c-bd)">${modalActBtns('data-fav-dive',idx,'data-share-dive',idx,faved)}</div>`:''}
+  </div>`;
+}
+
+function renderControverseDive(child,d,dv,data){
+  const sugg=(d.deep_questions&&d.deep_questions.length)?d.deep_questions.slice(0,3):[
+    'Pourquoi les experts sont-ils en désaccord sur ce point ?',
+    `Qu'est-ce qui change selon le tempérament de ${child.firstName} ?`,
+    'Que disent les données les plus récentes ?'
+  ];
+  return`<div class="overlay" id="modal-overlay">
+<div class="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head">
+    <div style="display:flex;align-items:center;gap:8px">
+      <button id="btn-dive-back" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;color:var(--c-t3)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg></button>
+      <span style="font-weight:600;font-size:0.875rem">Creuser · ${e(d.topic)}</span>
+    </div>
+    ${xBtn()}
+  </div>
+  <div class="sheet-body">
+    <div style="background:var(--c-bg2);border-left:3px solid #A06C2A;border-radius:0 10px 10px 0;padding:10px 14px;margin-bottom:20px">
+      <p style="font-size:0.8125rem;color:#6B6480;font-weight:600;line-height:1.4">${e(d.question)}</p>
+    </div>
+    ${dv.items.map((it,idx)=>renderDiveItem(it,child,data,idx)).join('')}
+    ${dv.loading?`<div style="display:flex;align-items:center;gap:9px;color:#C48A40;font-size:0.8125rem;margin-bottom:18px"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9" style="opacity:.25"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>Recherche en cours…</div>`:''}
+    ${dv.error?`<p style="font-size:0.8125rem;color:#A03828;margin-bottom:14px">${e(dv.error)}</p>`:''}
+    ${!dv.loading?`
+      <p style="font-size:0.6875rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#A06C2A;margin:6px 0 11px">${dv.items.length?'Continuer à creuser':'Creuser — par où ?'}</p>
+      ${sugg.map(q=>`<button class="dive-sugg" data-dive-q="${e(q)}">↳ ${e(q)}</button>`).join('')}
+      <div class="dive-ask">
+        <input id="dive-input" type="text" placeholder="Ou pose ta propre question…" autocomplete="off"/>
+        <button id="dive-send" class="dive-send-btn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+      </div>
+    `:''}
+    <div style="height:8px"></div>
+  </div>
+</div></div>`;
+}
+
+function ctrvShareText(d){return `${d.why_now} — ${d.bridge}`;}
+function diveShareText(it){return (it.blocks||[]).map(b=>b.text).join(' ');}
+
+function ctrvFullText(d){
+  const L=['CONTROVERSE — '+d.topic,'',d.question,'',d.why_now,'','— LES CAMPS —'];
+  (d.camps||[]).forEach(c=>{
+    L.push('','▸ '+c.name,c.logic);
+    (c.pros||[]).forEach(p=>L.push('  + '+p));
+    (c.cons||[]).forEach(p=>L.push('  − '+p));
+  });
+  L.push('','— CE QU\'ON SAIT —',d.known,'','— CE QU\'ON CROIT (pas un fait) —',d.believed,'','— CE QU\'ON NE SAIT PAS —',d.unknown,'','— ET POUR BÉBÉ ? —',d.bridge,'','— BébéPilote');
+  return L.join('\n');
+}
+function diveFullText(it){
+  const labels={fait:'FAIT ÉTABLI',interp:'INTERPRÉTATION',position:'POSITION',safety:'SÉCURITÉ',plain:''};
+  const L=['CREUSER — '+it.q,''];
+  (it.blocks||[]).forEach(b=>{const lb=labels[b.type];if(lb)L.push('['+lb+']');L.push(b.text,'');});
+  if(it.sources&&it.sources.length){L.push('Sources :');it.sources.forEach(s=>L.push('- '+s.title+' '+s.uri));L.push('');}
+  L.push('— BébéPilote');
+  return L.join('\n');
+}
+function toast(msg){
+  const el=document.createElement('div');
+  el.textContent=msg;
+  el.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:rgba(20,18,16,.92);color:#fff;padding:10px 16px;border-radius:10px;font-size:0.8125rem;font-weight:500;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,.25);max-width:80%;text-align:center';
+  document.body.appendChild(el);
+  setTimeout(()=>{el.style.transition='opacity .3s';el.style.opacity='0';setTimeout(()=>el.remove(),300);},1600);
+}
+async function shareTextContent(title,text){
+  if(navigator.share){try{await navigator.share({title,text});return;}catch(err){if(err&&err.name==='AbortError')return;}}
+  try{await navigator.clipboard.writeText(text);toast('Texte copié dans le presse-papier');}
+  catch{toast('Impossible de copier');}
+}
+
+function renderCtrvFavBody(d){
+  const cols=['#A06C2A','#3A5E38','#2D4A8A'];
+  return`<p style="font-family:'Cormorant Garamond',serif;font-size:1.125rem;font-weight:500;color:var(--c-ink);line-height:1.25;margin-bottom:6px">${e(d.question)}</p>
+  <p style="font-size:0.75rem;color:#6B6480;line-height:1.55;margin-bottom:12px">${e(d.why_now)}</p>
+  ${(d.camps||[]).map((cp,i)=>`<div style="border-left:3px solid ${cols[i%3]};padding-left:10px;margin-bottom:10px">
+    <p style="font-weight:700;font-size:0.8125rem;color:var(--c-ink);margin-bottom:4px">${e(cp.name)}</p>
+    ${(cp.pros||[]).map(p=>`<div style="display:flex;gap:6px;margin-bottom:3px"><span style="color:#3A5E38;font-weight:800">✓</span><span style="font-size:0.75rem;color:#5C5752;line-height:1.45">${md(p)}</span></div>`).join('')}
+    ${(cp.cons||[]).map(p=>`<div style="display:flex;gap:6px;margin-bottom:3px"><span style="color:#A03828;font-weight:800">✗</span><span style="font-size:0.75rem;color:#5C5752;line-height:1.45">${md(p)}</span></div>`).join('')}
+  </div>`).join('')}
+  <div style="background:var(--c-bg2);border-radius:10px;padding:11px;margin:10px 0">
+    <p style="font-size:0.625rem;font-weight:700;text-transform:uppercase;color:#3A5E38;margin-bottom:2px">◆ Ce qu'on sait</p><p style="font-size:0.75rem;color:#5C5752;line-height:1.5;margin-bottom:8px">${md(d.known)}</p>
+    <p style="font-size:0.625rem;font-weight:700;text-transform:uppercase;color:#A06C2A;margin-bottom:2px">◇ Ce qu'on croit</p><p style="font-size:0.75rem;color:#5C5752;line-height:1.5;margin-bottom:8px">${md(d.believed)}</p>
+    <p style="font-size:0.625rem;font-weight:700;text-transform:uppercase;color:#C48A40;margin-bottom:2px">○ Ce qu'on ne sait pas</p><p style="font-size:0.75rem;color:#5C5752;line-height:1.5">${md(d.unknown)}</p>
+  </div>
+  <div class="refs-block acc-plum"><p style="font-size:0.625rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">Et pour bébé ?</p>${renderBridge(d.bridge,'0.75rem')}</div>`;
+}
+
+function renderDiveFavBody(f){
+  return`<p style="font-size:0.8125rem;font-weight:600;color:var(--c-ink);line-height:1.4;margin-bottom:10px">${e(f.title)}</p>
+  ${(f.blocks||[]).map(renderDiveBlock).join('')}
+  ${f.diveSources&&f.diveSources.length?`<div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--c-bd)"><p style="font-size:0.625rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#9C9790;margin-bottom:6px">Sources</p>${f.diveSources.map(s=>`<a href="${e(s.uri)}" target="_blank" rel="noopener" class="msg-ref-link">${e(s.title)}</a>`).join('')}</div>`:''}`;
+}
+
+// ── Mode "Là, maintenant" : triage rapide en situation chaude ──
+
+
+function ctrvShareText(d){return `${d.why_now} — ${d.bridge}`;}
+function diveShareText(it){return (it.blocks||[]).map(b=>b.text).join(' ');}
+
+function ctrvFullText(d){
+  const L=['CONTROVERSE — '+d.topic,'',d.question,'',d.why_now,'','— LES CAMPS —'];
+  (d.camps||[]).forEach(c=>{
+    L.push('','▸ '+c.name,c.logic);
+    (c.pros||[]).forEach(p=>L.push('  + '+p));
+    (c.cons||[]).forEach(p=>L.push('  − '+p));
+  });
+  L.push('','— CE QU\'ON SAIT —',d.known,'','— CE QU\'ON CROIT (pas un fait) —',d.believed,'','— CE QU\'ON NE SAIT PAS —',d.unknown,'','— ET POUR BÉBÉ ? —',d.bridge,'','— BébéPilote');
+  return L.join('\n');
+}
+function diveFullText(it){
+  const labels={fait:'FAIT ÉTABLI',interp:'INTERPRÉTATION',position:'POSITION',safety:'SÉCURITÉ',plain:''};
+  const L=['CREUSER — '+it.q,''];
+  (it.blocks||[]).forEach(b=>{const lb=labels[b.type];if(lb)L.push('['+lb+']');L.push(b.text,'');});
+  if(it.sources&&it.sources.length){L.push('Sources :');it.sources.forEach(s=>L.push('- '+s.title+' '+s.uri));L.push('');}
+  L.push('— BébéPilote');
+  return L.join('\n');
+}
+function toast(msg){
+  const el=document.createElement('div');
+  el.textContent=msg;
+  el.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:rgba(20,18,16,.92);color:#fff;padding:10px 16px;border-radius:10px;font-size:0.8125rem;font-weight:500;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,.25);max-width:80%;text-align:center';
+  document.body.appendChild(el);
+  setTimeout(()=>{el.style.transition='opacity .3s';el.style.opacity='0';setTimeout(()=>el.remove(),300);},1600);
+}
+async function shareTextContent(title,text){
+  if(navigator.share){try{await navigator.share({title,text});return;}catch(err){if(err&&err.name==='AbortError')return;}}
+  try{await navigator.clipboard.writeText(text);toast('Texte copié dans le presse-papier');}
+  catch{toast('Impossible de copier');}
+}
+
+function renderCtrvFavBody(d){
+  const cols=['#A06C2A','#3A5E38','#2D4A8A'];
+  return`<p style="font-family:'Cormorant Garamond',serif;font-size:1.125rem;font-weight:500;color:var(--c-ink);line-height:1.25;margin-bottom:6px">${e(d.question)}</p>
+  <p style="font-size:0.75rem;color:#6B6480;line-height:1.55;margin-bottom:12px">${e(d.why_now)}</p>
+  ${(d.camps||[]).map((cp,i)=>`<div style="border-left:3px solid ${cols[i%3]};padding-left:10px;margin-bottom:10px">
+    <p style="font-weight:700;font-size:0.8125rem;color:var(--c-ink);margin-bottom:4px">${e(cp.name)}</p>
+    ${(cp.pros||[]).map(p=>`<div style="display:flex;gap:6px;margin-bottom:3px"><span style="color:#3A5E38;font-weight:800">✓</span><span style="font-size:0.75rem;color:#5C5752;line-height:1.45">${md(p)}</span></div>`).join('')}
+    ${(cp.cons||[]).map(p=>`<div style="display:flex;gap:6px;margin-bottom:3px"><span style="color:#A03828;font-weight:800">✗</span><span style="font-size:0.75rem;color:#5C5752;line-height:1.45">${md(p)}</span></div>`).join('')}
+  </div>`).join('')}
+  <div style="background:var(--c-bg2);border-radius:10px;padding:11px;margin:10px 0">
+    <p style="font-size:0.625rem;font-weight:700;text-transform:uppercase;color:#3A5E38;margin-bottom:2px">◆ Ce qu'on sait</p><p style="font-size:0.75rem;color:#5C5752;line-height:1.5;margin-bottom:8px">${md(d.known)}</p>
+    <p style="font-size:0.625rem;font-weight:700;text-transform:uppercase;color:#A06C2A;margin-bottom:2px">◇ Ce qu'on croit</p><p style="font-size:0.75rem;color:#5C5752;line-height:1.5;margin-bottom:8px">${md(d.believed)}</p>
+    <p style="font-size:0.625rem;font-weight:700;text-transform:uppercase;color:#C48A40;margin-bottom:2px">○ Ce qu'on ne sait pas</p><p style="font-size:0.75rem;color:#5C5752;line-height:1.5">${md(d.unknown)}</p>
+  </div>
+  <div class="refs-block acc-plum"><p style="font-size:0.625rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">Et pour bébé ?</p>${renderBridge(d.bridge,'0.75rem')}</div>`;
+}
+
+function renderDiveFavBody(f){
+  return`<p style="font-size:0.8125rem;font-weight:600;color:var(--c-ink);line-height:1.4;margin-bottom:10px">${e(f.title)}</p>
+  ${(f.blocks||[]).map(renderDiveBlock).join('')}
+  ${f.diveSources&&f.diveSources.length?`<div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--c-bd)"><p style="font-size:0.625rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#9C9790;margin-bottom:6px">Sources</p>${f.diveSources.map(s=>`<a href="${e(s.uri)}" target="_blank" rel="noopener" class="msg-ref-link">${e(s.title)}</a>`).join('')}</div>`:''}`;
+}
+
+// ── Mode "Là, maintenant" : triage rapide en situation chaude ──
 
 function renderControverseModal(child,data){
   const d=S.controverse.data;if(!d)return'';
