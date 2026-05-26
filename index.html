@@ -1842,64 +1842,36 @@ function renderDiveFavBody(f){
 // ── Mode "Là, maintenant" : triage rapide en situation chaude ──
 
 
-function ctrvShareText(d){return `${d.why_now} — ${d.bridge}`;}
-function diveShareText(it){return (it.blocks||[]).map(b=>b.text).join(' ');}
-
-function ctrvFullText(d){
-  const L=['CONTROVERSE — '+d.topic,'',d.question,'',d.why_now,'','— LES CAMPS —'];
-  (d.camps||[]).forEach(c=>{
-    L.push('','▸ '+c.name,c.logic);
-    (c.pros||[]).forEach(p=>L.push('  + '+p));
-    (c.cons||[]).forEach(p=>L.push('  − '+p));
-  });
-  L.push('','— CE QU\'ON SAIT —',d.known,'','— CE QU\'ON CROIT (pas un fait) —',d.believed,'','— CE QU\'ON NE SAIT PAS —',d.unknown,'','— ET POUR BÉBÉ ? —',d.bridge,'','— BébéPilote');
-  return L.join('\n');
+function renderControverseCard(child,data){
+  const c=S.controverse;
+  if(c.loading)return`<div class="ctrv-card" style="cursor:default">
+    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A06C2A;margin-bottom:12px">◆ Controverse du jour</p>
+    <div style="height:15px;width:75%;background:rgba(91,70,144,.16);border-radius:6px;margin-bottom:9px"></div>
+    <div style="height:15px;width:90%;background:rgba(91,70,144,.12);border-radius:6px;margin-bottom:9px"></div>
+    <div style="height:15px;width:45%;background:rgba(91,70,144,.1);border-radius:6px"></div>
+    <p style="font-size:0.75rem;color:#C48A40;margin-top:14px">Génération en cours…</p>
+  </div>`;
+  if(c.error)return`<button class="ctrv-card" id="btn-ctrv-retry">
+    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A06C2A;margin-bottom:8px">◆ Controverse du jour</p>
+    <p style="font-size:0.8125rem;color:#A03828;line-height:1.5">${e(c.error)}</p>
+    <p style="font-size:0.75rem;color:#A06C2A;margin-top:10px;font-weight:600">Toucher pour réessayer</p>
+  </button>`;
+  const d=c.data;
+  if(!d)return`<button class="ctrv-card" id="btn-ctrv-gen">
+    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A06C2A;margin-bottom:8px">◆ Controverse du jour</p>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:1.3125rem;font-weight:500;color:var(--c-ink);line-height:1.2">Qu'est-ce que je vais apprendre aujourd'hui&nbsp;?</p>
+    <p style="font-size:0.75rem;color:#C48A40;margin-top:10px;font-weight:600">Générer la controverse du jour →</p>
+  </button>`;
+  return`<button class="ctrv-card" id="btn-ctrv-open">
+    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A06C2A;margin-bottom:11px">◆ Controverse du jour · ${e(d.topic)}</p>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:1.4375rem;font-weight:500;color:var(--c-ink);line-height:1.22;margin-bottom:10px">${e(d.question)}</p>
+    <p style="font-size:0.8125rem;color:#6B6480;line-height:1.5;margin-bottom:15px">${e(d.why_now)}</p>
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <span style="font-size:0.75rem;color:#C48A40">3 min de lecture</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;font-size:0.8125rem;font-weight:600;color:#A06C2A">Ouvrir <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </div>
+  </button>`;
 }
-function diveFullText(it){
-  const labels={fait:'FAIT ÉTABLI',interp:'INTERPRÉTATION',position:'POSITION',safety:'SÉCURITÉ',plain:''};
-  const L=['CREUSER — '+it.q,''];
-  (it.blocks||[]).forEach(b=>{const lb=labels[b.type];if(lb)L.push('['+lb+']');L.push(b.text,'');});
-  if(it.sources&&it.sources.length){L.push('Sources :');it.sources.forEach(s=>L.push('- '+s.title+' '+s.uri));L.push('');}
-  L.push('— BébéPilote');
-  return L.join('\n');
-}
-function toast(msg){
-  const el=document.createElement('div');
-  el.textContent=msg;
-  el.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:rgba(20,18,16,.92);color:#fff;padding:10px 16px;border-radius:10px;font-size:0.8125rem;font-weight:500;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,.25);max-width:80%;text-align:center';
-  document.body.appendChild(el);
-  setTimeout(()=>{el.style.transition='opacity .3s';el.style.opacity='0';setTimeout(()=>el.remove(),300);},1600);
-}
-async function shareTextContent(title,text){
-  if(navigator.share){try{await navigator.share({title,text});return;}catch(err){if(err&&err.name==='AbortError')return;}}
-  try{await navigator.clipboard.writeText(text);toast('Texte copié dans le presse-papier');}
-  catch{toast('Impossible de copier');}
-}
-
-function renderCtrvFavBody(d){
-  const cols=['#A06C2A','#3A5E38','#2D4A8A'];
-  return`<p style="font-family:'Cormorant Garamond',serif;font-size:1.125rem;font-weight:500;color:var(--c-ink);line-height:1.25;margin-bottom:6px">${e(d.question)}</p>
-  <p style="font-size:0.75rem;color:#6B6480;line-height:1.55;margin-bottom:12px">${e(d.why_now)}</p>
-  ${(d.camps||[]).map((cp,i)=>`<div style="border-left:3px solid ${cols[i%3]};padding-left:10px;margin-bottom:10px">
-    <p style="font-weight:700;font-size:0.8125rem;color:var(--c-ink);margin-bottom:4px">${e(cp.name)}</p>
-    ${(cp.pros||[]).map(p=>`<div style="display:flex;gap:6px;margin-bottom:3px"><span style="color:#3A5E38;font-weight:800">✓</span><span style="font-size:0.75rem;color:#5C5752;line-height:1.45">${md(p)}</span></div>`).join('')}
-    ${(cp.cons||[]).map(p=>`<div style="display:flex;gap:6px;margin-bottom:3px"><span style="color:#A03828;font-weight:800">✗</span><span style="font-size:0.75rem;color:#5C5752;line-height:1.45">${md(p)}</span></div>`).join('')}
-  </div>`).join('')}
-  <div style="background:var(--c-bg2);border-radius:10px;padding:11px;margin:10px 0">
-    <p style="font-size:0.625rem;font-weight:700;text-transform:uppercase;color:#3A5E38;margin-bottom:2px">◆ Ce qu'on sait</p><p style="font-size:0.75rem;color:#5C5752;line-height:1.5;margin-bottom:8px">${md(d.known)}</p>
-    <p style="font-size:0.625rem;font-weight:700;text-transform:uppercase;color:#A06C2A;margin-bottom:2px">◇ Ce qu'on croit</p><p style="font-size:0.75rem;color:#5C5752;line-height:1.5;margin-bottom:8px">${md(d.believed)}</p>
-    <p style="font-size:0.625rem;font-weight:700;text-transform:uppercase;color:#C48A40;margin-bottom:2px">○ Ce qu'on ne sait pas</p><p style="font-size:0.75rem;color:#5C5752;line-height:1.5">${md(d.unknown)}</p>
-  </div>
-  <div class="refs-block acc-plum"><p style="font-size:0.625rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">Et pour bébé ?</p>${renderBridge(d.bridge,'0.75rem')}</div>`;
-}
-
-function renderDiveFavBody(f){
-  return`<p style="font-size:0.8125rem;font-weight:600;color:var(--c-ink);line-height:1.4;margin-bottom:10px">${e(f.title)}</p>
-  ${(f.blocks||[]).map(renderDiveBlock).join('')}
-  ${f.diveSources&&f.diveSources.length?`<div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--c-bd)"><p style="font-size:0.625rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#9C9790;margin-bottom:6px">Sources</p>${f.diveSources.map(s=>`<a href="${e(s.uri)}" target="_blank" rel="noopener" class="msg-ref-link">${e(s.title)}</a>`).join('')}</div>`:''}`;
-}
-
-// ── Mode "Là, maintenant" : triage rapide en situation chaude ──
 
 function renderControverseModal(child,data){
   const d=S.controverse.data;if(!d)return'';
