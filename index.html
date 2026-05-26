@@ -181,7 +181,7 @@ a{color:#2D4A8A}
 .chat-prompt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
 .chat-prompt-card{background:var(--c-card);border:1px solid var(--c-bd2);border-radius:16px;padding:14px 13px;text-align:left;font-size:0.8125rem;line-height:1.5;color:var(--c-t2);transition:background .12s,transform .1s;cursor:pointer;display:flex;flex-direction:column;gap:7px}
 .chat-prompt-card:hover,.chat-prompt-card:active{background:var(--c-bg2);transform:scale(.98)}
-.chat-prompt-card.sos{background:#E8F2EA;border-color:#C8E0CC;grid-column:1/-1}
+.chat-prompt-card.sos{background:#E8F2EA;border-color:#C8E0CC}
 .chat-prompt-card.sos .chat-prompt-cat{color:#3D7050}
 [data-theme="dark"] .chat-prompt-card.sos{background:#1A2E20;border-color:#253D2A}
 .chat-prompt-cat{font-size:0.625rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t4)}
@@ -1640,6 +1640,35 @@ Réponds UNIQUEMENT avec le JSON structuré demandé.`;
   }
 }
 
+// ── Situations "moment difficile" par tranche d'âge ──
+function getCoachSituations(ageInDays){
+  const m=ageInDays/30.44;
+  if(m<12)return[
+    {id:'pleurs',label:"Pleurs inconsolables"},
+    {id:'dodo',label:"Refuse de dormir"},
+    {id:'reveil',label:"Réveils nocturnes"},
+    {id:'manger',label:"Refuse de manger"},
+    {id:'separation',label:"Angoisse quand je pars"},
+    {id:'bras',label:"Veut les bras non-stop"},
+  ];
+  if(m<42)return[
+    {id:'colere',label:"Crise de colère"},
+    {id:'manger',label:"Refuse de manger"},
+    {id:'tape',label:"Tape, mord ou pousse"},
+    {id:'dodo',label:"Ne veut pas dormir"},
+    {id:'non',label:"Dit « non » à tout"},
+    {id:'transition',label:"Transition difficile (parc, bain…)"},
+  ];
+  return[
+    {id:'colere',label:"Crise de colère"},
+    {id:'obeir',label:"Refuse d'obéir"},
+    {id:'conflit',label:"Conflit avec un autre enfant"},
+    {id:'peur',label:"Peurs, cauchemars"},
+    {id:'habiller',label:"Refuse de s'habiller / se préparer"},
+    {id:'transition',label:"Transition difficile"},
+  ];
+}
+
 // ── Creuser : parsing des registres + appel Gemini grounded ──
 function parseDiveAnswer(txt){
   const re=/(◆\s*FAIT|◇\s*INTERPR[ÉE]TATION|○\s*POSITION|⚠\s*S[ÉE]CURIT[ÉE])\s*:?\s*/gi;
@@ -2278,7 +2307,14 @@ function renderChat(child,data){
     {label:S.lang==='en'?`What foods and eating habits are appropriate for ${ageLabel}?`:`Quels aliments et habitudes alimentaires sont adaptés à ${ageLabel} ?`,cat:t('sugg_cat_food')},
     {label:S.lang==='en'?`How to support ${child.firstName}'s language development at ${ageLabel}?`:`Comment favoriser le développement du langage de ${child.firstName} à ${ageLabel} ?`,cat:t('sugg_cat_language')},
     {label:S.lang==='en'?`How to handle ${child.firstName}'s crying at ${ageLabel}?`:`Comment gérer les pleurs de ${child.firstName} à ${ageLabel} ?`,cat:t('sugg_cat_emotions')},
-    {label:S.lang==='en'?`I'm having a tough moment with ${child.firstName} right now — help me concretely and quickly, what can I do in the next 30 seconds?`:`Je vis un moment difficile avec ${child.firstName} là maintenant — aide-moi concrètement et vite, qu'est-ce que je peux faire dans les 30 prochaines secondes ?`,cat:S.lang==='en'?'⚡ Right now':'⚡ Maintenant',sos:true},
+    ...getCoachSituations(ageInDays).slice(0,4).map(s=>({
+      label:S.lang==='en'
+        ?`I'm having a tough moment right now with ${child.firstName}: ${s.label}. Help me concretely — what can I do in the next 30 seconds?`
+        :`Moment difficile avec ${child.firstName} là maintenant : ${s.label}. Aide-moi concrètement — qu'est-ce que je peux faire dans les 30 prochaines secondes ?`,
+      cat:S.lang==='en'?'⚡ Right now':'⚡ Maintenant',
+      sos:true,
+      sosLabel:s.label,
+    })),
   ];
   const lastMsg=msgs.length?msgs[msgs.length-1]:null;
   const showFollowups=lastMsg?.role==='assistant'&&!loading&&!stream;
@@ -2301,7 +2337,7 @@ function renderChat(child,data){
         </div>
       </div>
       <div class="chat-prompt-grid">
-        ${[...chips.filter(c=>c.sos),...chips.filter(c=>!c.sos).slice(0,4)].map(c=>`<button class="chat-prompt-card${c.sos?' sos':''}" data-q="${e(c.label)}"${c.template?' data-tpl="1"':''}><span class="chat-prompt-cat">${e(c.cat)}</span><span>${e(c.label)}</span></button>`).join('')}
+        ${[...chips.filter(c=>c.sos),...chips.filter(c=>!c.sos).slice(0,4)].map(c=>`<button class="chat-prompt-card${c.sos?' sos':''}" data-q="${e(c.label)}"${c.template?' data-tpl="1"':''}><span class="chat-prompt-cat">${e(c.cat)}</span><span>${e(c.sosLabel||c.label)}</span></button>`).join('')}
       </div>
       ${chips.filter(c=>!c.sos).length>4?`<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:0 4px">
         ${chips.filter(c=>!c.sos).slice(4).map(c=>`<button class="chip-btn" data-q="${e(c.label)}" style="font-size:0.75rem">${e(c.cat)}</button>`).join('')}
@@ -2326,7 +2362,7 @@ function renderChat(child,data){
       <div class="chat-sugg-list">
         ${[...chips.filter(c=>c.sos),...chips.filter(c=>!c.sos)].map(c=>`<button class="chat-sugg-item" data-q="${e(c.label)}"${c.template?' data-tpl="1"':''}>
           <span class="chat-sugg-cat">${e(c.cat)}</span>
-          <span class="chat-sugg-label">${e(c.label)}</span>
+          <span class="chat-sugg-label">${e(c.sosLabel||c.label)}</span>
         </button>`).join('')}
       </div>
     </div>`:''}
