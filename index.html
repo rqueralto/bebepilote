@@ -266,6 +266,13 @@ a{color:#2D4A8A}
 .lang-opt{flex:1;padding:9px 6px;border-radius:10px;font-size:0.8125rem;font-weight:600;background:var(--c-bg3);color:var(--c-t2);border:1.5px solid transparent;transition:all .15s;text-align:center}
 .lang-opt.active{background:var(--c-card);color:var(--c-ink);border-color:var(--c-bd2);box-shadow:0 1px 3px rgba(0,0,0,.08)}
 
+/* ── Coach "Là, maintenant" ── */
+.coach-card{display:block;width:100%;text-align:left;background:linear-gradient(135deg,#3A5E38,#2E4D2C);border-radius:18px;padding:18px;margin:0 16px 14px;width:calc(100% - 32px);box-shadow:0 2px 8px rgba(58,94,56,.22),0 8px 20px rgba(58,94,56,.14);transition:transform .1s,opacity .15s}
+.coach-card:active{transform:scale(.985)}
+[data-theme="dark"] .coach-card{background:linear-gradient(135deg,#2E4D2C,#23391F)}
+.coach-sit{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;text-align:left;padding:14px 16px;border-radius:12px;background:var(--c-bg2);border:1px solid var(--c-bd);font-size:0.9375rem;font-weight:500;color:var(--c-ink);transition:background .12s,border-color .12s}
+.coach-sit:active{background:var(--c-bg3)}
+
 /* ── Font size selector ── */
 .fz-opt{flex:1;padding:9px 6px;border-radius:10px;background:var(--c-bg3);color:var(--c-t2);border:1.5px solid transparent;transition:all .15s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px}
 .fz-opt.active{background:var(--c-card);color:var(--c-ink);border-color:var(--c-bd2);box-shadow:0 1px 3px rgba(0,0,0,.08)}
@@ -663,7 +670,7 @@ activite:[
 
 const _sw='stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
 const _ico=(path,extra='')=>`<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" ${_sw} ${extra}>${path}</svg>`;
-const VERSION='1.1.7';
+const VERSION='1.2.0';
 const ALL_SECTIONS=[
   {id:'langage',  label:'Langage & Communication',  label_en:'Language & Communication', icon:_ico('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/>'),colorBg:'acc-blue',  colorText:'acc-blue'},
   {id:'motricite',label:'La Motricité',              label_en:'Motor Skills',              icon:_ico('<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>'),colorBg:'acc-green', colorText:'acc-green'},
@@ -1391,6 +1398,7 @@ const S={
   profileSettings:false,
   flags:{controverse:true},
   controverse:{loading:false,error:null,data:null,childKey:null,dive:{open:false,items:[],loading:false,error:null}},
+  coach:{situation:null,stream:'',loading:false,error:null,done:false,feedback:null},
 };
 function saveKids(){localStorage.setItem('bebeChildren',JSON.stringify(S.children));}
 function saveKey(k){S.apiKey=k;localStorage.setItem('bebeApiKey',k);}
@@ -1635,6 +1643,58 @@ Réponds UNIQUEMENT avec le JSON structuré demandé.`;
   }
 }
 
+// ── Mode "Là, maintenant" : streaming d'une réponse coach apaisée ──
+function patchCoach(){
+  const el=document.getElementById('coach-stream');if(!el)return;
+  el.innerHTML=renderCoachResponse(S.coach.stream);
+  document.querySelector('.sheet-body')?.scrollTo({top:document.querySelector('.sheet-body').scrollHeight,behavior:'smooth'});
+}
+async function runCoach(child,data,sit){
+  if(S.provider==='anthropic'){if(!S.anthropicKey){S.coach.situation=sit;S.coach.error='Ajoute ta clé Claude dans les Paramètres.';render();return;}}
+  else if(!S.apiKey){S.coach.situation=sit;S.coach.error='Ajoute ta clé Gemini dans les Paramètres.';render();return;}
+  S.coach.situation=sit;S.coach.stream='';S.coach.loading=true;S.coach.error=null;S.coach.done=false;S.coach.feedback=null;render();
+  const sys=buildCoachPrompt(child,data,sit);
+  const dec=new TextDecoder();let buf='',full='';
+  const parse=chunk=>{buf+=chunk;const lines=buf.split('\n');buf=lines.pop();return lines;};
+  const flush=tx=>{full+=tx;S.coach.stream=full;patchCoach();};
+  try{
+    if(S.provider==='anthropic'){
+      const ac=new AbortController();const tid=setTimeout(()=>ac.abort(),20000);
+      let res;
+      try{res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',headers:{...anthropicHeaders(),'accept':'text/event-stream'},signal:ac.signal,
+        body:JSON.stringify({model:ANTHROPIC_MODEL,max_tokens:900,stream:true,system:sys,messages:[{role:'user',content:'Aide-moi avec cette situation, maintenant.'}]})
+      });}catch(e){clearTimeout(tid);if(e.name==='AbortError')throw new Error('Délai dépassé — réessaie.');throw new TypeError(e.message);}
+      clearTimeout(tid);
+      if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`Erreur ${res.status}`);}
+      const reader=res.body.getReader();let et='';
+      while(true){const{done,value}=await reader.read();if(done)break;
+        for(const l of parse(dec.decode(value,{stream:true}))){
+          if(l.startsWith('event: ')){et=l.slice(7).trim();continue;}
+          if(l.startsWith('data: ')&&et==='content_block_delta'){try{const p=JSON.parse(l.slice(6).trim());if(p.delta?.type==='text_delta'&&p.delta.text)flush(p.delta.text);}catch{}}
+        }
+      }
+    }else{
+      const res=await fetch(geminiUrl('streamGenerateContent')+'&alt=sse',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents:[{role:'user',parts:[{text:'Aide-moi avec cette situation, maintenant.'}]}],generationConfig:{temperature:.85}})
+      });
+      if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`Erreur ${res.status}`);}
+      const reader=res.body.getReader();
+      while(true){const{done,value}=await reader.read();if(done)break;
+        for(const l of parse(dec.decode(value,{stream:true}))){
+          if(l.startsWith('data: ')){const d2=l.slice(6).trim();if(!d2||d2==='[DONE]')continue;try{const p=JSON.parse(d2),tx=p.candidates?.[0]?.content?.parts?.[0]?.text;if(tx)flush(tx);}catch{}}
+        }
+      }
+    }
+    if(!full.trim())throw new Error('Réponse vide — réessaie.');
+    S.coach.loading=false;S.coach.done=true;render();
+  }catch(err){
+    console.error('[runCoach]',err);
+    S.coach.loading=false;S.coach.error=netErrMsg(err);render();
+  }
+}
+
 // ── Creuser : parsing des registres + appel Gemini grounded ──
 function parseDiveAnswer(txt){
   const re=/(◆\s*FAIT|◇\s*INTERPR[ÉE]TATION|○\s*POSITION|⚠\s*S[ÉE]CURIT[ÉE])\s*:?\s*/gi;
@@ -1834,6 +1894,96 @@ function renderDiveFavBody(f){
   ${f.diveSources&&f.diveSources.length?`<div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--c-bd)"><p style="font-size:0.625rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#9C9790;margin-bottom:6px">Sources</p>${f.diveSources.map(s=>`<a href="${e(s.uri)}" target="_blank" rel="noopener" class="msg-ref-link">${e(s.title)}</a>`).join('')}</div>`:''}`;
 }
 
+// ── Mode "Là, maintenant" : triage rapide en situation chaude ──
+function getCoachSituations(ageInDays){
+  const m=ageInDays/30.44;
+  if(m<12)return[
+    {id:'pleurs',label:"Pleurs inconsolables"},
+    {id:'dodo',label:"Refuse de dormir"},
+    {id:'reveil',label:"Réveils nocturnes"},
+    {id:'manger',label:"Refuse de manger"},
+    {id:'separation',label:"Angoisse quand je pars"},
+    {id:'bras',label:"Veut les bras non-stop"},
+  ];
+  if(m<42)return[
+    {id:'colere',label:"Crise de colère"},
+    {id:'manger',label:"Refuse de manger"},
+    {id:'tape',label:"Tape, mord ou pousse"},
+    {id:'dodo',label:"Ne veut pas dormir"},
+    {id:'non',label:"Dit « non » à tout"},
+    {id:'transition',label:"Transition difficile (parc, bain…)"},
+  ];
+  return[
+    {id:'colere',label:"Crise de colère"},
+    {id:'obeir',label:"Refuse d'obéir"},
+    {id:'conflit',label:"Conflit avec un autre enfant"},
+    {id:'peur',label:"Peurs, cauchemars"},
+    {id:'habiller',label:"Refuse de s'habiller / se préparer"},
+    {id:'transition',label:"Transition difficile"},
+  ];
+}
+function buildCoachPrompt(child,data,sit){
+  const sibs=getSiblings(S.children.indexOf(child));
+  let sibCtx='';
+  if(sibs.length){
+    const childDate=new Date(child.birthDate+'T12:00:00');
+    const lines=sibs.map(sib=>{
+      const sibDate=new Date(sib.birthDate+'T12:00:00');const older=sibDate<childDate;
+      const rel=sib.gender==='girl'?(older?'grande sœur':'petite sœur'):(older?'grand frère':'petit frère');
+      if(isUnborn(sib))return `- ${sib.firstName}, ${rel} à naître.`;
+      const gap=Math.abs(Math.round(getGapMonths(child,sib)));
+      return `- ${sib.firstName} (${rel}), ${gap} mois d'écart.`;
+    });
+    sibCtx=`\n## Fratrie\n${lines.join('\n')}\nN'invente jamais un frère ou une sœur hors de cette liste.`;
+  }
+  const extra=sit.free?` Le parent précise : « ${sit.free} ».`:'';
+  return `Tu es le copilote calme de "BébéPilote". Le parent t'écrit EN PLEIN MOMENT difficile avec son enfant — il est peut-être débordé, une main occupée, peu de patience. Ton seul rôle : l'aider à traverser CE moment, maintenant.
+
+## Enfant
+${child.firstName}, ${child.gender==='girl'?'fille':'garçon'}, ${data.ageLabel} (jour ${data.ageInDays}).${sibCtx}
+
+## Situation
+${sit.label}.${extra}
+
+## Ton (NON négociable)
+- Voix posée, chaleureuse, jamais culpabilisante. Tu parles à un parent compétent qui vit un moment dur — pas à un débutant.
+- Tutoie le parent. Phrases courtes. Zéro jargon. Pas de "Bien sûr", "Absolument", "Excellente question", pas de préambule.
+- Va droit au geste. Le parent doit pouvoir agir dans les 10 secondes.
+
+## Format EXACT — 3 blocs, séparés par une ligne vide, dans cet ordre :
+Dans l'instant : [1 à 2 gestes très concrets à faire MAINTENANT, adaptés à l'âge EXACT. Ce que le parent peut dire ou faire dans les 30 prochaines secondes. Sois précis : mots, gestes, posture.]
+
+À éviter : [le réflexe courant qui empire la situation à cet âge — une phrase, sans culpabiliser.]
+
+Pourquoi : [2-3 phrases. Ce qui se passe dans la tête de l'enfant à cet âge précis. C'est ici, et seulement ici, que tu peux être un peu plus profond — mais court et clair.]
+
+## Garde-fous
+- Ancre TOUT sur l'âge réel. Un geste pour 20 mois n'est pas un geste pour 4 ans.
+- Risque médical ou de sécurité (fièvre, chute, blessure, étouffement) : dis-le calmement et renvoie vers une consultation, sans paniquer.
+- N'invente jamais d'étude chiffrée. Tu peux nommer une école (Goldman, Montessori, Bowlby, Faber & Mazlish…) sans fausse précision.
+- Réponds en français. Rien d'autre que les 3 blocs.`;
+}
+function renderCoachResponse(txt){
+  if(!txt)return'';
+  const sw='stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"';
+  const icoNow=`<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" ${sw}><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`;
+  const icoAvoid=`<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" ${sw}><circle cx="12" cy="12" r="9"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+  const icoWhy=`<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" ${sw}><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 4.5 1.5c0 1.5-2 2-2 3"/><line x1="12" y1="16.5" x2="12.01" y2="16.5"/></svg>`;
+  const secs=[
+    {re:/^Dans l['’]instant\s*:\s*/i,label:"Dans l'instant",icon:icoNow,color:'#3A5E38'},
+    {re:/^[ÀA]\s*éviter\s*:\s*/i,label:"À éviter",icon:icoAvoid,color:'#A03828'},
+    {re:/^Pourquoi\s*:\s*/i,label:"Pourquoi",icon:icoWhy,color:'#2D4A8A'},
+  ];
+  return txt.split(/\n\n+/).filter(s=>s.trim()).map(seg=>{
+    const m=secs.find(s=>s.re.test(seg.trim()));
+    if(m){
+      const clean=seg.trim().replace(m.re,'');
+      return `<div style="margin-bottom:18px"><div style="display:flex;align-items:center;gap:6px;color:${m.color};margin-bottom:7px">${m.icon}<span style="font-size:0.625rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase">${m.label}</span></div><div style="font-size:0.9375rem;color:var(--c-t2);line-height:1.62">${md(clean)}</div></div>`;
+    }
+    return `<div style="font-size:0.9375rem;color:var(--c-t2);line-height:1.62;margin-bottom:12px">${md(seg)}</div>`;
+  }).join('');
+}
+
 function renderControverseCard(child,data){
   const c=S.controverse;
   if(c.loading)return`<div class="ctrv-card" style="cursor:default">
@@ -1863,6 +2013,61 @@ function renderControverseCard(child,data){
       <span style="display:inline-flex;align-items:center;gap:5px;font-size:0.8125rem;font-weight:600;color:#A06C2A">Ouvrir <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
     </div>
   </button>`;
+}
+
+function renderCoachModal(child,data){
+  const c=S.coach;
+  const sw='stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"';
+  let body;
+  if(!c.situation){
+    const sits=getCoachSituations(data.ageInDays);
+    const chev=`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--c-t4)" ${sw}><path d="M9 18l6-6-6-6"/></svg>`;
+    body=`
+    <p style="font-size:0.9375rem;color:var(--c-t2);line-height:1.55;margin-bottom:18px">Qu'est-ce qui se passe avec ${e(child.firstName)}, là, maintenant&nbsp;?</p>
+    <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:18px">
+      ${sits.map(s=>`<button class="coach-sit" data-coach-sit="${s.id}" data-coach-label="${e(s.label)}"><span>${e(s.label)}</span>${chev}</button>`).join('')}
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input id="coach-free" class="field" placeholder="Autre situation…" autocomplete="off" style="flex:1"/>
+      <button id="coach-free-go" style="flex-shrink:0;width:44px;height:44px;border-radius:11px;background:#3A5E38;color:#fff;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" ${sw}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+    </div>`;
+  }else{
+    const loadingDots=`<div style="display:flex;align-items:center;gap:9px;color:#3A5E38;font-size:0.8125rem"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9" style="opacity:.25"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>${e(child.firstName)}, j'arrive…</div>`;
+    const inner=c.error
+      ? `<p style="font-size:0.875rem;color:#A03828;line-height:1.5">${e(c.error)}</p><button id="coach-retry" style="margin-top:12px;font-size:0.8125rem;color:#3A5E38;font-weight:600;text-decoration:underline">Réessayer</button>`
+      : (renderCoachResponse(c.stream)||loadingDots);
+    const fbDone=c.feedback;
+    const feedbackBlock=(c.done&&!c.error)?`
+      <div style="border-top:1px solid var(--c-bd);margin-top:8px;padding-top:16px">
+        ${fbDone?`<p style="text-align:center;font-size:0.8125rem;color:#3A5E38;font-weight:600">Noté — courage, tu gères.</p>`:`
+        <p style="text-align:center;font-size:0.75rem;color:var(--c-t4);margin-bottom:10px">Ça t'a aidé&nbsp;?</p>
+        <div style="display:flex;gap:8px">
+          <button class="ctrv-fb" data-coach-fb="oui" style="flex:1">Oui</button>
+          <button class="ctrv-fb" data-coach-fb="un-peu" style="flex:1">Un peu</button>
+          <button class="ctrv-fb" data-coach-fb="non" style="flex:1">Pas vraiment</button>
+        </div>`}
+      </div>`:'';
+    body=`
+    <p style="font-size:0.6875rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#3A5E38;margin-bottom:14px">${e(c.situation.label)}</p>
+    <div id="coach-stream">${inner}</div>
+    ${feedbackBlock}
+    ${(c.done||c.error)?`<button id="coach-back" style="margin-top:16px;display:inline-flex;align-items:center;gap:6px;font-size:0.8125rem;color:var(--c-t3);font-weight:500"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" ${sw}><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>Autre situation</button>`:''}`;
+  }
+  return`<div class="overlay" id="modal-overlay">
+<div class="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head">
+    <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+      <div class="s-icon acc-sage" style="width:34px;height:34px;flex-shrink:0"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" ${sw}><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+      <span style="font-weight:600;font-size:0.875rem">Là, maintenant</span>
+    </div>
+    ${xBtn()}
+  </div>
+  <div class="sheet-body">
+    ${body}
+    <div style="height:8px"></div>
+  </div>
+</div></div>`;
 }
 
 function renderControverseModal(child,data){
@@ -2134,6 +2339,18 @@ function renderToday(child,data,childIdx){
   if(data.unborn)return renderPrenatal(child,childIdx??S.childIdx);
   const {milestone,neuron,ageLabel,ageInDays,sections}=data;
   return`<div style="padding-top:16px">
+<button class="coach-card" id="btn-coach-open">
+  <div style="display:flex;align-items:center;gap:12px">
+    <div style="width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+      <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    </div>
+    <div style="flex:1;min-width:0">
+      <p style="font-size:1rem;font-weight:700;color:#fff;line-height:1.2">Là, maintenant</p>
+      <p style="font-size:0.8125rem;color:rgba(255,255,255,.82);margin-top:2px;line-height:1.3">Un moment difficile avec ${e(child.firstName)}&nbsp;? Je t'aide tout de suite.</p>
+    </div>
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M9 18l6-6-6-6"/></svg>
+  </div>
+</button>
 ${S.flags.controverse?renderControverseCard(child,data):''}
 <!-- Section heading -->
 <div style="padding:0 16px;margin:4px 0 10px">
@@ -2977,6 +3194,7 @@ function render(){
   else if(S.modal==='prenatalDetail')modalHTML=renderPrenatalDetailModal(child);
   else if(S.modal==='prenatalSection')modalHTML=renderPrenatalSectionModal(S.modalSection,child);
   else if(S.modal==='controverse')modalHTML=renderControverseModal(child,data);
+  else if(S.modal==='coach')modalHTML=renderCoachModal(child,data);
   else if(S.modal==='settings')modalHTML=renderSettingsModal();
   else if(S.modal==='renameConv')modalHTML=renderRenameConvModal();
   else if(S.modal==='allConversations')modalHTML=renderAllConvsModal(child);
@@ -3157,6 +3375,15 @@ function bind(child,data){
   document.getElementById('btn-ctrv-retry')?.addEventListener('click',()=>generateControverse(child,data,true));
   document.getElementById('btn-ctrv-regen')?.addEventListener('click',()=>{S.modal=null;generateControverse(child,data,true);});
   document.querySelectorAll('[data-ctrv-fb]').forEach(b=>b.addEventListener('click',()=>{setCtrvFeedback(b.dataset.ctrvFb,child.firstName);render();}));
+  // Coach "Là, maintenant"
+  document.getElementById('btn-coach-open')?.addEventListener('click',()=>{S.coach={situation:null,stream:'',loading:false,error:null,done:false,feedback:null};S.modal='coach';render();});
+  document.querySelectorAll('[data-coach-sit]').forEach(b=>b.addEventListener('click',()=>runCoach(child,data,{id:b.dataset.coachSit,label:b.dataset.coachLabel})));
+  const coachFreeGo=()=>{const v=document.getElementById('coach-free')?.value.trim();if(v)runCoach(child,data,{id:'free',label:v,free:v});};
+  document.getElementById('coach-free-go')?.addEventListener('click',coachFreeGo);
+  document.getElementById('coach-free')?.addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();coachFreeGo();}});
+  document.getElementById('coach-retry')?.addEventListener('click',()=>{if(S.coach.situation)runCoach(child,data,S.coach.situation);});
+  document.getElementById('coach-back')?.addEventListener('click',()=>{S.coach={situation:null,stream:'',loading:false,error:null,done:false,feedback:null};render();});
+  document.querySelectorAll('[data-coach-fb]').forEach(b=>b.addEventListener('click',()=>{S.coach.feedback=b.dataset.coachFb;render();}));
   // Creuser (deep dive)
   document.getElementById('btn-ctrv-creuser')?.addEventListener('click',()=>{S.controverse.dive.open=true;S.controverse.dive.error=null;render();});
   document.getElementById('btn-dive-back')?.addEventListener('click',()=>{S.controverse.dive.open=false;render();});
