@@ -195,14 +195,18 @@ a{color:#2D4A8A}
 .chat-pill-send{width:34px;height:34px;border-radius:50%;background:var(--c-ink);color:var(--c-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s,transform .1s}
 .chat-pill-send:active{transform:scale(.9)}
 .chat-pill-send:disabled{opacity:.28}
-/* ⚡ Maintenant — pills row */
-.chat-sos-row{display:flex;gap:8px;overflow-x:auto;padding:2px 0 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-.chat-sos-row::-webkit-scrollbar{display:none}
-.chat-sos-pill{flex-shrink:0;padding:8px 14px;border-radius:99px;background:#E8F2EA;border:1px solid #C8E0CC;font-size:0.8125rem;font-weight:500;color:#2A5038;white-space:nowrap;transition:background .12s,transform .1s}
-.chat-sos-pill:active{background:#D5EBD9;transform:scale(.97)}
-[data-theme="dark"] .chat-sos-pill{background:#1A2E20;border-color:#253D2A;color:#6DAA7A}
-/* Section label */
-.chat-section-lbl{font-size:0.625rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--c-t4);margin-bottom:8px;padding-left:2px}
+/* ── Accordéon suggestions Zoé ── */
+.chat-acc{display:flex;flex-direction:column;gap:8px}
+.chat-acc-btn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:13px 15px;border-radius:14px;background:var(--c-card);border:1px solid var(--c-bd2);text-align:left;transition:background .12s,border-radius .15s}
+.chat-acc-btn.open{border-radius:14px 14px 0 0}
+.chat-acc-btn:active{background:var(--c-bg2)}
+.chat-acc-lbl{display:flex;align-items:center;gap:9px;font-size:0.9375rem;font-weight:600;color:var(--c-ink)}
+.chat-acc-lbl span{font-size:1rem}
+.chat-acc-chevron{transition:transform .2s;color:var(--c-t4);flex-shrink:0}
+.chat-acc-btn.open .chat-acc-chevron{transform:rotate(180deg)}
+.chat-acc-body{background:var(--c-card);border:1px solid var(--c-bd2);border-top:none;border-radius:0 0 14px 14px;padding:10px 12px 14px;display:flex;flex-wrap:wrap;gap:7px}
+.chat-acc-chip{padding:8px 13px;border-radius:10px;background:var(--c-bg2);border:1px solid var(--c-bd);font-size:0.8125rem;color:var(--c-t2);text-align:left;line-height:1.4;transition:background .12s,transform .1s}
+.chat-acc-chip:active{background:var(--c-bg3);transform:scale(.98)}
 /* Keyboard awareness */
 .keyboard-open .chat-pill-wrap{padding-bottom:max(10px,env(safe-area-inset-bottom))!important}
 /* Dots */
@@ -1382,7 +1386,7 @@ const S={
   _claudeTest:null,
   _claudeTestMsg:null,
   ob:{step:1,name:'',date:'',gender:'',apiKey:'',errs:{}},
-  chat:{msgs:[],stream:'',loading:false,showSugg:false,currentConvId:null},
+  chat:{msgs:[],stream:'',loading:false,showSugg:false,currentConvId:null,openSections:[]},
   ctxMenu:{open:false,convId:null,x:0,y:0},
   renameConv:{id:null,title:''},
   lang:'fr',
@@ -2325,31 +2329,57 @@ function renderChat(child,data){
     <div class="chat-empty">
 
       <!-- En-tête Zoé -->
-      <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding-bottom:4px">
-        <div style="width:52px;height:52px;border-radius:50%;background:#3D5570;display:flex;align-items:center;justify-content:center">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="rgba(255,255,255,.92)" ${sw}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/><path d="M5 3v3M3 5h3M19 18v3M18 19h3"/></svg>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+        <div style="width:50px;height:50px;border-radius:50%;background:#3D5570;display:flex;align-items:center;justify-content:center">
+          <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="rgba(255,255,255,.92)" ${sw}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/><path d="M5 3v3M3 5h3M19 18v3M18 19h3"/></svg>
         </div>
         <div style="text-align:center">
           <p style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500;color:var(--c-ink);margin-bottom:4px">${t('chat_greeting')}</p>
-          <p style="font-size:0.8125rem;color:var(--c-t3);line-height:1.5">${t('chat_subtitle').replace('\n',' ')}<strong style="color:var(--c-ink);font-weight:600"> ${e(child.firstName)}</strong> ?</p>
+          <p style="font-size:0.8125rem;color:var(--c-t3);line-height:1.5">${t('chat_subtitle').replace('\n',' ')}<strong style="color:var(--c-ink);font-weight:600"> ${e(child.firstName)}</strong>&nbsp;?</p>
         </div>
       </div>
 
-      <!-- ⚡ Section Maintenant -->
-      <div>
-        <p class="chat-section-lbl">⚡ Maintenant</p>
-        <div class="chat-sos-row">
-          ${chips.filter(c=>c.sos).map(c=>`<button class="chat-sos-pill" data-q="${e(c.label)}">${e(c.sosLabel)}</button>`).join('')}
-        </div>
-      </div>
-
-      <!-- Suggestions contextuelles -->
-      <div>
-        <p class="chat-section-lbl">${S.lang==='en'?'Explore':'Explorer'}</p>
-        <div class="chat-prompt-grid">
-          ${chips.filter(c=>!c.sos).slice(0,4).map(c=>`<button class="chat-prompt-card" data-q="${e(c.label)}"${c.template?' data-tpl="1"':''}><span class="chat-prompt-cat">${e(c.cat)}</span><span>${e(c.label)}</span></button>`).join('')}
-        </div>
-      </div>
+      <!-- Accordéon -->
+      <div class="chat-acc">${(()=>{
+        const chev=`<svg class="chat-acc-chevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`;
+        const open=S.chat.openSections;
+        const sections=[
+          {
+            id:'now',
+            icon:'⚡',
+            label:S.lang==='en'?'Right now':'Là, maintenant',
+            chips:getCoachSituations(ageInDays).map(s=>({txt:s.label,q:`Moment difficile avec ${child.firstName} là maintenant : ${s.label}. Aide-moi concrètement — qu'est-ce que je peux faire dans les 30 prochaines secondes ?`}))
+          },
+          {
+            id:'explore',
+            icon:'💡',
+            label:S.lang==='en'?'Explore':'Explorer',
+            chips:chips.filter(c=>!c.sos).map(c=>({txt:c.label,q:c.label,tpl:c.template}))
+          },
+          {
+            id:'ctrv',
+            icon:'🎯',
+            label:S.lang==='en'?'Controversy of the day':'Controverse du jour',
+            chips:S.controverse.data?[
+              {txt:`Résume-moi les camps : « ${e(S.controverse.data.question).substring(0,55)}… »`,q:`Résume-moi les différentes positions sur la controverse suivante : « ${S.controverse.data.question} »`},
+              ...( S.controverse.data.camps||[]).slice(0,2).map(c=>({txt:`Défends le camp : "${c.name}"`,q:`Défends le camp "${c.name}" sur la question : « ${S.controverse.data.question} ». Explique sa logique et ses arguments les plus solides.`})),
+              {txt:`Ce qu'on sait vraiment sur : ${S.controverse.data.topic}`,q:`Qu'est-ce qu'on sait vraiment, de façon certaine et scientifiquement établie, sur : ${S.controverse.data.topic} ? Sépare les faits établis des croyances.`},
+            ]:[{txt:S.lang==='en'?'Generate today\'s controversy first →':'Génère d\'abord la controverse du jour →',q:'',disabled:true}]
+          },
+        ];
+        return sections.map(sec=>{
+          const isOpen=open.includes(sec.id);
+          return`<div>
+            <button class="chat-acc-btn${isOpen?' open':''}" data-acc="${sec.id}">
+              <span class="chat-acc-lbl"><span>${sec.icon}</span>${e(sec.label)}</span>
+              ${chev}
+            </button>
+            ${isOpen?`<div class="chat-acc-body">
+              ${sec.chips.map(c=>c.disabled?`<span style="font-size:0.8125rem;color:var(--c-t4);font-style:italic;padding:4px 2px">${e(c.txt)}</span>`:`<button class="chat-acc-chip" data-q="${e(c.q)}"${c.tpl?' data-tpl="1"':''}>${e(c.txt)}</button>`).join('')}
+            </div>`:''}
+          </div>`;
+        }).join('');
+      })()}</div>
 
     </div>`:`
     ${msgs.map((m,i)=>renderMsgBlock(m,i,child,data)).join('')}
@@ -3501,7 +3531,17 @@ function bindMsgActions(child){
 
 function bindChat(child,data){
   const inp=document.getElementById('chat-in');
+  // Accordéon sections
+  document.querySelectorAll('[data-acc]').forEach(b=>b.addEventListener('click',()=>{
+    const id=b.dataset.acc;
+    const idx=S.chat.openSections.indexOf(id);
+    if(idx>=0)S.chat.openSections.splice(idx,1);
+    else S.chat.openSections.push(id);
+    render();
+  }));
+  // Chips & suggestions
   document.querySelectorAll('[data-q]').forEach(b=>b.addEventListener('click',()=>{
+    if(!b.dataset.q)return;
     if(b.dataset.tpl){
       if(inp){inp.value=b.dataset.q;inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,120)+'px';inp.focus();}
     }else{
