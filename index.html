@@ -2290,7 +2290,7 @@ ${renderFavoritesUnified(child)}`;
 
 // ═══════════════════════ CHAT ═══════════════════════
 function renderChat(child,data){
-  const{milestone,ageLabel}=data,{msgs,stream,loading}=S.chat;
+  const{milestone,ageLabel,ageInDays}=data,{msgs,stream,loading}=S.chat;
   const empty=!msgs.length&&!loading&&!stream;
   const sw='stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
   const sparkleIcon=`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="rgba(255,255,255,.92)" ${sw}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/><path d="M5 3v3M3 5h3M19 18v3M18 19h3"/></svg>`;
