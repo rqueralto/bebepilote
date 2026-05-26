@@ -195,18 +195,14 @@ a{color:#2D4A8A}
 .chat-pill-send{width:34px;height:34px;border-radius:50%;background:var(--c-ink);color:var(--c-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s,transform .1s}
 .chat-pill-send:active{transform:scale(.9)}
 .chat-pill-send:disabled{opacity:.28}
-/* Suggestion button inside pill */
-.chat-pill-sugg{width:30px;height:30px;border-radius:50%;background:none;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--c-t4);transition:color .15s,background .15s}
-.chat-pill-sugg.active{color:#3D5570;background:rgba(61,85,112,.1)}
-.chat-pill-sugg:active{opacity:.7}
-/* Suggestion panel above input */
-.chat-sugg-panel{background:var(--c-card);border:1px solid var(--c-bd2);border-radius:20px;padding:14px 14px 10px;margin-bottom:10px;box-shadow:0 4px 20px rgba(0,0,0,.1)}
-.chat-sugg-panel-title{font-size:0.625rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--c-t4);margin-bottom:10px;padding-left:2px}
-.chat-sugg-list{display:flex;flex-direction:column;gap:2px;max-height:220px;overflow-y:auto}
-.chat-sugg-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:12px;text-align:left;background:none;transition:background .12s}
-.chat-sugg-item:active,.chat-sugg-item:hover{background:var(--c-bg3)}
-.chat-sugg-cat{font-size:0.625rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--c-t4);flex-shrink:0;width:64px}
-.chat-sugg-label{font-size:0.8125rem;color:var(--c-ink);line-height:1.4;flex:1}
+/* ⚡ Maintenant — pills row */
+.chat-sos-row{display:flex;gap:8px;overflow-x:auto;padding:2px 0 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.chat-sos-row::-webkit-scrollbar{display:none}
+.chat-sos-pill{flex-shrink:0;padding:8px 14px;border-radius:99px;background:#E8F2EA;border:1px solid #C8E0CC;font-size:0.8125rem;font-weight:500;color:#2A5038;white-space:nowrap;transition:background .12s,transform .1s}
+.chat-sos-pill:active{background:#D5EBD9;transform:scale(.97)}
+[data-theme="dark"] .chat-sos-pill{background:#1A2E20;border-color:#253D2A;color:#6DAA7A}
+/* Section label */
+.chat-section-lbl{font-size:0.625rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--c-t4);margin-bottom:8px;padding-left:2px}
 /* Keyboard awareness */
 .keyboard-open .chat-pill-wrap{padding-bottom:max(10px,env(safe-area-inset-bottom))!important}
 /* Dots */
@@ -2327,21 +2323,34 @@ function renderChat(child,data){
   <div class="chat-msgs-area scroll-h" id="chat-msgs">
     ${empty?`
     <div class="chat-empty">
-      <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
-        <div style="width:56px;height:56px;border-radius:50%;background:#3D5570;display:flex;align-items:center;justify-content:center">
-          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="rgba(255,255,255,.92)" ${sw}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/><path d="M5 3v3M3 5h3M19 18v3M18 19h3"/></svg>
+
+      <!-- En-tête Zoé -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding-bottom:4px">
+        <div style="width:52px;height:52px;border-radius:50%;background:#3D5570;display:flex;align-items:center;justify-content:center">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="rgba(255,255,255,.92)" ${sw}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/><path d="M5 3v3M3 5h3M19 18v3M18 19h3"/></svg>
         </div>
         <div style="text-align:center">
-          <p style="font-family:'Cormorant Garamond',serif;font-size:1.625rem;font-weight:500;color:var(--c-ink);margin-bottom:6px">${t('chat_greeting')}</p>
-          <p style="font-size:0.8125rem;color:var(--c-t3);line-height:1.55">${t('chat_subtitle').replace('\n','<br>')}<br><strong style="color:var(--c-ink);font-weight:600">${e(child.firstName)}</strong> ?</p>
+          <p style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500;color:var(--c-ink);margin-bottom:4px">${t('chat_greeting')}</p>
+          <p style="font-size:0.8125rem;color:var(--c-t3);line-height:1.5">${t('chat_subtitle').replace('\n',' ')}<strong style="color:var(--c-ink);font-weight:600"> ${e(child.firstName)}</strong> ?</p>
         </div>
       </div>
-      <div class="chat-prompt-grid">
-        ${[...chips.filter(c=>c.sos),...chips.filter(c=>!c.sos).slice(0,4)].map(c=>`<button class="chat-prompt-card${c.sos?' sos':''}" data-q="${e(c.label)}"${c.template?' data-tpl="1"':''}><span class="chat-prompt-cat">${e(c.cat)}</span><span>${e(c.sosLabel||c.label)}</span></button>`).join('')}
+
+      <!-- ⚡ Section Maintenant -->
+      <div>
+        <p class="chat-section-lbl">⚡ Maintenant</p>
+        <div class="chat-sos-row">
+          ${chips.filter(c=>c.sos).map(c=>`<button class="chat-sos-pill" data-q="${e(c.label)}">${e(c.sosLabel)}</button>`).join('')}
+        </div>
       </div>
-      ${chips.filter(c=>!c.sos).length>4?`<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:0 4px">
-        ${chips.filter(c=>!c.sos).slice(4).map(c=>`<button class="chip-btn" data-q="${e(c.label)}" style="font-size:0.75rem">${e(c.cat)}</button>`).join('')}
-      </div>`:''}
+
+      <!-- Suggestions contextuelles -->
+      <div>
+        <p class="chat-section-lbl">${S.lang==='en'?'Explore':'Explorer'}</p>
+        <div class="chat-prompt-grid">
+          ${chips.filter(c=>!c.sos).slice(0,4).map(c=>`<button class="chat-prompt-card" data-q="${e(c.label)}"${c.template?' data-tpl="1"':''}><span class="chat-prompt-cat">${e(c.cat)}</span><span>${e(c.label)}</span></button>`).join('')}
+        </div>
+      </div>
+
     </div>`:`
     ${msgs.map((m,i)=>renderMsgBlock(m,i,child,data)).join('')}
     ${loading||stream?`<div class="msg-block">
@@ -2357,19 +2366,7 @@ function renderChat(child,data){
 
   <!-- Input -->
   <div class="chat-pill-wrap">
-    ${S.chat.showSugg?`<div class="chat-sugg-panel" id="chat-sugg-panel">
-      <p class="chat-sugg-panel-title">${t('chat_suggestions_label')} ${e(child.firstName)}</p>
-      <div class="chat-sugg-list">
-        ${[...chips.filter(c=>c.sos),...chips.filter(c=>!c.sos)].map(c=>`<button class="chat-sugg-item" data-q="${e(c.label)}"${c.template?' data-tpl="1"':''}>
-          <span class="chat-sugg-cat">${e(c.cat)}</span>
-          <span class="chat-sugg-label">${e(c.sosLabel||c.label)}</span>
-        </button>`).join('')}
-      </div>
-    </div>`:''}
     <div class="chat-pill">
-      <button class="chat-pill-sugg${S.chat.showSugg?' active':''}" id="chat-sugg-btn" title="Suggestions" type="button">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg>
-      </button>
       <textarea id="chat-in" class="chat-pill-in" rows="1"
         placeholder="${S.apiKey?t('chat_placeholder_key'):t('chat_placeholder_nokey')}"
         ${loading?'disabled':''}></textarea>
@@ -3505,7 +3502,6 @@ function bindMsgActions(child){
 function bindChat(child,data){
   const inp=document.getElementById('chat-in');
   document.querySelectorAll('[data-q]').forEach(b=>b.addEventListener('click',()=>{
-    S.chat.showSugg=false;
     if(b.dataset.tpl){
       if(inp){inp.value=b.dataset.q;inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,120)+'px';inp.focus();}
     }else{
@@ -3514,16 +3510,9 @@ function bindChat(child,data){
   }));
   const growInp=()=>{if(!inp)return;inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,120)+'px';};
   inp?.addEventListener('input',growInp);
-  document.getElementById('chat-send')?.addEventListener('click',()=>{S.chat.showSugg=false;sendMsg(inp?.value||'',child,data);});
-  inp?.addEventListener('keydown',ev=>{if(ev.key==='Enter'&&!ev.shiftKey){ev.preventDefault();S.chat.showSugg=false;sendMsg(inp.value,child,data);}});
+  document.getElementById('chat-send')?.addEventListener('click',()=>{sendMsg(inp?.value||'',child,data);});
+  inp?.addEventListener('keydown',ev=>{if(ev.key==='Enter'&&!ev.shiftKey){ev.preventDefault();sendMsg(inp.value,child,data);}});
   document.getElementById('btn-saved-chats')?.addEventListener('click',()=>{S.modal='savedChats';render();});
-  // Suggestions panel toggle
-  document.getElementById('chat-sugg-btn')?.addEventListener('click',()=>{
-    S.chat.showSugg=!S.chat.showSugg;
-    render();
-    // Keep focus on input after panel open
-    setTimeout(()=>document.getElementById('chat-in')?.focus(),50);
-  });
   bindMsgActions(child);
 }
 
