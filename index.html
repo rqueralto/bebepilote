@@ -1178,11 +1178,11 @@ async function loadZoeCamps(idx){
       parsed=JSON.parse(j.candidates?.[0]?.content?.parts?.[0]?.text||'{}');
     }
     (parsed.camps||[]).forEach(c=>{c.diveLoading=false;c.dive=null;});
-    addApiLog({ts:new Date().toISOString(),provider:useAnthropic?'anthropic':'gemini',endpoint:'camps',status:'ok',model:useAnthropic?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_campsT0,reqMsgs:1,respText:JSON.stringify(parsed,null,2),error:null});
+    addApiLog({ts:new Date().toISOString(),provider:useAnthropic?'anthropic':'gemini',endpoint:'camps',status:'ok',model:useAnthropic?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_campsT0,reqMsgs:1,reqSystem:sys,reqUserMsg:prompt,respText:JSON.stringify(parsed,null,2),error:null});
     m.camps=parsed;m.campLoading=false;m.campsSaved=false;
     autoSaveConv(S.children[S.childIdx]);patchChatMsgs();
   }catch(err){
-    addApiLog({ts:new Date().toISOString(),provider:useAnthropic?'anthropic':'gemini',endpoint:'camps',status:'error',model:useAnthropic?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_campsT0,reqMsgs:1,respText:'',error:err.message});
+    addApiLog({ts:new Date().toISOString(),provider:useAnthropic?'anthropic':'gemini',endpoint:'camps',status:'error',model:useAnthropic?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_campsT0,reqMsgs:1,reqSystem:sys,reqUserMsg:prompt,respText:'',error:err.message});
     m.campLoading=false;m.camps={camps:[{name:'Erreur',logic:err.message,diveLoading:false,dive:null}],unknown:'',refs:[]};patchChatMsgs();
   }
 }
@@ -1641,12 +1641,12 @@ Réponds UNIQUEMENT avec le JSON structuré demandé.`;
   try{
     const obj=await aiControverse(sys);
     if(!obj.camps||!obj.camps.length)throw new Error('Format inattendu');
-    addApiLog({ts:new Date().toISOString(),provider:S.provider,endpoint:'controverse',status:'ok',model:S.provider==='anthropic'?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_ctrvT0,reqMsgs:1,respText:JSON.stringify(obj,null,2),error:null});
+    addApiLog({ts:new Date().toISOString(),provider:S.provider,endpoint:'controverse',status:'ok',model:S.provider==='anthropic'?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_ctrvT0,reqMsgs:1,reqSystem:sys,reqUserMsg:'Génère la controverse du jour.',respText:JSON.stringify(obj,null,2),error:null});
     localStorage.setItem(ck,JSON.stringify(obj));
     upsertCtrvToday(obj,child.firstName);
     S.controverse.data=obj;S.controverse.loading=false;S.controverse.childKey=ctrvIdent(child);render();
   }catch(err){
-    addApiLog({ts:new Date().toISOString(),provider:S.provider,endpoint:'controverse',status:'error',model:S.provider==='anthropic'?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_ctrvT0,reqMsgs:1,respText:'',error:netErrMsg(err)});
+    addApiLog({ts:new Date().toISOString(),provider:S.provider,endpoint:'controverse',status:'error',model:S.provider==='anthropic'?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_ctrvT0,reqMsgs:1,reqSystem:sys,reqUserMsg:'Génère la controverse du jour.',respText:'',error:netErrMsg(err)});
     S.controverse.loading=false;S.controverse.error=netErrMsg(err);render();
   }
 }
@@ -1746,10 +1746,10 @@ Structure ta réponse en 2 à 5 blocs. Chaque bloc commence sur une NOUVELLE LIG
     // Grounding indisponible (quota séparé sur tier gratuit, ou outil non supporté) → repli sans recherche web
     try{result=await callDive(false);}
     catch(err2){
-      addApiLog({ts:new Date().toISOString(),provider:S.provider,endpoint:'deepdive',status:'error',model:S.provider==='anthropic'?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_diveT0,reqMsgs:1,respText:'',error:netErrMsg(err2)});
+      addApiLog({ts:new Date().toISOString(),provider:S.provider,endpoint:'deepdive',status:'error',model:S.provider==='anthropic'?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_diveT0,reqMsgs:1,reqSystem:sys,reqUserMsg:q,respText:'',error:netErrMsg(err2)});
       S.controverse.dive.loading=false;S.controverse.dive.error=netErrMsg(err2);render();return;}
   }
-  addApiLog({ts:new Date().toISOString(),provider:S.provider,endpoint:'deepdive',status:'ok',model:S.provider==='anthropic'?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_diveT0,reqMsgs:1,respText:(result?.blocks||[]).map(b=>b.text).join('\n\n'),error:null});
+  addApiLog({ts:new Date().toISOString(),provider:S.provider,endpoint:'deepdive',status:'ok',model:S.provider==='anthropic'?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_diveT0,reqMsgs:1,reqSystem:sys,reqUserMsg:q,respText:(result?.blocks||[]).map(b=>b.text).join('\n\n'),error:null});
   S.controverse.dive.items.push({q:q.trim(),...result});
   S.controverse.dive.loading=false;render();
 }
@@ -2639,10 +2639,13 @@ function renderApiLog(){
       <span class="api-log-badge ${entry.status==='ok'?'ok':'err'}">${entry.status==='ok'?'OK':'Erreur'}</span>
       <span style="font-size:0.625rem;color:var(--c-t5);margin-left:auto">${entry.duration}ms</span>
     </div>
-    <p style="font-size:0.6875rem;color:var(--c-t4);margin-bottom:4px">${e(entry.model||'')}${entry.reqMsgs?' · '+entry.reqMsgs+' msg':''}</p>
+    <p style="font-size:0.6875rem;color:var(--c-t4);margin-bottom:6px">${e(entry.model||'')}${entry.reqMsgs?' · '+entry.reqMsgs+' msg':''}</p>
+    ${entry.reqUserMsg?`<div style="margin-bottom:5px"><span style="font-size:0.5625rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--c-t5)">Message</span><div class="api-log-resp" style="margin-top:3px;max-height:60px">${e((entry.reqUserMsg||'').substring(0,300))}${(entry.reqUserMsg||'').length>300?'…':''}</div></div>`:''}
+    ${entry.reqSystem?`<div style="margin-bottom:5px"><span style="font-size:0.5625rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--c-t5)">System prompt</span><div class="api-log-resp" style="margin-top:3px;color:var(--c-t4)">${e((entry.reqSystem||'').substring(0,200))}…</div></div>`:''}
+    <div style="margin-bottom:2px"><span style="font-size:0.5625rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--c-t5)">${entry.status==='error'?'Erreur':'Réponse'}</span></div>
     ${entry.status==='error'?`<div class="api-log-resp" style="color:#A03828;background:rgba(160,56,40,.07)">${e(entry.error||'Erreur inconnue')}</div>`:`<div class="api-log-resp" id="log-resp-${i}">${e((entry.respText||'').substring(0,300))}${(entry.respText||'').length>300?'…':''}</div>`}
     <div class="api-log-actions">
-      <button class="api-log-act" data-copy-log="${i}">${icoCopy}Copier la réponse</button>
+      <button class="api-log-act" data-copy-log="${i}">${icoCopy}Tout copier</button>
       ${entry.status==='ok'&&(entry.respText||'').length>300?`<button class="api-log-act" data-expand-log="${i}">${icoExpand}<span id="log-expand-lbl-${i}">Voir tout</span></button>`:''}
     </div>
   </div>`).join('')}
@@ -3497,7 +3500,7 @@ function bind(child,data){
   document.getElementById('toggle-apilog')?.addEventListener('change',ev=>{S.showApiLog=ev.target.checked;localStorage.setItem('bebeShowApiLog',S.showApiLog?'true':'false');if(!S.showApiLog&&S.tab==='apilog')S.tab='today';render();});
   document.querySelectorAll('[data-goto-apilog]').forEach(b=>b.addEventListener('click',()=>{if(!S.showApiLog)return;S.modal=null;S.tab='apilog';S.drawer=false;render();}));
   document.getElementById('btn-clear-apilog')?.addEventListener('click',()=>{S.apiLog=[];render();});
-  document.querySelectorAll('[data-copy-log]').forEach(b=>b.addEventListener('click',()=>{const idx=+b.dataset.copyLog;const entry=S.apiLog[idx];if(!entry)return;const txt=`=== API LOG ===\nDate: ${entry.ts}\nProvider: ${entry.provider}\nModel: ${entry.model||''}\nEndpoint: ${entry.endpoint}\nStatus: ${entry.status}\nDuration: ${entry.duration}ms\n\n--- RESPONSE ---\n${entry.respText||entry.error||''}`;navigator.clipboard?.writeText(txt).then(()=>toast('Copié !'),()=>toast('Impossible de copier'));}));
+  document.querySelectorAll('[data-copy-log]').forEach(b=>b.addEventListener('click',()=>{const idx=+b.dataset.copyLog;const entry=S.apiLog[idx];if(!entry)return;const txt=[`=== API LOG ===`,`Date: ${entry.ts}`,`Provider: ${entry.provider}`,`Model: ${entry.model||''}`,`Endpoint: ${entry.endpoint}`,`Status: ${entry.status}`,`Duration: ${entry.duration}ms`,``,`--- REQUEST ---`,entry.reqSystem?`System:\n${entry.reqSystem}`:'(no system)',``,entry.reqUserMsg?`User:\n${entry.reqUserMsg}`:'',``,`--- RESPONSE ---`,entry.respText||entry.error||'(empty)'].join('\n');navigator.clipboard?.writeText(txt).then(()=>toast('Copié !'),()=>toast('Impossible de copier'));}));
   document.querySelectorAll('[data-expand-log]').forEach(b=>b.addEventListener('click',()=>{const idx=+b.dataset.expandLog;const entry=S.apiLog[idx];if(!entry)return;const el=document.getElementById('log-resp-'+idx);const lbl=document.getElementById('log-expand-lbl-'+idx);if(!el)return;if(el.classList.contains('expanded')){el.textContent=entry.respText.substring(0,300)+'…';el.classList.remove('expanded');if(lbl)lbl.textContent='Voir tout';}else{el.textContent=entry.respText;el.classList.add('expanded');if(lbl)lbl.textContent='Réduire';}}));
   document.getElementById('anthropic-key-in')?.addEventListener('change',ev=>{saveAnthropicKey(ev.target.value.trim());S._claudeTest=null;S._claudeTestMsg=null;});
   document.getElementById('btn-test-claude')?.addEventListener('click',async()=>{
@@ -3832,10 +3835,10 @@ Ne mets ce marker QUE si le sujet est réellement débattu entre spécialistes. 
     const creuserLabel=creuserMatch?creuserMatch[1].trim():null;
     const content=full.split('---REFS---')[0].split('---CREUSER---')[0].trim();
     S.chat.msgs.push({role:'assistant',content,refs,liked:false,saved:false,creuserLabel,camps:null,campLoading:false});
-    addApiLog({ts:new Date().toISOString(),provider:useAnthropic?'anthropic':'gemini',endpoint:'chat',status:'ok',model:useAnthropic?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_logT0,reqMsgs:S.chat.msgs.filter(m=>m.role==='user').length,respText:content,error:null});
+    addApiLog({ts:new Date().toISOString(),provider:useAnthropic?'anthropic':'gemini',endpoint:'chat',status:'ok',model:useAnthropic?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_logT0,reqMsgs:S.chat.msgs.filter(m=>m.role==='user').length,reqSystem:sys,reqUserMsg:txt.trim(),respText:content,error:null});
     S.chat.stream='';S.chat.loading=false;autoSaveConv(child);render();
   }catch(err){
-    addApiLog({ts:new Date().toISOString(),provider:useAnthropic?'anthropic':'gemini',endpoint:'chat',status:'error',model:useAnthropic?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_logT0,reqMsgs:S.chat.msgs.filter(m=>m.role==='user').length,respText:'',error:netErrMsg(err)});
+    addApiLog({ts:new Date().toISOString(),provider:useAnthropic?'anthropic':'gemini',endpoint:'chat',status:'error',model:useAnthropic?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_logT0,reqMsgs:S.chat.msgs.filter(m=>m.role==='user').length,reqSystem:sys,reqUserMsg:txt.trim(),respText:'',error:netErrMsg(err)});
     S.chat.msgs.push({role:'assistant',content:`Oups, une erreur s'est produite : ${netErrMsg(err)}`,refs:[],liked:false,saved:false});
     S.chat.stream='';S.chat.loading=false;render();
   }
