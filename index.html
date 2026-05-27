@@ -197,6 +197,26 @@ a{color:#2D4A8A}
 .chat-pill-send:disabled{opacity:.28}
 /* ── Accordéon suggestions Zoé ── */
 .chat-acc{display:flex;flex-direction:column;gap:8px;width:100%}
+.api-log-card{background:var(--c-card);border:1px solid var(--c-bd2);border-radius:14px;padding:13px 14px;margin-bottom:10px}
+.api-log-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.api-log-badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:5px;font-size:0.5625rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;flex-shrink:0}
+.api-log-badge.ok{background:rgba(58,94,56,.13);color:#3A5E38}
+.api-log-badge.err{background:rgba(160,56,40,.13);color:#A03828}
+.api-log-badge.ant{background:rgba(61,85,112,.13);color:#3D5570}
+.api-log-badge.gem{background:rgba(196,138,64,.13);color:#A06C2A}
+.api-log-resp{font-size:0.6875rem;color:var(--c-t3);line-height:1.55;padding:8px 10px;background:var(--c-bg2);border-radius:8px;margin-top:6px;white-space:pre-wrap;word-break:break-word;max-height:100px;overflow:hidden;font-family:ui-monospace,monospace}
+.api-log-resp.expanded{max-height:none}
+.api-log-actions{display:flex;gap:7px;margin-top:8px}
+.api-log-act{display:flex;align-items:center;gap:5px;padding:6px 11px;border-radius:8px;background:var(--c-bg2);border:1px solid var(--c-bd);font-size:0.75rem;font-weight:500;color:var(--c-t2);transition:background .12s}
+.api-log-act:active{background:var(--c-bg3)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--c-bd)}
+.toggle-row:last-child{border-bottom:none}
+.toggle-knob{position:relative;width:42px;height:24px;flex-shrink:0}
+.toggle-knob input{opacity:0;width:0;height:0;position:absolute}
+.toggle-track{position:absolute;cursor:pointer;inset:0;background:var(--c-bg3);border-radius:12px;transition:.18s;border:1px solid var(--c-bd2)}
+.toggle-track:before{position:absolute;content:'';height:18px;width:18px;left:2px;bottom:2px;background:#fff;border-radius:50%;transition:.18s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle-knob input:checked+.toggle-track{background:#3D5570;border-color:#3D5570}
+.toggle-knob input:checked+.toggle-track:before{transform:translateX(18px)}
 .chat-acc-btn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:13px 15px;border-radius:14px;background:var(--c-card);border:1px solid var(--c-bd2);text-align:left;transition:background .12s,border-radius .15s}
 .chat-acc-btn.open{border-radius:14px 14px 0 0}
 .chat-acc-btn:active{background:var(--c-bg2)}
@@ -1133,6 +1153,7 @@ async function loadZoeCamps(idx){
   const sys=`Tu es un analyste neutre en psychologie du développement de l'enfant. Ta mission : cartographier les grandes écoles de pensée sur un sujet parental contesté, de façon équilibrée et rigoureuse. Tu t'adresses à un parent universitaire francophone qui veut comprendre le débat, pas une réponse rassurante.`;
   const prompt=`Sujet contesté : "${m.creuserLabel}"\nQuestion posée : "${question}"\n\nGénère une analyse structurée des 2 à 3 grandes positions ou écoles sur ce sujet. Chaque position doit avoir un nom clair (pas "Camp A") et une explication dense de 2-3 phrases (logique, arguments, courant ou auteurs représentatifs). Ajoute une phrase sur ce qui reste scientifiquement incertain. Ajoute 1 à 3 références académiques ou livres clés sur ce débat (auteur, année, titre court — pas d'URL).`;
   const inputSchema={type:'object',properties:{camps:{type:'array',minItems:2,maxItems:3,items:{type:'object',properties:{name:{type:'string'},logic:{type:'string'}},required:['name','logic']}},unknown:{type:'string'},refs:{type:'array',maxItems:3,items:{type:'string'}}},required:['camps','unknown','refs']};
+  const _campsT0=Date.now();
   try{
     let parsed;
     if(useAnthropic){
@@ -1157,9 +1178,11 @@ async function loadZoeCamps(idx){
       parsed=JSON.parse(j.candidates?.[0]?.content?.parts?.[0]?.text||'{}');
     }
     (parsed.camps||[]).forEach(c=>{c.diveLoading=false;c.dive=null;});
+    addApiLog({ts:new Date().toISOString(),provider:useAnthropic?'anthropic':'gemini',endpoint:'camps',status:'ok',model:useAnthropic?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_campsT0,reqMsgs:1,respText:JSON.stringify(parsed,null,2),error:null});
     m.camps=parsed;m.campLoading=false;m.campsSaved=false;
     autoSaveConv(S.children[S.childIdx]);patchChatMsgs();
   }catch(err){
+    addApiLog({ts:new Date().toISOString(),provider:useAnthropic?'anthropic':'gemini',endpoint:'camps',status:'error',model:useAnthropic?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_campsT0,reqMsgs:1,respText:'',error:err.message});
     m.campLoading=false;m.camps={camps:[{name:'Erreur',logic:err.message,diveLoading:false,dive:null}],unknown:'',refs:[]};patchChatMsgs();
   }
 }
@@ -1395,12 +1418,14 @@ const S={
   profileSettings:false,
   flags:{controverse:true},
   controverse:{loading:false,error:null,data:null,childKey:null,dive:{open:false,items:[],loading:false,error:null}},
-
+  apiLog:[],
+  showApiLog:localStorage.getItem('bebeShowApiLog')==='true',
 };
 function saveKids(){localStorage.setItem('bebeChildren',JSON.stringify(S.children));}
 function saveKey(k){S.apiKey=k;localStorage.setItem('bebeApiKey',k);}
 function saveProvider(p){S.provider=p;localStorage.setItem('bebeProvider',p);}
 function saveAnthropicKey(k){S.anthropicKey=k;localStorage.setItem('bebeAnthropicKey',k);}
+function addApiLog(entry){if(!S.showApiLog)return;S.apiLog.unshift({id:Date.now(),...entry});if(S.apiLog.length>100)S.apiLog.length=100;}
 function ctrvProviderKey(){return S.provider==='anthropic'?S.anthropicKey:S.apiKey;}
 function ctrvIdent(child){return child.firstName+'|'+S.provider;}
 function childData(c){
@@ -1629,13 +1654,16 @@ ${liked.length?`\n## Sujets appréciés par ce parent (privilégie ce registre) 
 ${disliked.length?`\n## Sujets rejetés par ce parent (évite) : ${disliked.join(', ')}`:''}
 
 Réponds UNIQUEMENT avec le JSON structuré demandé.`;
+  const _ctrvT0=Date.now();
   try{
     const obj=await aiControverse(sys);
     if(!obj.camps||!obj.camps.length)throw new Error('Format inattendu');
+    addApiLog({ts:new Date().toISOString(),provider:S.provider,endpoint:'controverse',status:'ok',model:S.provider==='anthropic'?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_ctrvT0,reqMsgs:1,respText:JSON.stringify(obj,null,2),error:null});
     localStorage.setItem(ck,JSON.stringify(obj));
     upsertCtrvToday(obj,child.firstName);
     S.controverse.data=obj;S.controverse.loading=false;S.controverse.childKey=ctrvIdent(child);render();
   }catch(err){
+    addApiLog({ts:new Date().toISOString(),provider:S.provider,endpoint:'controverse',status:'error',model:S.provider==='anthropic'?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_ctrvT0,reqMsgs:1,respText:'',error:netErrMsg(err)});
     S.controverse.loading=false;S.controverse.error=netErrMsg(err);render();
   }
 }
@@ -1729,12 +1757,16 @@ Structure ta réponse en 2 à 5 blocs. Chaque bloc commence sur une NOUVELLE LIG
     return {blocks:parseDiveAnswer(text),sources,grounded};
   };
   let result=null;
+  const _diveT0=Date.now();
   try{result=await callDive(true);}
   catch(err){
     // Grounding indisponible (quota séparé sur tier gratuit, ou outil non supporté) → repli sans recherche web
     try{result=await callDive(false);}
-    catch(err2){S.controverse.dive.loading=false;S.controverse.dive.error=netErrMsg(err2);render();return;}
+    catch(err2){
+      addApiLog({ts:new Date().toISOString(),provider:S.provider,endpoint:'deepdive',status:'error',model:S.provider==='anthropic'?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_diveT0,reqMsgs:1,respText:'',error:netErrMsg(err2)});
+      S.controverse.dive.loading=false;S.controverse.dive.error=netErrMsg(err2);render();return;}
   }
+  addApiLog({ts:new Date().toISOString(),provider:S.provider,endpoint:'deepdive',status:'ok',model:S.provider==='anthropic'?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_diveT0,reqMsgs:1,respText:(result?.blocks||[]).map(b=>b.text).join('\n\n'),error:null});
   S.controverse.dive.items.push({q:q.trim(),...result});
   S.controverse.dive.loading=false;render();
 }
@@ -2461,6 +2493,21 @@ function renderProfileSettings(){
     </div>
   </div>
 </div>
+<div style="margin-bottom:20px">
+  <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t5);margin-bottom:10px">Développeur</p>
+  <div style="background:var(--c-card);border-radius:14px;padding:0 16px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.08)">
+    <div class="toggle-row">
+      <div>
+        <p style="font-size:0.875rem;font-weight:500;color:var(--c-ink);margin-bottom:1px">API Log</p>
+        <p style="font-size:0.6875rem;color:var(--c-t4)">Affiche les requêtes dans le menu</p>
+      </div>
+      <label class="toggle-knob">
+        <input type="checkbox" id="toggle-apilog"${S.showApiLog?' checked':''}>
+        <span class="toggle-track"></span>
+      </label>
+    </div>
+  </div>
+</div>
 <p style="text-align:center;font-size:0.625rem;color:var(--c-t5);padding:16px 0 4px;letter-spacing:.04em">BébéPilote v${VERSION}</p>
 </div>`;
 }
@@ -2560,6 +2607,48 @@ function renderCtrvViewModal(child){
   </div>
   <div class="sheet-body">${renderCtrvFavBody(d)}</div>
 </div></div>`;
+}
+function renderApiLog(){
+  const sw='stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"';
+  const endpointLabels={chat:'Zoé chat',controverse:'Controverse',deepdive:'Deep dive',camps:'Camps'};
+  const provLabel={anthropic:'Claude',gemini:'Gemini'};
+  function relTime(iso){const d=Date.now()-new Date(iso).getTime();if(d<60000)return'À l\'instant';if(d<3600000)return`Il y a ${Math.floor(d/60000)} min`;if(d<86400000)return`Il y a ${Math.floor(d/3600000)} h`;return`Il y a ${Math.floor(d/86400000)} j`;}
+  const icoTerminal=`<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" ${sw}><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>`;
+  const icoCopy=`<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" ${sw}><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+  const icoTrash=`<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" ${sw}><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>`;
+  const icoExpand=`<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" ${sw}><polyline points="6 9 12 15 18 9"/></svg>`;
+  return`<div style="padding:16px">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+    <div style="display:flex;align-items:center;gap:9px">
+      <div style="width:36px;height:36px;border-radius:10px;background:rgba(61,85,112,.12);display:flex;align-items:center;justify-content:center;color:#3D5570">${icoTerminal}</div>
+      <div>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:500;color:var(--c-ink);line-height:1.1">API Log</p>
+        <p style="font-size:0.6875rem;color:var(--c-t4)">${S.apiLog.length} entrée${S.apiLog.length!==1?'s':''}</p>
+      </div>
+    </div>
+    ${S.apiLog.length?`<button id="btn-clear-apilog" style="display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:9px;background:rgba(160,56,40,.1);border:none;font-size:0.75rem;font-weight:600;color:#A03828;cursor:pointer">${icoTrash}Tout effacer</button>`:''}
+  </div>
+  ${S.apiLog.length===0?`<div style="text-align:center;padding:48px 20px">
+    <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="var(--c-bd2)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:12px"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+    <p style="font-size:0.875rem;color:var(--c-t4)">Aucune requête enregistrée</p>
+    <p style="font-size:0.75rem;color:var(--c-t5);margin-top:4px">Les appels API apparaîtront ici</p>
+  </div>`:S.apiLog.map((entry,i)=>`
+  <div class="api-log-card">
+    <div class="api-log-meta">
+      <span style="font-size:0.6875rem;color:var(--c-t4);flex-shrink:0">${relTime(entry.ts)}</span>
+      <span class="api-log-badge ${entry.provider==='anthropic'?'ant':'gem'}">${provLabel[entry.provider]||entry.provider}</span>
+      <span class="api-log-badge" style="background:var(--c-bg3);color:var(--c-t3)">${endpointLabels[entry.endpoint]||entry.endpoint}</span>
+      <span class="api-log-badge ${entry.status==='ok'?'ok':'err'}">${entry.status==='ok'?'OK':'Erreur'}</span>
+      <span style="font-size:0.625rem;color:var(--c-t5);margin-left:auto">${entry.duration}ms</span>
+    </div>
+    <p style="font-size:0.6875rem;color:var(--c-t4);margin-bottom:4px">${e(entry.model||'')}${entry.reqMsgs?' · '+entry.reqMsgs+' msg':''}</p>
+    ${entry.status==='error'?`<div class="api-log-resp" style="color:#A03828;background:rgba(160,56,40,.07)">${e(entry.error||'Erreur inconnue')}</div>`:`<div class="api-log-resp" id="log-resp-${i}">${e((entry.respText||'').substring(0,300))}${(entry.respText||'').length>300?'…':''}</div>`}
+    <div class="api-log-actions">
+      <button class="api-log-act" data-copy-log="${i}">${icoCopy}Copier la réponse</button>
+      ${entry.status==='ok'&&(entry.respText||'').length>300?`<button class="api-log-act" data-expand-log="${i}">${icoExpand}<span id="log-expand-lbl-${i}">Voir tout</span></button>`:''}
+    </div>
+  </div>`).join('')}
+</div>`;
 }
 function renderSettingsModal(){
   return`<div class="overlay" id="modal-overlay">
@@ -3036,6 +3125,7 @@ function render(){
   else if(S.tab==='history')tabHTML=renderHistory(child);
   else if(S.tab==='chat')tabHTML=renderChat(child,data);
   else if(S.tab==='profile')tabHTML=renderProfile();
+  else if(S.tab==='apilog')tabHTML=renderApiLog();
 
   let modalHTML='';
   if(S.modal==='savedChats')modalHTML=renderSavedChatsModal(child);
@@ -3110,12 +3200,14 @@ function render(){
     history:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
     profile:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
     settings:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+    apilog:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>`,
   };
   const navItems=[
     {id:'today',label:t('tab_today')},
     {id:'chat',label:t('tab_chat')},
     {id:'history',label:t('tab_history')},
     {id:'profile',label:t('tab_profile')},
+    ...(S.showApiLog?[{id:'apilog',label:'API Log'}]:[]),
   ];
   const childConvs=getConversations().filter(c=>c.childName===child.firstName);
   const recentConvs=childConvs.slice(0,10);
@@ -3404,6 +3496,10 @@ function bind(child,data){
   document.querySelectorAll('[data-lang-val]').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.langVal)));
   document.querySelectorAll('[data-fz-val]').forEach(b=>b.addEventListener('click',()=>setFontSize(b.dataset.fzVal)));
   document.querySelectorAll('[data-prov]').forEach(b=>b.addEventListener('click',()=>{saveProvider(b.dataset.prov);render();}));
+  document.getElementById('toggle-apilog')?.addEventListener('change',ev=>{S.showApiLog=ev.target.checked;localStorage.setItem('bebeShowApiLog',S.showApiLog?'true':'false');if(!S.showApiLog&&S.tab==='apilog')S.tab='today';render();});
+  document.getElementById('btn-clear-apilog')?.addEventListener('click',()=>{S.apiLog=[];render();});
+  document.querySelectorAll('[data-copy-log]').forEach(b=>b.addEventListener('click',()=>{const idx=+b.dataset.copyLog;const entry=S.apiLog[idx];if(!entry)return;const txt=`=== API LOG ===\nDate: ${entry.ts}\nProvider: ${entry.provider}\nModel: ${entry.model||''}\nEndpoint: ${entry.endpoint}\nStatus: ${entry.status}\nDuration: ${entry.duration}ms\n\n--- RESPONSE ---\n${entry.respText||entry.error||''}`;navigator.clipboard?.writeText(txt).then(()=>toast('Copié !'),()=>toast('Impossible de copier'));}));
+  document.querySelectorAll('[data-expand-log]').forEach(b=>b.addEventListener('click',()=>{const idx=+b.dataset.expandLog;const entry=S.apiLog[idx];if(!entry)return;const el=document.getElementById('log-resp-'+idx);const lbl=document.getElementById('log-expand-lbl-'+idx);if(!el)return;if(el.classList.contains('expanded')){el.textContent=entry.respText.substring(0,300)+'…';el.classList.remove('expanded');if(lbl)lbl.textContent='Voir tout';}else{el.textContent=entry.respText;el.classList.add('expanded');if(lbl)lbl.textContent='Réduire';}}));
   document.getElementById('anthropic-key-in')?.addEventListener('change',ev=>{saveAnthropicKey(ev.target.value.trim());S._claudeTest=null;S._claudeTestMsg=null;});
   document.getElementById('btn-test-claude')?.addEventListener('click',async()=>{
     const key=document.getElementById('anthropic-key-in')?.value.trim()||S.anthropicKey;
@@ -3681,6 +3777,7 @@ Ne mets pas de URLs. Uniquement auteur + titre + année si connue.
 ---CREUSER---
 <label court du débat, max 8 mots, ex : "Sommeil : faut-il laisser pleurer ?">
 Ne mets ce marker QUE si le sujet est réellement débattu entre spécialistes. Ne le mets pas pour des questions factuelles ou de développement normal.${(()=>{const ex=getLikedExamples();return ex.length?`\n\n## Exemples de réponses appréciées par ce parent (few-shot)\n${ex.map(x=>`Q: ${x.question}\nR: ${x.answer}`).join('\n\n')}`:''})()}`;
+  const _logT0=Date.now();
   const reader_dec=new TextDecoder();
   let full='',buf='';
   const parseStream=chunk=>{
@@ -3736,8 +3833,10 @@ Ne mets ce marker QUE si le sujet est réellement débattu entre spécialistes. 
     const creuserLabel=creuserMatch?creuserMatch[1].trim():null;
     const content=full.split('---REFS---')[0].split('---CREUSER---')[0].trim();
     S.chat.msgs.push({role:'assistant',content,refs,liked:false,saved:false,creuserLabel,camps:null,campLoading:false});
+    addApiLog({ts:new Date().toISOString(),provider:useAnthropic?'anthropic':'gemini',endpoint:'chat',status:'ok',model:useAnthropic?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_logT0,reqMsgs:S.chat.msgs.filter(m=>m.role==='user').length,respText:content,error:null});
     S.chat.stream='';S.chat.loading=false;autoSaveConv(child);render();
   }catch(err){
+    addApiLog({ts:new Date().toISOString(),provider:useAnthropic?'anthropic':'gemini',endpoint:'chat',status:'error',model:useAnthropic?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_logT0,reqMsgs:S.chat.msgs.filter(m=>m.role==='user').length,respText:'',error:netErrMsg(err)});
     S.chat.msgs.push({role:'assistant',content:`Oups, une erreur s'est produite : ${netErrMsg(err)}`,refs:[],liked:false,saved:false});
     S.chat.stream='';S.chat.loading=false;render();
   }
