@@ -1992,6 +1992,7 @@ function renderControverseModal(child,data){
       ${d.tomorrow_teaser?`<p style="font-size:0.8125rem;color:#6B6480;font-style:italic;line-height:1.5">Demain : « ${e(d.tomorrow_teaser)} »</p>`:''}
       <button id="btn-ctrv-regen" style="margin-top:14px;font-size:0.75rem;color:#C48A40;text-decoration:underline">Régénérer (proto)</button>
     </div>
+    ${providerBadge(true)}
     <div style="height:8px"></div>
   </div>
 </div></div>`;
@@ -2437,6 +2438,7 @@ function renderChat(child,data){
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
       </button>
     </div>
+    ${providerBadge(true)}
   </div>
 
 </div>`;
@@ -2607,6 +2609,19 @@ function renderCtrvViewModal(child){
   </div>
   <div class="sheet-body">${renderCtrvFavBody(d)}</div>
 </div></div>`;
+}
+function providerBadge(center=false){
+  const isAnt=S.provider==='anthropic';
+  const label=isAnt?'Claude Sonnet':'Gemini Flash';
+  const col=isAnt?'#3D5570':'#A06C2A';
+  const bg=isAnt?'rgba(61,85,112,.09)':'rgba(160,108,42,.09)';
+  const icoAnt=`<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="${col}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg>`;
+  const icoGem=`<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="${col}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+  const logDot=S.showApiLog?`<svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="${col}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.6"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>`:'';
+  const clickable=S.showApiLog;
+  return`<div style="${center?'text-align:center;':''}padding:4px 0 2px">
+    <button data-goto-apilog="1" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;background:${bg};border:1px solid ${col}22;font-size:0.625rem;font-weight:600;color:${col};letter-spacing:.04em;opacity:.85;${clickable?'cursor:pointer':'cursor:default'}">${isAnt?icoAnt:icoGem}${label}${logDot}</button>
+  </div>`;
 }
 function renderApiLog(){
   const sw='stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"';
@@ -3497,6 +3512,7 @@ function bind(child,data){
   document.querySelectorAll('[data-fz-val]').forEach(b=>b.addEventListener('click',()=>setFontSize(b.dataset.fzVal)));
   document.querySelectorAll('[data-prov]').forEach(b=>b.addEventListener('click',()=>{saveProvider(b.dataset.prov);render();}));
   document.getElementById('toggle-apilog')?.addEventListener('change',ev=>{S.showApiLog=ev.target.checked;localStorage.setItem('bebeShowApiLog',S.showApiLog?'true':'false');if(!S.showApiLog&&S.tab==='apilog')S.tab='today';render();});
+  document.querySelectorAll('[data-goto-apilog]').forEach(b=>b.addEventListener('click',()=>{if(!S.showApiLog)return;S.modal=null;S.tab='apilog';S.drawer=false;render();}));
   document.getElementById('btn-clear-apilog')?.addEventListener('click',()=>{S.apiLog=[];render();});
   document.querySelectorAll('[data-copy-log]').forEach(b=>b.addEventListener('click',()=>{const idx=+b.dataset.copyLog;const entry=S.apiLog[idx];if(!entry)return;const txt=`=== API LOG ===\nDate: ${entry.ts}\nProvider: ${entry.provider}\nModel: ${entry.model||''}\nEndpoint: ${entry.endpoint}\nStatus: ${entry.status}\nDuration: ${entry.duration}ms\n\n--- RESPONSE ---\n${entry.respText||entry.error||''}`;navigator.clipboard?.writeText(txt).then(()=>toast('Copié !'),()=>toast('Impossible de copier'));}));
   document.querySelectorAll('[data-expand-log]').forEach(b=>b.addEventListener('click',()=>{const idx=+b.dataset.expandLog;const entry=S.apiLog[idx];if(!entry)return;const el=document.getElementById('log-resp-'+idx);const lbl=document.getElementById('log-expand-lbl-'+idx);if(!el)return;if(el.classList.contains('expanded')){el.textContent=entry.respText.substring(0,300)+'…';el.classList.remove('expanded');if(lbl)lbl.textContent='Voir tout';}else{el.textContent=entry.respText;el.classList.add('expanded');if(lbl)lbl.textContent='Réduire';}}));
