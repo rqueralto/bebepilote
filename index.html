@@ -1503,7 +1503,7 @@ async function aiControverse(sys){
       headers:anthropicHeaders(),
       signal:ac.signal,
       body:JSON.stringify({
-        model:ANTHROPIC_MODEL,max_tokens:1600,stream:false,system:sys,
+        model:ANTHROPIC_MODEL,max_tokens:1800,stream:false,system:sys,
         messages:[{role:'user',content:'Génère la controverse du jour.'}],
         tools:[{name:'controverse',description:'Renvoie la controverse du jour, structurée.',input_schema:CTRV_TOOL_SCHEMA}],
         tool_choice:{type:'tool',name:'controverse'}
@@ -1628,6 +1628,16 @@ ${sibCtx}
 - Tu peux nommer une école de pensée ou un chercheur célèbre et incontesté (Bowlby, Dweck, Montessori, Ferber, Goldman, Piaget…) SANS inventer de référence chiffrée.
 - En cas de doute, écris "les approches divergent" plutôt qu'un faux fait.
 - Sujets à risque vital (mort subite du nourrisson, fièvre, allergies, sécurité physique) : reste prudent et renvoie explicitement au principe de consulter une autorité médicale.
+
+## Longueurs STRICTES (budget token limité — respecte à la lettre)
+- topic : 2-4 mots
+- question : 1 phrase, max 20 mots
+- why_now : max 2 phrases courtes
+- camps : 2 camps (pas 3). logic de chaque camp : max 2 phrases. pros : 1-2 items, chaque item max 10 mots. cons : 1-2 items, chaque item max 10 mots.
+- known / believed / unknown : max 2 phrases chacun
+- bridge : exactement 2 phrases — une pour "Observer :", une pour "Essayer :"
+- tomorrow_teaser : 1 phrase, max 15 mots
+- deep_questions : 3 questions, chacune max 12 mots
 
 ## Style
 - Français, dense, vif, zéro remplissage. Ne commence jamais par "Bien sûr", "Absolument".
