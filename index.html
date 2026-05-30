@@ -1987,7 +1987,6 @@ function renderControverseModal(child,data){
       ${d.tomorrow_teaser?`<p style="font-size:0.8125rem;color:#6B6480;font-style:italic;line-height:1.5">Demain : « ${e(d.tomorrow_teaser)} »</p>`:''}
       <button id="btn-ctrv-regen" style="margin-top:14px;font-size:0.75rem;color:#C48A40;text-decoration:underline">Régénérer (proto)</button>
     </div>
-    ${providerBadge(true)}
     <div style="height:8px"></div>
   </div>
 </div></div>`;
@@ -2433,7 +2432,6 @@ function renderChat(child,data){
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
       </button>
     </div>
-    ${providerBadge(true)}
   </div>
 
 </div>`;
@@ -3215,12 +3213,18 @@ function render(){
     settings:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
     apilog:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>`,
   };
+  const _provChip=(()=>{
+    const isAnt=S.provider==='anthropic';
+    const col=isAnt?'#3D5570':'#A06C2A';
+    const bg=isAnt?'rgba(61,85,112,.13)':'rgba(160,108,42,.13)';
+    return`<span style="margin-left:auto;padding:2px 8px;border-radius:5px;font-size:0.5625rem;font-weight:700;letter-spacing:.04em;background:${bg};color:${col}">${isAnt?'Claude':'Gemini'}</span>`;
+  })();
   const navItems=[
     {id:'today',label:t('tab_today')},
     {id:'chat',label:t('tab_chat')},
     {id:'history',label:t('tab_history')},
     {id:'profile',label:t('tab_profile')},
-    ...(S.showApiLog?[{id:'apilog',label:'API Log'}]:[]),
+    ...(S.showApiLog?[{id:'apilog',label:'API Log',badge:_provChip}]:[]),
   ];
   const childConvs=getConversations().filter(c=>c.childName===child.firstName);
   const recentConvs=childConvs.slice(0,10);
@@ -3245,7 +3249,7 @@ function render(){
   </div>
   <div class="drawer-body">
     ${navItems.map(item=>`<button class="drawer-item${S.tab===item.id&&!S.chat.currentConvId&&item.id==='chat'?' active':S.tab===item.id&&item.id!=='chat'?' active':''}" data-tab="${item.id}">
-      ${drawerIcons[item.id]}<span>${item.label}</span>
+      ${drawerIcons[item.id]}<span>${item.label}</span>${item.badge||''}
     </button>`).join('')}
     ${recentConvs.length?`
     <div class="drawer-section-label">${S.lang==='en'?'Recent':'Récents'}</div>
