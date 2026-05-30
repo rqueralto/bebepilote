@@ -1795,7 +1795,7 @@ function childData(c){
 
 // ═══════════════════════ CONTROVERSE DU JOUR (proto) ═══════════════════════
 function ctrvDateStr(){return new Date().toISOString().slice(0,10);}
-function ctrvCacheKey(c){return 'bebeCtrv_v2_'+S.provider+'_'+c.firstName+'_'+ctrvDateStr();}
+function ctrvCacheKey(c){return 'bebeCtrv_v2_'+S.provider+'_'+c.firstName+'_'+ctrvDateStr()+'_'+(S.lang||'fr');}
 function getCtrvHistory(){try{return JSON.parse(localStorage.getItem('bebeCtrvHistory')||'[]');}catch{return[];}}
 function upsertCtrvToday(obj,childName){const h=getCtrvHistory();const today=ctrvDateStr();const ex=h.find(x=>x.date===today&&x.childName===childName);if(ex){const changed=ex.topic!==obj.topic||ex.question!==obj.question;ex.topic=obj.topic;ex.question=obj.question;ex.data=obj;if(changed)ex.signal=null;}else{h.unshift({date:today,childName,topic:obj.topic,question:obj.question,signal:null,data:obj});}localStorage.setItem('bebeCtrvHistory',JSON.stringify(h.slice(0,60)));}
 function setCtrvFeedback(signal,childName){const h=getCtrvHistory();const it=h.find(x=>x.date===ctrvDateStr()&&x.childName===childName);if(it){it.signal=signal;localStorage.setItem('bebeCtrvHistory',JSON.stringify(h));}}
@@ -1849,7 +1849,8 @@ function netErrMsg(err){
 }
 
 // Génère la controverse structurée selon le moteur choisi
-async function aiControverse(sys){
+async function aiControverse(sys,userMsg){
+  userMsg=userMsg||'Génère la controverse du jour.';
   if(S.provider==='anthropic'){
     if(!S.anthropicKey)throw new Error('Clé Claude manquante (Paramètres).');
     // Non-streaming. max_tokens=1600 : ~1100-1200 tokens réels + marge
@@ -1861,7 +1862,7 @@ async function aiControverse(sys){
       signal:ac.signal,
       body:JSON.stringify({
         model:ANTHROPIC_MODEL,max_tokens:1800,stream:false,system:sys,
-        messages:[{role:'user',content:'Génère la controverse du jour.'}],
+        messages:[{role:'user',content:userMsg}],
         tools:[{name:'controverse',description:'Renvoie la controverse du jour, structurée.',input_schema:CTRV_TOOL_SCHEMA}],
         tool_choice:{type:'tool',name:'controverse'}
       })
@@ -1880,7 +1881,7 @@ async function aiControverse(sys){
   let res;
   try{res=await fetch(geminiUrl('generateContent'),{
     method:'POST',headers:{'Content-Type':'application/json'},signal:ac2.signal,
-    body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents:[{role:'user',parts:[{text:'Génère la controverse du jour.'}]}],generationConfig:{responseMimeType:'application/json',responseSchema:CTRV_SCHEMA,temperature:1.05}})
+    body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents:[{role:'user',parts:[{text:userMsg}]}],generationConfig:{responseMimeType:'application/json',responseSchema:CTRV_SCHEMA,temperature:1.05}})
   });}catch(e){clearTimeout(tid2);console.error('[aiControverse Gemini]',e);if(e.name==='AbortError')throw new Error('Délai dépassé — réessaie.');throw new TypeError(e.message);}
   clearTimeout(tid2);
   if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`Erreur ${res.status}`);}
@@ -1923,7 +1924,7 @@ async function aiDeepDive(sys,q,grounded){
 
 async function generateControverse(child,data,force){
   if(S.controverse.loading)return; // prevent concurrent calls
-  if(S.provider==='anthropic'){if(!S.anthropicKey){S.controverse.error='Ajoute ta clé Claude dans les Paramètres.';S.controverse.childKey=ctrvIdent(child);render();return;}}
+  if(S.provider==='anthropic'){if(!S.anthropicKey){S.controverse.error=S.lang==='en'?'Add your Claude key in Settings.':'Ajoute ta clé Claude dans les Paramètres.';S.controverse.childKey=ctrvIdent(child);render();return;}}
   else if(!S.apiKey){S.modal='apikey';render();return;}
   S.controverse.dive={open:false,items:[],loading:false,error:null};
   const ck=ctrvCacheKey(child);
@@ -1933,6 +1934,7 @@ async function generateControverse(child,data,force){
   const recent=[...new Set(hist.slice(0,20).map(x=>x.question))];
   const liked=[...new Set(hist.filter(x=>x.signal==='learned').map(x=>x.topic))];
   const disliked=[...new Set(hist.filter(x=>x.signal==='skip').map(x=>x.topic))];
+  const _cen=S.lang==='en';
   const sibs=getSiblings(S.children.indexOf(child));
   let sibCtx='';
   if(sibs.length){
@@ -1941,26 +1943,87 @@ async function generateControverse(child,data,force){
       const unborn=isUnborn(sib);
       const sibDate=new Date(sib.birthDate+'T12:00:00');
       const older=sibDate<childDate;
-      const rel=sib.gender==='girl'?(older?'grande sœur':'petite sœur'):(older?'grand frère':'petit frère');
-      if(unborn){
-        const dtu=getDaysUntilDue(sib);
-        const term=sibDate.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
-        return `- ${sib.firstName} (futur·e ${rel} de ${child.firstName}) est à naître — terme le ${term}, dans ~${dtu} jours. ${child.firstName} va donc DEVENIR ${child.gender==='girl'?'grande sœur':'grand frère'} (ne l'est pas encore).`;
+      if(_cen){
+        const rel=sib.gender==='girl'?(older?'older sister':'younger sister'):(older?'older brother':'younger brother');
+        if(unborn){
+          const dtu=getDaysUntilDue(sib);
+          const term=sibDate.toLocaleDateString('en-US',{day:'numeric',month:'long',year:'numeric'});
+          return `- ${sib.firstName} (future ${rel} of ${child.firstName}) is yet to be born — due ${term}, in ~${dtu} days. ${child.firstName} will therefore BECOME a ${child.gender==='girl'?'big sister':'big brother'} (not yet).`;
+        }
+        const gap=Math.abs(Math.round(getGapMonths(child,sib)));
+        return `- ${sib.firstName} (${rel} of ${child.firstName}) — ${gap} months apart, already born.`;
+      } else {
+        const rel=sib.gender==='girl'?(older?'grande sœur':'petite sœur'):(older?'grand frère':'petit frère');
+        if(unborn){
+          const dtu=getDaysUntilDue(sib);
+          const term=sibDate.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+          return `- ${sib.firstName} (futur·e ${rel} de ${child.firstName}) est à naître — terme le ${term}, dans ~${dtu} jours. ${child.firstName} va donc DEVENIR ${child.gender==='girl'?'grande sœur':'grand frère'} (ne l'est pas encore).`;
+        }
+        const gap=Math.abs(Math.round(getGapMonths(child,sib)));
+        return `- ${sib.firstName} (${rel} de ${child.firstName}) — ${gap} mois d'écart, déjà né·e.`;
       }
-      const gap=Math.abs(Math.round(getGapMonths(child,sib)));
-      return `- ${sib.firstName} (${rel} de ${child.firstName}) — ${gap} mois d'écart, déjà né·e.`;
     });
     const olderCount=sibs.filter(s=>new Date(s.birthDate+'T12:00:00')<childDate).length;
     let position;
-    if(olderCount===0)position=`${child.firstName} est l'aîné·e de la fratrie (aucun grand frère ni grande sœur).`;
-    else if(olderCount===sibs.length)position=`${child.firstName} est le·la cadet·te de la fratrie.`;
-    else position=`${child.firstName} est au milieu de la fratrie.`;
-    sibCtx=`## Fratrie (RESPECTE SCRUPULEUSEMENT cet ordre de naissance)
-${position}
-${lines.join('\n')}
-N'invente JAMAIS un frère ou une sœur, ni un ordre de naissance différent de ces faits. Si un cadet est à naître, ${child.firstName} n'a pas encore ce statut de "petit" à gérer — c'est l'arrivée à venir qui compte.`;
+    if(_cen){
+      if(olderCount===0)position=`${child.firstName} is the eldest (no older siblings).`;
+      else if(olderCount===sibs.length)position=`${child.firstName} is the youngest.`;
+      else position=`${child.firstName} is a middle child.`;
+      sibCtx=`## Siblings (STRICTLY respect this birth order)\n${position}\n${lines.join('\n')}\nNEVER invent a sibling or a different birth order. If a younger sibling is yet to be born, ${child.firstName} is not yet a big sibling — that transition is coming.`;
+    } else {
+      if(olderCount===0)position=`${child.firstName} est l'aîné·e de la fratrie (aucun grand frère ni grande sœur).`;
+      else if(olderCount===sibs.length)position=`${child.firstName} est le·la cadet·te de la fratrie.`;
+      else position=`${child.firstName} est au milieu de la fratrie.`;
+      sibCtx=`## Fratrie (RESPECTE SCRUPULEUSEMENT cet ordre de naissance)\n${position}\n${lines.join('\n')}\nN'invente JAMAIS un frère ou une sœur, ni un ordre de naissance différent de ces faits. Si un cadet est à naître, ${child.firstName} n'a pas encore ce statut de "petit" à gérer — c'est l'arrivée à venir qui compte.`;
+    }
   }
-  const sys=`Tu es l'éditeur intellectuel de "BébéPilote", une app qui remplace le doomscrolling par UNE idée utile par jour sur le développement de l'enfant. Ton lecteur est un parent universitaire exigeant : il déteste les généralités rassurantes, il aime le débat d'idées argumenté, les nuances et l'honnêteté épistémique.
+  const sys=_cen?`You are the intellectual editor of "BébéPilote", an app that replaces doomscrolling with ONE useful idea per day about child development. Your reader is a demanding, university-educated parent who hates reassuring generalities and loves argued debate, nuance, and epistemic honesty.
+
+You produce "Debate of the day": a real parenting question that divides opinion, presented in a balanced and stimulating way.
+
+## Child
+${child.firstName}, ${child.gender==='girl'?'girl':'boy'}, ${data.ageLabel} (day ${data.ageInDays}).
+${sibCtx}
+
+## Core rules (NON-negotiable)
+- Choose ONE real, live controversy relevant to THIS exact age.
+- Present 2 camps. EACH camp MUST have at least one honest "pro" AND one honest "con". No camp without flaws — that's the app's DNA.
+- "known": what the data genuinely establishes, without overstating.
+- "believed": what falls under belief/ideology on both sides, presented as such — not as fact.
+- "unknown": what science honestly cannot settle.
+- "bridge": the parent's "so concretely, this week?" moment. MUST be structured in 2 blocks separated by \\n\\n — use this exact format:
+  "Observe: [an OBSERVABLE, concrete signal to watch in this specific child at this specific age — behaviour, reaction, timing]\\n\\nTry: [a micro-action or adjustment the parent can test today or this week]"
+  Never a platitude ("trust your instincts"), never an ideological conclusion. The parent must leave with something to DO or WATCH.
+- "tomorrow_teaser": an enticing but honest question for tomorrow (one sentence).
+- "deep_questions": 3 precise, sharp, enticing follow-up questions to dig into THIS debate (they will power a "Dig deeper" button). Anchored on the camps above, not generic.
+
+## Citations & truth
+- NEVER invent a study, meta-analysis, date, or precise figure. No false precision.
+- You may name a well-known, uncontested school of thought or researcher (Bowlby, Dweck, Montessori, Ferber, Goldman, Piaget…) WITHOUT inventing a numbered reference.
+- When in doubt, write "approaches differ" rather than a false fact.
+- Vital-risk topics (SIDS, fever, allergies, physical safety): stay cautious and explicitly refer to consulting a medical authority.
+
+## STRICT lengths (limited token budget — follow to the letter)
+- topic: 2-4 words
+- question: 1 sentence, max 20 words
+- why_now: max 2 short sentences
+- camps: 2 camps (not 3). logic per camp: max 2 sentences. pros: 1-2 items, each max 10 words. cons: 1-2 items, each max 10 words.
+- known / believed / unknown: max 2 sentences each
+- bridge: exactly 2 sentences — one for "Observe:", one for "Try:"
+- tomorrow_teaser: 1 sentence, max 15 words
+- deep_questions: 3 questions, each max 12 words
+
+## Style
+- English, dense, sharp, zero filler. Never start with "Sure," or "Absolutely,".
+- Intellectual-journal tone, not a soft parenting blog.
+
+## DO NOT reuse (questions asked recently)
+${recent.length?recent.map(q=>'- '+q).join('\n'):'(none)'}
+${liked.length?`\n## Topics this parent enjoyed (favour this register): ${liked.join(', ')}`:''}
+${disliked.length?`\n## Topics this parent rejected (avoid): ${disliked.join(', ')}`:''}
+
+Reply ONLY with the structured JSON requested.`
+  :`Tu es l'éditeur intellectuel de "BébéPilote", une app qui remplace le doomscrolling par UNE idée utile par jour sur le développement de l'enfant. Ton lecteur est un parent universitaire exigeant : il déteste les généralités rassurantes, il aime le débat d'idées argumenté, les nuances et l'honnêteté épistémique.
 
 Tu produis "La controverse du jour" : une vraie question parentale qui divise, présentée de façon équilibrée et stimulante.
 
@@ -2008,14 +2071,15 @@ ${disliked.length?`\n## Sujets rejetés par ce parent (évite) : ${disliked.join
 Réponds UNIQUEMENT avec le JSON structuré demandé.`;
   const _ctrvT0=Date.now();
   try{
-    const obj=await aiControverse(sys);
+    const _ctrvUserMsg=_cen?'Generate today\'s debate.':'Génère la controverse du jour.';
+    const obj=await aiControverse(sys,_ctrvUserMsg);
     if(!obj.camps||!obj.camps.length)throw new Error('Format inattendu');
-    addApiLog({ts:new Date().toISOString(),provider:S.provider,endpoint:'controverse',status:'ok',model:S.provider==='anthropic'?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_ctrvT0,reqMsgs:1,reqSystem:sys,reqUserMsg:'Génère la controverse du jour.',respText:JSON.stringify(obj,null,2),error:null});
+    addApiLog({ts:new Date().toISOString(),provider:S.provider,endpoint:'controverse',status:'ok',model:S.provider==='anthropic'?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_ctrvT0,reqMsgs:1,reqSystem:sys,reqUserMsg:_cen?'Generate today\'s debate.':'Génère la controverse du jour.',respText:JSON.stringify(obj,null,2),error:null});
     localStorage.setItem(ck,JSON.stringify(obj));
     upsertCtrvToday(obj,child.firstName);
     S.controverse.data=obj;S.controverse.loading=false;S.controverse.childKey=ctrvIdent(child);render();
   }catch(err){
-    addApiLog({ts:new Date().toISOString(),provider:S.provider,endpoint:'controverse',status:'error',model:S.provider==='anthropic'?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_ctrvT0,reqMsgs:1,reqSystem:sys,reqUserMsg:'Génère la controverse du jour.',respText:'',error:netErrMsg(err)});
+    addApiLog({ts:new Date().toISOString(),provider:S.provider,endpoint:'controverse',status:'error',model:S.provider==='anthropic'?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_ctrvT0,reqMsgs:1,reqSystem:sys,reqUserMsg:_cen?'Generate today\'s debate.':'Génère la controverse du jour.',respText:'',error:netErrMsg(err)});
     S.controverse.loading=false;S.controverse.error=netErrMsg(err);render();
   }
 }
@@ -2074,14 +2138,38 @@ function parseDiveAnswer(txt){
 async function askDeepDive(child,data,q){
   const keyMissing=S.provider==='anthropic'?!S.anthropicKey:!S.apiKey;
   if(keyMissing){
-    if(S.provider==='anthropic'){S.controverse.dive.open=true;S.controverse.dive.error='Ajoute ta clé Claude dans les Paramètres.';render();return;}
+    if(S.provider==='anthropic'){S.controverse.dive.open=true;S.controverse.dive.error=S.lang==='en'?'Add your Claude key in Settings.':'Ajoute ta clé Claude dans les Paramètres.';render();return;}
     S.modal='apikey';render();return;
   }
   if(S.controverse.dive.loading)return;
   const d=S.controverse.data;if(!d||!q||!q.trim())return;
   S.controverse.dive.open=true;S.controverse.dive.loading=true;S.controverse.dive.error=null;render();
+  const _diveEn=S.lang==='en';
   const campsTxt=d.camps.map(c=>`${c.name} — ${c.logic}`).join(' || ');
-  const sys=`Tu approfondis une controverse parentale pour un parent universitaire exigeant, dans l'app BébéPilote.
+  const sys=_diveEn?`You are digging into a parenting debate for a demanding, university-educated parent, in the BébéPilote app.
+
+## Current debate (stay anchored on it, do not drift)
+Question: ${d.question}
+Camps: ${campsTxt}
+
+## Child
+${child.firstName}, ${child.gender==='girl'?'girl':'boy'}, ${data.ageLabel}.
+
+## Your mission
+Answer the parent's follow-up question rigorously, with nuance and HONESTY about the epistemic status of each claim.
+
+## MANDATORY format
+Structure your response in 2 to 5 blocks. Each block starts on a NEW LINE with EXACTLY one of these tags, followed by ":" then the text:
+◆FACT: an established empirical claim, backed by a source you genuinely found via research.
+◇INTERPRETATION: a plausible reading not settled by data.
+○POSITION: a recommendation or doctrine — name who holds it (school, institution, author).
+⚠SAFETY: ONLY if the topic involves a vital risk (SIDS, choking, serious fever, allergy, physical safety). Invite the reader to consult a medical authority (AAP, WHO, etc.) rather than trusting you.
+
+## Hard rules
+- Use web research to back each ◆FACT. NEVER invent a study, figure, or date.
+- If you cannot find a reliable source, do NOT use ◆FACT — switch to ◇INTERPRETATION.
+- English, dense, no filler. Do not start with "Sure," or "Absolutely,".`
+  :`Tu approfondis une controverse parentale pour un parent universitaire exigeant, dans l'app BébéPilote.
 
 ## Controverse en cours (reste ancré dessus, ne dérive pas)
 Question : ${d.question}
@@ -2124,11 +2212,12 @@ Structure ta réponse en 2 à 5 blocs. Chaque bloc commence sur une NOUVELLE LIG
 }
 
 function renderDiveBlock(b){
+  const _dben=S.lang==='en';
   const cfg={
-    fait:{c:'#3A5E38',sym:'◆',label:'Fait établi · sourcé'},
-    interp:{c:'#A06C2A',sym:'◇',label:'Interprétation'},
-    position:{c:'#C48A40',sym:'○',label:'Position / recommandation'},
-    safety:{c:'#A03828',sym:'⚠',label:'Sécurité'}
+    fait:{c:'#3A5E38',sym:'◆',label:_dben?'Established fact · sourced':'Fait établi · sourcé'},
+    interp:{c:'#A06C2A',sym:'◇',label:_dben?'Interpretation':'Interprétation'},
+    position:{c:'#C48A40',sym:'○',label:_dben?'Position / recommendation':'Position / recommandation'},
+    safety:{c:'#A03828',sym:'⚠',label:_dben?'Safety':'Sécurité'}
   };
   if(b.type==='plain')return`<p style="font-size:0.8438rem;color:#5C5752;line-height:1.7;margin-bottom:12px">${e(b.text)}</p>`;
   const k=cfg[b.type]||cfg.position;
@@ -2150,9 +2239,9 @@ function renderDiveItem(it,child,data,idx){
       <p style="font-size:0.875rem;font-weight:600;color:var(--c-ink);line-height:1.4">${e(it.q)}</p>
     </div>
     ${it.blocks.map(renderDiveBlock).join('')}
-    ${it.grounded===false?`<p style="font-size:0.6875rem;color:#B0A89E;font-style:italic;margin-top:4px">Réponse sans recherche web (mode prudent — sans citation chiffrée). Le grounding s'activera avec un quota Google Search.</p>`:''}
+    ${it.grounded===false?`<p style="font-size:0.6875rem;color:#B0A89E;font-style:italic;margin-top:4px">${S.lang==='en'?'Answer without web search (cautious mode — no cited figures). Grounding will activate with a Google Search quota.':'Réponse sans recherche web (mode prudent — sans citation chiffrée). Le grounding s\'activera avec un quota Google Search.'}</p>`:''}
     ${it.sources&&it.sources.length?`<div style="margin-top:12px;padding-top:10px;border-top:1px dashed var(--c-bd)">
-      <p style="font-size:0.625rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#9C9790;margin-bottom:7px">Sources</p>
+      <p style="font-size:0.625rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#9C9790;margin-bottom:7px">${S.lang==='en'?'Sources':'Sources'}</p>
       ${it.sources.map(s=>`<a href="${e(s.uri)}" target="_blank" rel="noopener" class="msg-ref-link"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>${e(s.title)}</a>`).join('')}
     </div>`:''}
     ${child?`<div style="display:flex;gap:6px;margin-top:12px;padding-top:8px;border-top:1px solid var(--c-bd)">${modalActBtns('data-fav-dive',idx,'data-share-dive',idx,faved)}</div>`:''}
@@ -2160,18 +2249,23 @@ function renderDiveItem(it,child,data,idx){
 }
 
 function renderControverseDive(child,d,dv,data){
-  const sugg=(d.deep_questions&&d.deep_questions.length)?d.deep_questions.slice(0,3):[
+  const _diveUien=S.lang==='en';
+  const sugg=(d.deep_questions&&d.deep_questions.length)?d.deep_questions.slice(0,3):(_diveUien?[
+    'Why do experts disagree on this?',
+    `What changes with ${child.firstName}'s temperament?`,
+    'What do the most recent data say?'
+  ]:[
     'Pourquoi les experts sont-ils en désaccord sur ce point ?',
     `Qu'est-ce qui change selon le tempérament de ${child.firstName} ?`,
     'Que disent les données les plus récentes ?'
-  ];
+  ]);
   return`<div class="overlay" id="modal-overlay">
 <div class="sheet">
   <div class="sheet-handle"></div>
   <div class="sheet-head">
     <div style="display:flex;align-items:center;gap:8px">
       <button id="btn-dive-back" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;color:var(--c-t3)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg></button>
-      <span style="font-weight:600;font-size:0.875rem">Creuser · ${e(d.topic)}</span>
+      <span style="font-weight:600;font-size:0.875rem">${_diveUien?'Deep dive':'Creuser'} · ${e(d.topic)}</span>
     </div>
     ${xBtn()}
   </div>
@@ -2180,13 +2274,13 @@ function renderControverseDive(child,d,dv,data){
       <p style="font-size:0.8125rem;color:#6B6480;font-weight:600;line-height:1.4">${e(d.question)}</p>
     </div>
     ${dv.items.map((it,idx)=>renderDiveItem(it,child,data,idx)).join('')}
-    ${dv.loading?`<div style="display:flex;align-items:center;gap:9px;color:#C48A40;font-size:0.8125rem;margin-bottom:18px"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9" style="opacity:.25"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>Recherche en cours…</div>`:''}
+    ${dv.loading?`<div style="display:flex;align-items:center;gap:9px;color:#C48A40;font-size:0.8125rem;margin-bottom:18px"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9" style="opacity:.25"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>${_diveUien?'Searching…':'Recherche en cours…'}</div>`:''}
     ${dv.error?`<p style="font-size:0.8125rem;color:#A03828;margin-bottom:14px">${e(dv.error)}</p>`:''}
     ${!dv.loading?`
-      <p style="font-size:0.6875rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#A06C2A;margin:6px 0 11px">${dv.items.length?'Continuer à creuser':'Creuser — par où ?'}</p>
+      <p style="font-size:0.6875rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#A06C2A;margin:6px 0 11px">${dv.items.length?(_diveUien?'Keep digging':'Continuer à creuser'):(_diveUien?'Dig deeper — where to start?':'Creuser — par où ?')}</p>
       ${sugg.map(q=>`<button class="dive-sugg" data-dive-q="${e(q)}">↳ ${e(q)}</button>`).join('')}
       <div class="dive-ask">
-        <input id="dive-input" type="text" placeholder="Ou pose ta propre question…" autocomplete="off"/>
+        <input id="dive-input" type="text" placeholder="${_diveUien?'Or ask your own question…':'Ou pose ta propre question…'}" autocomplete="off"/>
         <button id="dive-send" class="dive-send-btn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
       </div>
     `:''}
@@ -2239,11 +2333,11 @@ function renderCtrvFavBody(d){
     ${(cp.cons||[]).map(p=>`<div style="display:flex;gap:6px;margin-bottom:3px"><span style="color:#A03828;font-weight:800">✗</span><span style="font-size:0.75rem;color:#5C5752;line-height:1.45">${md(p)}</span></div>`).join('')}
   </div>`).join('')}
   <div style="background:var(--c-bg2);border-radius:10px;padding:11px;margin:10px 0">
-    <p style="font-size:0.625rem;font-weight:700;text-transform:uppercase;color:#3A5E38;margin-bottom:2px">◆ Ce qu'on sait</p><p style="font-size:0.75rem;color:#5C5752;line-height:1.5;margin-bottom:8px">${md(d.known)}</p>
-    <p style="font-size:0.625rem;font-weight:700;text-transform:uppercase;color:#A06C2A;margin-bottom:2px">◇ Ce qu'on croit</p><p style="font-size:0.75rem;color:#5C5752;line-height:1.5;margin-bottom:8px">${md(d.believed)}</p>
-    <p style="font-size:0.625rem;font-weight:700;text-transform:uppercase;color:#C48A40;margin-bottom:2px">○ Ce qu'on ne sait pas</p><p style="font-size:0.75rem;color:#5C5752;line-height:1.5">${md(d.unknown)}</p>
+    <p style="font-size:0.625rem;font-weight:700;text-transform:uppercase;color:#3A5E38;margin-bottom:2px">◆ ${S.lang==='en'?'What we know':'Ce qu\'on sait'}</p><p style="font-size:0.75rem;color:#5C5752;line-height:1.5;margin-bottom:8px">${md(d.known)}</p>
+    <p style="font-size:0.625rem;font-weight:700;text-transform:uppercase;color:#A06C2A;margin-bottom:2px">◇ ${S.lang==='en'?'What we believe':'Ce qu\'on croit'}</p><p style="font-size:0.75rem;color:#5C5752;line-height:1.5;margin-bottom:8px">${md(d.believed)}</p>
+    <p style="font-size:0.625rem;font-weight:700;text-transform:uppercase;color:#C48A40;margin-bottom:2px">○ ${S.lang==='en'?'What we don\'t know':'Ce qu\'on ne sait pas'}</p><p style="font-size:0.75rem;color:#5C5752;line-height:1.5">${md(d.unknown)}</p>
   </div>
-  <div class="refs-block acc-plum"><p style="font-size:0.625rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">Et pour bébé ?</p>${renderBridge(d.bridge,'0.75rem')}</div>`;
+  <div class="refs-block acc-plum"><p style="font-size:0.625rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">${S.lang==='en'?'And for the child?':'Et pour bébé ?'}</p>${renderBridge(d.bridge,'0.75rem')}</div>`;
 }
 
 function renderDiveFavBody(f){
@@ -2256,32 +2350,33 @@ function renderDiveFavBody(f){
 
 
 function renderControverseCard(child,data){
-  const c=S.controverse;
+  const c=S.controverse;const _cen=S.lang==='en';
+  const _ctrvLabel=_cen?'◆ Debate of the day':'◆ Controverse du jour';
   if(c.loading)return`<div class="ctrv-card" style="cursor:default">
-    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A06C2A;margin-bottom:12px">◆ Controverse du jour</p>
+    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A06C2A;margin-bottom:12px">${_ctrvLabel}</p>
     <div style="height:15px;width:75%;background:rgba(91,70,144,.16);border-radius:6px;margin-bottom:9px"></div>
     <div style="height:15px;width:90%;background:rgba(91,70,144,.12);border-radius:6px;margin-bottom:9px"></div>
     <div style="height:15px;width:45%;background:rgba(91,70,144,.1);border-radius:6px"></div>
-    <p style="font-size:0.75rem;color:#C48A40;margin-top:14px">Génération en cours…</p>
+    <p style="font-size:0.75rem;color:#C48A40;margin-top:14px">${_cen?'Generating…':'Génération en cours…'}</p>
   </div>`;
   if(c.error)return`<button class="ctrv-card" id="btn-ctrv-retry">
-    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A06C2A;margin-bottom:8px">◆ Controverse du jour</p>
+    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A06C2A;margin-bottom:8px">${_ctrvLabel}</p>
     <p style="font-size:0.8125rem;color:#A03828;line-height:1.5">${e(c.error)}</p>
-    <p style="font-size:0.75rem;color:#A06C2A;margin-top:10px;font-weight:600">Toucher pour réessayer</p>
+    <p style="font-size:0.75rem;color:#A06C2A;margin-top:10px;font-weight:600">${_cen?'Tap to retry':'Toucher pour réessayer'}</p>
   </button>`;
   const d=c.data;
   if(!d)return`<button class="ctrv-card" id="btn-ctrv-gen">
-    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A06C2A;margin-bottom:8px">◆ Controverse du jour</p>
-    <p style="font-family:'Cormorant Garamond',serif;font-size:1.3125rem;font-weight:500;color:var(--c-ink);line-height:1.2">Qu'est-ce que je vais apprendre aujourd'hui&nbsp;?</p>
-    <p style="font-size:0.75rem;color:#C48A40;margin-top:10px;font-weight:600">Générer la controverse du jour →</p>
+    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A06C2A;margin-bottom:8px">${_ctrvLabel}</p>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:1.3125rem;font-weight:500;color:var(--c-ink);line-height:1.2">${_cen?'What will I learn today?':'Qu\'est-ce que je vais apprendre aujourd\'hui ?'}</p>
+    <p style="font-size:0.75rem;color:#C48A40;margin-top:10px;font-weight:600">${_cen?'Generate today\'s debate →':'Générer la controverse du jour →'}</p>
   </button>`;
   return`<button class="ctrv-card" id="btn-ctrv-open">
-    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A06C2A;margin-bottom:11px">◆ Controverse du jour · ${e(d.topic)}</p>
+    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A06C2A;margin-bottom:11px">${_ctrvLabel} · ${e(d.topic)}</p>
     <p style="font-family:'Cormorant Garamond',serif;font-size:1.4375rem;font-weight:500;color:var(--c-ink);line-height:1.22;margin-bottom:10px">${e(d.question)}</p>
     <p style="font-size:0.8125rem;color:#6B6480;line-height:1.5;margin-bottom:15px">${e(d.why_now)}</p>
     <div style="display:flex;align-items:center;justify-content:space-between">
-      <span style="font-size:0.75rem;color:#C48A40">3 min de lecture</span>
-      <span style="display:inline-flex;align-items:center;gap:5px;font-size:0.8125rem;font-weight:600;color:#A06C2A">Ouvrir <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      <span style="font-size:0.75rem;color:#C48A40">${_cen?'3 min read':'3 min de lecture'}</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;font-size:0.8125rem;font-weight:600;color:#A06C2A">${_cen?'Open':'Ouvrir'} <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
     </div>
   </button>`;
 }
@@ -2292,6 +2387,7 @@ function renderControverseModal(child,data){
   const fb=getCtrvFeedbackToday(child.firstName);
   const campCols=['#A06C2A','#3A5E38','#2D4A8A'];
   const faved=isFavorited(favId(child.firstName,'controverse',d.topic));
+  const _cmen=S.lang==='en';
   return`<div class="overlay" id="modal-overlay">
 <div class="sheet">
   <div class="sheet-handle"></div>
@@ -2310,7 +2406,7 @@ function renderControverseModal(child,data){
     <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.6875rem;font-weight:500;line-height:1.25;margin-bottom:12px">${e(d.question)}</h2>
     <p style="font-size:0.875rem;color:#5C5752;line-height:1.7;margin-bottom:24px">${e(d.why_now)}</p>
 
-    <p style="font-size:0.6875rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#A06C2A;margin-bottom:12px">Les camps</p>
+    <p style="font-size:0.6875rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#A06C2A;margin-bottom:12px">${_cmen?'The camps':'Les camps'}</p>
     <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:26px">
       ${(d.camps||[]).map((cp,i)=>{const col=campCols[i%3];return`<div style="border:1px solid var(--c-bd);border-left:3px solid ${col};border-radius:12px;padding:14px 16px">
         <p style="font-weight:700;font-size:0.875rem;color:var(--c-ink);margin-bottom:6px">${e(cp.name)}</p>
@@ -2321,28 +2417,28 @@ function renderControverseModal(child,data){
     </div>
 
     <div style="background:var(--c-bg2);border-radius:14px;padding:16px;margin-bottom:26px">
-      <div style="margin-bottom:13px"><p style="font-size:0.6875rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#3A5E38;margin-bottom:4px">◆ Ce qu'on sait</p><p style="font-size:0.8125rem;color:#5C5752;line-height:1.6">${md(d.known)}</p></div>
-      <div style="margin-bottom:13px"><p style="font-size:0.6875rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#A06C2A;margin-bottom:4px">◇ Ce qu'on croit (pas un fait)</p><p style="font-size:0.8125rem;color:#5C5752;line-height:1.6">${md(d.believed)}</p></div>
-      <div><p style="font-size:0.6875rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#C48A40;margin-bottom:4px">○ Ce qu'on ne sait pas</p><p style="font-size:0.8125rem;color:#5C5752;line-height:1.6">${md(d.unknown)}</p></div>
+      <div style="margin-bottom:13px"><p style="font-size:0.6875rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#3A5E38;margin-bottom:4px">◆ ${_cmen?'What we know':'Ce qu\'on sait'}</p><p style="font-size:0.8125rem;color:#5C5752;line-height:1.6">${md(d.known)}</p></div>
+      <div style="margin-bottom:13px"><p style="font-size:0.6875rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#A06C2A;margin-bottom:4px">◇ ${_cmen?'What we believe (not a fact)':'Ce qu\'on croit (pas un fait)'}</p><p style="font-size:0.8125rem;color:#5C5752;line-height:1.6">${md(d.believed)}</p></div>
+      <div><p style="font-size:0.6875rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#C48A40;margin-bottom:4px">○ ${_cmen?'What we don\'t know':'Ce qu\'on ne sait pas'}</p><p style="font-size:0.8125rem;color:#5C5752;line-height:1.6">${md(d.unknown)}</p></div>
     </div>
 
     <div class="refs-block acc-plum" style="margin-bottom:24px">
-      <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">Et pour ${e(child.firstName)} ?</p>
+      <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">${_cmen?`And for ${e(child.firstName)}?`:`Et pour ${e(child.firstName)} ?`}</p>
       <div>${renderBridge(d.bridge,'0.875rem')}</div>
     </div>
 
-    <button id="btn-ctrv-creuser" class="ctrv-creuser-btn"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/></svg>Creuser ce sujet</button>
+    <button id="btn-ctrv-creuser" class="ctrv-creuser-btn"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/></svg>${_cmen?'Dig deeper':'Creuser ce sujet'}</button>
 
-    <p style="text-align:center;font-size:0.75rem;color:#9C9790;margin-bottom:10px">Cette controverse…</p>
+    <p style="text-align:center;font-size:0.75rem;color:#9C9790;margin-bottom:10px">${_cmen?'This debate…':'Cette controverse…'}</p>
     <div style="display:flex;gap:8px;margin-bottom:22px">
-      <button class="ctrv-fb${fb==='learned'?' on':''}" data-ctrv-fb="learned" style="flex:1"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;flex-shrink:0"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.5.4.8 1 .9 1.6h5.4c.1-.6.4-1.2.9-1.6A6 6 0 0 0 12 3z"/></svg>M'a appris</button>
-      <button class="ctrv-fb${fb==='skip'?' on':''}" data-ctrv-fb="skip" style="flex:1"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;flex-shrink:0"><circle cx="12" cy="12" r="9"/><line x1="5.6" y1="5.6" x2="18.4" y2="18.4"/></svg>Pas pour moi</button>
+      <button class="ctrv-fb${fb==='learned'?' on':''}" data-ctrv-fb="learned" style="flex:1"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;flex-shrink:0"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.5.4.8 1 .9 1.6h5.4c.1-.6.4-1.2.9-1.6A6 6 0 0 0 12 3z"/></svg>${_cmen?'Learned something':'M\'a appris'}</button>
+      <button class="ctrv-fb${fb==='skip'?' on':''}" data-ctrv-fb="skip" style="flex:1"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;flex-shrink:0"><circle cx="12" cy="12" r="9"/><line x1="5.6" y1="5.6" x2="18.4" y2="18.4"/></svg>${_cmen?'Not for me':'Pas pour moi'}</button>
     </div>
 
     <div style="text-align:center;border-top:1px solid var(--c-bd);padding-top:16px">
-      <p style="font-size:0.75rem;color:#9C9790;margin-bottom:5px">C'est tout pour aujourd'hui.</p>
-      ${d.tomorrow_teaser?`<p style="font-size:0.8125rem;color:#6B6480;font-style:italic;line-height:1.5">Demain : « ${e(d.tomorrow_teaser)} »</p>`:''}
-      <button id="btn-ctrv-regen" style="margin-top:14px;font-size:0.75rem;color:#C48A40;text-decoration:underline">Régénérer (proto)</button>
+      <p style="font-size:0.75rem;color:#9C9790;margin-bottom:5px">${_cmen?'That\'s all for today.':'C\'est tout pour aujourd\'hui.'}</p>
+      ${d.tomorrow_teaser?`<p style="font-size:0.8125rem;color:#6B6480;font-style:italic;line-height:1.5">${_cmen?'Tomorrow:':'Demain :'} « ${e(d.tomorrow_teaser)} »</p>`:''}
+      <button id="btn-ctrv-regen" style="margin-top:14px;font-size:0.75rem;color:#C48A40;text-decoration:underline">${_cmen?'Regenerate (proto)':'Régénérer (proto)'}</button>
     </div>
     <div style="height:8px"></div>
   </div>
