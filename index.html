@@ -167,6 +167,10 @@ a{color:#2D4A8A}
 /* Bot response — no bubble, plain text */
 .msg-block{display:flex;flex-direction:column;align-items:flex-start;gap:6px;max-width:94%;align-self:flex-start}
 .msg-bot{color:var(--c-ink);font-size:0.9375rem;line-height:1.72;word-break:break-word}
+.msg-bot ul,.msg-bot ol{margin:5px 0 5px 18px;padding:0}
+.msg-bot li{margin-bottom:3px;line-height:1.6}
+.msg-bot strong{font-weight:700;color:var(--c-ink)}
+.msg-bot code{background:var(--c-bg2);padding:1px 4px;border-radius:4px;font-size:.88em;font-family:monospace}
 .msg-actions{display:flex;gap:2px;margin-top:2px}
 .msg-act{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--c-t4);transition:background .12s,color .12s}
 .msg-act:hover{background:var(--c-bg3);color:var(--c-t2)}
@@ -1384,7 +1388,7 @@ function renderMsgBlock(m,idx,child,data){
   const refs=m.refs||[];
   const sw='stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"';
   return`<div class="msg-block">
-  <p class="msg-bot">${e(m.content)}</p>
+  <div class="msg-bot">${mdFull(m.content)}</div>
   <div class="msg-actions">
     <button class="msg-act${m.copied?' copied-flash':''}" data-msg-copy="${idx}" title="Copier">
       <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" ${sw}><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
@@ -1556,6 +1560,40 @@ function md(s){
     .replace(/\*([^*\n]+?)\*/g,'<em>$1</em>')
     .replace(/\n{2,}/g,'<br><br>')
     .replace(/\n/g,'<br>');
+}
+// Full markdown renderer for chat messages and dive blocks (handles lists, headings, inline code)
+function mdFull(s){
+  if(!s)return'';
+  const esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const inline=t=>esc(t)
+    .replace(/\*\*\*(.+?)\*\*\*/g,'<strong><em>$1</em></strong>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*([^*\n]+?)\*/g,'<em>$1</em>')
+    .replace(/`([^`\n]+)`/g,'<code style="background:var(--c-bg2);padding:1px 4px;border-radius:4px;font-size:.88em;font-family:monospace">$1</code>');
+  const lines=s.split('\n');
+  const parts=[];
+  let listType='',inList=false;
+  const closeList=()=>{if(inList){parts.push(`</${listType}>`);inList=false;listType='';}};
+  for(const line of lines){
+    const trimmed=line.trim();
+    // Headings
+    const hm=trimmed.match(/^(#{1,3})\s+(.+)/);
+    if(hm){closeList();const sz=['1rem','0.9375rem','0.875rem'][hm[1].length-1];parts.push(`<p style="font-weight:700;font-size:${sz};margin:10px 0 3px;color:var(--c-ink)">${inline(hm[2])}</p>`);continue;}
+    // Bullet list
+    const bm=trimmed.match(/^[-*]\s+(.+)/);
+    if(bm){if(!inList||listType!=='ul'){closeList();parts.push('<ul style="margin:5px 0 5px 18px;padding:0;list-style:disc">');inList=true;listType='ul';}parts.push(`<li style="margin-bottom:3px;line-height:1.6">${inline(bm[1])}</li>`);continue;}
+    // Numbered list
+    const nm=trimmed.match(/^(\d+)\.\s+(.+)/);
+    if(nm){if(!inList||listType!=='ol'){closeList();parts.push('<ol style="margin:5px 0 5px 18px;padding:0">');inList=true;listType='ol';}parts.push(`<li style="margin-bottom:3px;line-height:1.6">${inline(nm[2])}</li>`);continue;}
+    // Horizontal rule
+    if(/^[-*_]{3,}$/.test(trimmed)){closeList();parts.push('<hr style="border:none;border-top:1px solid var(--c-bd);margin:10px 0">');continue;}
+    // Empty line → paragraph break
+    if(!trimmed){closeList();parts.push('<br>');continue;}
+    // Regular line
+    closeList();parts.push(inline(line)+'<br>');
+  }
+  closeList();
+  return parts.join('').replace(/(<br>\s*){3,}/g,'<br><br>').replace(/^(<br>)+|(<br>)+$/g,'');
 }
 // Renders the bridge field (2-part "Observer / Essayer") with SVG icons
 function renderBridge(txt,fs){
@@ -2169,7 +2207,8 @@ Structure your response in 2 to 5 blocks. Each block starts on a NEW LINE with E
 ## Hard rules
 - Use web research to back each ◆FACT. NEVER invent a study, figure, or date.
 - If you cannot find a reliable source, do NOT use ◆FACT — switch to ◇INTERPRETATION.
-- English, dense, no filler. Do not start with "Sure," or "Absolutely,".`
+- English, dense, no filler. Do not start with "Sure," or "Absolutely,".
+- Within each block, use markdown freely: **bold** for key terms, bullet lists for steps, line breaks between paragraphs.`
   :`Tu approfondis une controverse parentale pour un parent universitaire exigeant, dans l'app BébéPilote.
 
 ## Controverse en cours (reste ancré dessus, ne dérive pas)
@@ -2192,7 +2231,8 @@ Structure ta réponse en 2 à 5 blocs. Chaque bloc commence sur une NOUVELLE LIG
 ## Règles dures
 - Sers-toi de la recherche web pour fonder chaque ◆FAIT. N'invente JAMAIS d'étude, de chiffre ni de date.
 - Si tu ne trouves pas de source fiable, n'utilise PAS ◆FAIT — bascule en ◇INTERPRÉTATION.
-- Français, dense, sans remplissage. Ne commence pas par "Bien sûr" ni "Absolument".`;
+- Français, dense, sans remplissage. Ne commence pas par "Bien sûr" ni "Absolument".
+- Dans chaque bloc, utilise le markdown librement : **gras** pour les termes clés, listes à puces pour les étapes, sauts de ligne entre les paragraphes.`;
   const callDive=async(grounded)=>{
     const {text,sources}=await aiDeepDive(sys,q.trim(),grounded);
     return {blocks:parseDiveAnswer(text),sources,grounded};
@@ -2220,15 +2260,15 @@ function renderDiveBlock(b){
     position:{c:'#C48A40',sym:'○',label:_dben?'Position / recommendation':'Position / recommandation'},
     safety:{c:'#A03828',sym:'⚠',label:_dben?'Safety':'Sécurité'}
   };
-  if(b.type==='plain')return`<p style="font-size:0.8438rem;color:#5C5752;line-height:1.7;margin-bottom:12px">${e(b.text)}</p>`;
+  if(b.type==='plain')return`<div style="font-size:0.8438rem;color:#5C5752;line-height:1.7;margin-bottom:12px">${mdFull(b.text)}</div>`;
   const k=cfg[b.type]||cfg.position;
   if(b.type==='safety')return`<div style="background:rgba(160,56,40,.07);border-radius:10px;padding:11px 13px;margin-bottom:12px">
     <p style="font-size:0.625rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:${k.c};margin-bottom:4px">${k.sym} ${k.label}</p>
-    <p style="font-size:0.8125rem;color:#5C5752;line-height:1.6">${e(b.text)}</p>
+    <div style="font-size:0.8125rem;color:#5C5752;line-height:1.6">${mdFull(b.text)}</div>
   </div>`;
   return`<div style="margin-bottom:13px">
     <p style="font-size:0.625rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:${k.c};margin-bottom:3px">${k.sym} ${k.label}</p>
-    <p style="font-size:0.8438rem;color:#5C5752;line-height:1.65">${e(b.text)}</p>
+    <div style="font-size:0.8438rem;color:#5C5752;line-height:1.65">${mdFull(b.text)}</div>
   </div>`;
 }
 
@@ -2918,7 +2958,7 @@ function renderChat(child,data){
     ${msgs.map((m,i)=>renderMsgBlock(m,i,child,data)).join('')}
     ${loading||stream?`<div class="msg-block">
       ${stream
-        ?`<p class="msg-bot">${e(stream)}</p>`
+        ?`<div class="msg-bot">${mdFull(stream)}</div>`
         :`<div style="display:flex;gap:5px;padding:8px 0;align-items:center"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>`}
     </div>`:''}
     ${showFollowups?`<div style="display:flex;flex-wrap:wrap;gap:6px;padding:2px 0 4px">
@@ -4382,7 +4422,8 @@ Today's development: "${mFact}" — ${data.milestone?.details||''}
 Today's Caroline Goldman tip: "${carolineTopic}" — ${carolineCtx.tip}
 
 ## Format rules
-- 3 to 6 sentences in English, dense and useful — no filler
+- Use markdown freely: **bold** for key terms, bullet lists (- item) for steps or options, numbered lists for sequences. Use line breaks between paragraphs. Do NOT write a single wall of text.
+- Length: 3–8 sentences or equivalent structured content — no filler, no padding
 - Never start with "Of course!", "Absolutely!", "That's a great question!" or any equivalent
 - If the parent describes a medical symptom (fever, fall, bleeding), recommend consulting a doctor without panicking
 - If the question is outside child development, gently refocus
@@ -4441,7 +4482,8 @@ Conseil Caroline Goldman affiché aujourd'hui : "${carolineCtx.topic}" — ${car
 
 ## Règles de format
 
-- 3 à 6 phrases en français, denses et utiles — pas de remplissage
+- Utilise le markdown librement : **gras** pour les termes clés, listes à puces (- item) pour les étapes ou options, listes numérotées pour les séquences. Sauts de ligne entre les paragraphes. N'écris PAS un bloc de texte monolithique.
+- Longueur : 3 à 8 phrases ou contenu structuré équivalent — pas de remplissage
 - Ne commence jamais par "Bien sûr !", "Absolument !", "C'est une excellente question" ou tout équivalent
 - Si le parent décrit un symptôme médical (fièvre, chute, saignement), recommande une consultation sans paniquer
 - Si la question sort du développement de l'enfant, recentre avec tact
@@ -4526,7 +4568,7 @@ function patchChatMsgs(){
   const c=document.getElementById('chat-msgs');if(!c)return;
   const msgs=S.chat.msgs;
   c.innerHTML=msgs.map((m,i)=>renderMsgBlock(m,i,S.children[S.childIdx],null)).join('')
-    +(S.chat.stream?`<div style="display:flex;gap:8px;align-items:flex-end"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#9C9790" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-bottom:10px"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg><div class="msg-bot">${e(S.chat.stream)}</div></div>`:'')
+    +(S.chat.stream?`<div style="display:flex;gap:8px;align-items:flex-end"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#9C9790" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-bottom:10px"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg><div class="msg-bot">${mdFull(S.chat.stream)}</div></div>`:'')
     +'<div id="chat-end"></div>';
   document.getElementById('chat-end')?.scrollIntoView({behavior:'smooth'});
   // Re-attach action handlers after DOM update
