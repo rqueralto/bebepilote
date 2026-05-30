@@ -2087,29 +2087,30 @@ Réponds UNIQUEMENT avec le JSON structuré demandé.`;
 // ── Situations "moment difficile" par tranche d'âge ──
 function getCoachSituations(ageInDays){
   const m=ageInDays/30.44;
+  const _en=S.lang==='en';
   if(m<12)return[
-    {id:'pleurs',label:"Pleurs inconsolables"},
-    {id:'dodo',label:"Refuse de dormir"},
-    {id:'reveil',label:"Réveils nocturnes"},
-    {id:'manger',label:"Refuse de manger"},
-    {id:'separation',label:"Angoisse quand je pars"},
-    {id:'bras',label:"Veut les bras non-stop"},
+    {id:'pleurs',label:_en?"Inconsolable crying":"Pleurs inconsolables"},
+    {id:'dodo',label:_en?"Refuses to sleep":"Refuse de dormir"},
+    {id:'reveil',label:_en?"Night wakings":"Réveils nocturnes"},
+    {id:'manger',label:_en?"Refuses to eat":"Refuse de manger"},
+    {id:'separation',label:_en?"Anxiety when I leave":"Angoisse quand je pars"},
+    {id:'bras',label:_en?"Wants to be held non-stop":"Veut les bras non-stop"},
   ];
   if(m<42)return[
-    {id:'colere',label:"Crise de colère"},
-    {id:'manger',label:"Refuse de manger"},
-    {id:'tape',label:"Tape, mord ou pousse"},
-    {id:'dodo',label:"Ne veut pas dormir"},
-    {id:'non',label:"Dit « non » à tout"},
-    {id:'transition',label:"Transition difficile (parc, bain…)"},
+    {id:'colere',label:_en?"Tantrum / meltdown":"Crise de colère"},
+    {id:'manger',label:_en?"Refuses to eat":"Refuse de manger"},
+    {id:'tape',label:_en?"Hits, bites or pushes":"Tape, mord ou pousse"},
+    {id:'dodo',label:_en?"Won't go to sleep":"Ne veut pas dormir"},
+    {id:'non',label:_en?"Says « no » to everything":"Dit « non » à tout"},
+    {id:'transition',label:_en?"Difficult transition (park, bath…)":"Transition difficile (parc, bain…)"},
   ];
   return[
-    {id:'colere',label:"Crise de colère"},
-    {id:'obeir',label:"Refuse d'obéir"},
-    {id:'conflit',label:"Conflit avec un autre enfant"},
-    {id:'peur',label:"Peurs, cauchemars"},
-    {id:'habiller',label:"Refuse de s'habiller / se préparer"},
-    {id:'transition',label:"Transition difficile"},
+    {id:'colere',label:_en?"Tantrum / meltdown":"Crise de colère"},
+    {id:'obeir',label:_en?"Refuses to listen":"Refuse d'obéir"},
+    {id:'conflit',label:_en?"Conflict with another child":"Conflit avec un autre enfant"},
+    {id:'peur',label:_en?"Fears, nightmares":"Peurs, cauchemars"},
+    {id:'habiller',label:_en?"Refuses to get dressed / ready":"Refuse de s'habiller / se préparer"},
+    {id:'transition',label:_en?"Difficult transition":"Transition difficile"},
   ];
 }
 
@@ -2876,7 +2877,7 @@ function renderChat(child,data){
             id:'now',
             icon:icoNow,
             label:S.lang==='en'?'Right now':'Là, maintenant',
-            chips:getCoachSituations(ageInDays).map(s=>({txt:s.label,q:`Moment difficile avec ${child.firstName} là maintenant : ${s.label}. Aide-moi concrètement — qu'est-ce que je peux faire dans les 30 prochaines secondes ?`}))
+            chips:getCoachSituations(ageInDays).map(s=>({txt:s.label,q:S.lang==='en'?`Tough moment right now with ${child.firstName}: ${s.label}. Help me concretely — what can I do in the next 30 seconds?`:`Moment difficile avec ${child.firstName} là maintenant : ${s.label}. Aide-moi concrètement — qu'est-ce que je peux faire dans les 30 prochaines secondes ?`}))
           },
           {
             id:'explore',
@@ -2888,11 +2889,15 @@ function renderChat(child,data){
             id:'ctrv',
             icon:icoCtrv,
             label:S.lang==='en'?'Controversy of the day':'Controverse du jour',
-            chips:S.controverse.data?[
+            chips:S.controverse.data?(S.lang==='en'?[
+              {txt:`Summary of positions: "${e(S.controverse.data.question).substring(0,55)}…"`,q:`Summarise the different positions on the following debate: "${S.controverse.data.question}"`},
+              ...( S.controverse.data.camps||[]).slice(0,2).map(c=>({txt:`Defend the camp: "${c.name}"`,q:`Defend the camp "${c.name}" on the question: "${S.controverse.data.question}". Explain its logic and strongest arguments.`})),
+              {txt:`What we really know about: ${S.controverse.data.topic}`,q:`What do we really know, with certainty and scientific backing, about: ${S.controverse.data.topic}? Separate established facts from beliefs.`},
+            ]:[
               {txt:`Résume-moi les camps : « ${e(S.controverse.data.question).substring(0,55)}… »`,q:`Résume-moi les différentes positions sur la controverse suivante : « ${S.controverse.data.question} »`},
               ...( S.controverse.data.camps||[]).slice(0,2).map(c=>({txt:`Défends le camp : "${c.name}"`,q:`Défends le camp "${c.name}" sur la question : « ${S.controverse.data.question} ». Explique sa logique et ses arguments les plus solides.`})),
               {txt:`Ce qu'on sait vraiment sur : ${S.controverse.data.topic}`,q:`Qu'est-ce qu'on sait vraiment, de façon certaine et scientifiquement établie, sur : ${S.controverse.data.topic} ? Sépare les faits établis des croyances.`},
-            ]:[{txt:S.lang==='en'?'Generate today\'s controversy first →':'Génère d\'abord la controverse du jour →',q:'',disabled:true}]
+            ]):[{txt:S.lang==='en'?'Generate today\'s controversy first →':'Génère d\'abord la controverse du jour →',q:'',disabled:true}]
           },
         ];
         return sections.map(sec=>{
