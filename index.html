@@ -2706,17 +2706,38 @@ function renderChat(child,data){
   const sparkleIcon=`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="rgba(255,255,255,.92)" ${sw}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/><path d="M5 3v3M3 5h3M19 18v3M18 19h3"/></svg>`;
 
   const mFact=milestone?(S.lang==='en'?(milestone.en?.fact||milestone.fact):milestone.fact):null;
+  // Chips dynamiques : une par section, ancrée dans l'étape du moment de Gabriel
+  const en=S.lang==='en';
+  const _sfChips=['langage','motricite','caractere','activite'].map(sid=>{
+    const sec=ALL_SECTIONS.find(x=>x.id===sid);
+    const cfg=SECTION_MS[sid];
+    const f=getFocus(child,data.ageInMonths,sid);
+    const fe=f.e;
+    const sLabel=en?(sec.label_en||sec.label):sec.label;
+    const title=en?(fe.title_en||fe.title):fe.title;
+    const summary=en?(fe.summary_en||fe.summary):fe.summary;
+    const obs=en?fe.q_en:fe.q;
+    const isAct=sid==='activite';
+    const label=en
+      ?`${sLabel}: "${title}" — how to make the most of it?`
+      :`${sLabel} · « ${title} » — comment en profiter ?`;
+    const q=en
+      ?(isAct
+        ?`${child.firstName} (${ageLabel}) — activity of the moment: "${title}". ${summary} ${obs} How to do this in a way that's truly beneficial for their development, concretely?`
+        :`${child.firstName} (${ageLabel}) — current milestone: "${title}" (${sLabel}). ${summary} ${obs} How to support this concretely in everyday life?`)
+      :(isAct
+        ?`${child.firstName} (${ageLabel}) — activité du moment : « ${title} ». ${summary} ${obs} Comment la faire de façon vraiment bénéfique pour son développement, concrètement ?`
+        :`${child.firstName} (${ageLabel}) — étape du moment : « ${title} » (${sLabel}). ${summary} ${obs} Comment l'accompagner concrètement au quotidien ?`);
+    return {label, cat:sLabel, q};
+  });
   const chips=[
     ...(milestone?[
-      {label:S.lang==='en'?`How to encourage: "${(mFact||'').substring(0,45)}${(mFact||'').length>45?'…':''}"?`:`Comment encourager : "${milestone.fact.substring(0,45)}${milestone.fact.length>45?'…':''}" ?`,cat:t('sugg_cat_today')},
-      {label:S.lang==='en'?`Is it normal if ${child.firstName} isn't doing this yet at ${ageLabel}?`:`Est-ce normal si ${child.firstName} ne fait pas encore ça à ${ageLabel} ?`,cat:t('sugg_cat_today')},
+      {label:en?`How to encourage: "${(mFact||'').substring(0,45)}${(mFact||'').length>45?'…':''}"?`:`Comment encourager : "${milestone.fact.substring(0,45)}${milestone.fact.length>45?'…':''}" ?`,cat:t('sugg_cat_today')},
+      {label:en?`Is it normal if ${child.firstName} isn't doing this yet at ${ageLabel}?`:`Est-ce normal si ${child.firstName} ne fait pas encore ça à ${ageLabel} ?`,cat:t('sugg_cat_today')},
     ]:[]),
-    {label:S.lang==='en'?`When should I worry about ${child.firstName}'s development at ${ageLabel}?`:`Quand dois-je m'inquiéter pour le développement de ${child.firstName} à ${ageLabel} ?`,cat:t('sugg_cat_health'),template:true},
-    {label:S.lang==='en'?`What creative or sensory activity to suggest for ${child.firstName} (${ageLabel}) today?`:`Quelle activité créative ou sensorielle proposer à ${child.firstName} (${ageLabel}) aujourd'hui ?`,cat:t('sugg_cat_activity')},
-    {label:S.lang==='en'?`How to optimize ${child.firstName}'s sleep at ${ageLabel}?`:`Comment optimiser le sommeil de ${child.firstName} à ${ageLabel} ?`,cat:t('sugg_cat_sleep')},
-    {label:S.lang==='en'?`What foods and eating habits are appropriate for ${ageLabel}?`:`Quels aliments et habitudes alimentaires sont adaptés à ${ageLabel} ?`,cat:t('sugg_cat_food')},
-    {label:S.lang==='en'?`How to support ${child.firstName}'s language development at ${ageLabel}?`:`Comment favoriser le développement du langage de ${child.firstName} à ${ageLabel} ?`,cat:t('sugg_cat_language')},
-    {label:S.lang==='en'?`How to handle ${child.firstName}'s crying at ${ageLabel}?`:`Comment gérer les pleurs de ${child.firstName} à ${ageLabel} ?`,cat:t('sugg_cat_emotions')},
+    {label:en?`When should I worry about ${child.firstName}'s development at ${ageLabel}?`:`Quand dois-je m'inquiéter pour le développement de ${child.firstName} à ${ageLabel} ?`,cat:t('sugg_cat_health'),template:true},
+    {label:en?`How to optimize ${child.firstName}'s sleep at ${ageLabel}?`:`Comment optimiser le sommeil de ${child.firstName} à ${ageLabel} ?`,cat:t('sugg_cat_sleep')},
+    ..._sfChips,
     ...getCoachSituations(ageInDays).slice(0,4).map(s=>({
       label:S.lang==='en'
         ?`I'm having a tough moment right now with ${child.firstName}: ${s.label}. Help me concretely — what can I do in the next 30 seconds?`
