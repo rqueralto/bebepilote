@@ -977,7 +977,7 @@ function getDayOfYear(d){return Math.floor((d-new Date(d.getFullYear(),0,0))/864
 // Référentiel dense d'observations rapprochées (inspiré des jalons CDC/AAP, formulation maison).
 // Modèle "terse" : titre + pourquoi court + observation concrète. m = âge typique (mois).
 const LANG_OBS=[
-  {m:2,minMonths:1,maxMonths:4,
+  {track:"comp",m:2,minMonths:1,maxMonths:4,
     t:"Réagit aux sons et à ta voix",t_en:"Reacts to sounds and your voice",
     summary:"Son système auditif se cale sur la voix humaine dès les premières semaines — la base de tout le langage.",
     summary_en:"Their hearing tunes to the human voice in the very first weeks — the foundation of all language.",
@@ -986,7 +986,7 @@ const LANG_OBS=[
     refs:["Mehler, J. et al. (1988). A precursor of language acquisition in young infants. Cognition.","Vouloumanos, A. & Werker, J. F. (2007). Listening to language at birth. Developmental Science."],
     q:"Se calme, s'anime ou tourne les yeux quand tu lui parles doucement ?",q_en:"Do they calm, brighten, or turn their eyes when you speak softly?"},
 
-  {m:3,minMonths:2,maxMonths:5,
+  {track:"voc",m:3,minMonths:2,maxMonths:5,
     t:"Les premiers gazouillis",t_en:"First coos",
     summary:"Il découvre qu'il peut produire des sons — sa voix devient un jouet.",
     summary_en:"They discover they can make sounds — their voice becomes a toy.",
@@ -995,7 +995,7 @@ const LANG_OBS=[
     refs:["Stern, D. N. (1985). The Interpersonal World of the Infant. Basic Books.","Gros-Louis, J. et al. (2006). Maternal responses to infant vocalizations. Infancy."],
     q:"Émet-il des petits sons-voyelles (areu, euh) quand il est tranquille et de bonne humeur ?",q_en:"Do they make little vowel sounds (coos) when content and in a good mood?"},
 
-  {m:4,minMonths:3,maxMonths:6,
+  {track:"voc",m:4,minMonths:3,maxMonths:6,
     t:"Il te répond en sons",t_en:"Sound exchanges",
     summary:"Le tour de parole s'installe : tu parles, il répond, tu relances.",
     summary_en:"Turn-taking begins: you talk, they answer, you continue.",
@@ -1004,7 +1004,7 @@ const LANG_OBS=[
     refs:["Jaffe, J. et al. (2001). Rhythms of Dialogue in Infancy. Monographs SRCD.","Tamis-LeMonda, C. et al. (2001). Maternal responsiveness and child language. Child Development."],
     q:"Quand tu lui parles puis t'arrêtes en le regardant, te répond-il par un son, comme un échange ?",q_en:"When you talk then pause while looking at them, do they reply with a sound, like a back-and-forth?"},
 
-  {m:6,minMonths:5,maxMonths:8,
+  {track:"voc",m:6,minMonths:5,maxMonths:8,
     t:"Bruits de bouche et babillage varié",t_en:"Raspberries & varied babble",
     summary:"Il s'entraîne mécaniquement à articuler — c'est de la musculation vocale.",
     summary_en:"They're physically rehearsing articulation — it's vocal gymnastics.",
@@ -1013,7 +1013,7 @@ const LANG_OBS=[
     refs:["Oller, D. K. (2000). The Emergence of the Speech Capacity. Lawrence Erlbaum.","Gros-Louis, J. et al. (2006). Maternal responses to infant vocalizations. Infancy."],
     q:"Fait-il des bruits de bouche variés (raspberries, claquements de lèvres) et enchaîne-t-il des sons différents ?",q_en:"Do they make varied mouth sounds (raspberries, lip smacks) and string together different sounds?"},
 
-  {m:7,minMonths:6,maxMonths:9,
+  {track:"comp",m:7,minMonths:6,maxMonths:9,
     t:"Réagit à son prénom",t_en:"Responds to their name",
     summary:"Le premier « mot » qu'il comprend, c'est le sien — un marqueur clé du développement.",
     summary_en:"The first 'word' they understand is their own name — a key developmental marker.",
@@ -1022,7 +1022,7 @@ const LANG_OBS=[
     refs:["Mandel, D. R. et al. (1995). Infants remember the order of words. Cognitive Development.","Jusczyk, P. W. (1997). The Discovery of Spoken Language. MIT Press."],
     q:"Tourne-t-il clairement la tête vers toi quand tu l'appelles par son prénom (et non avec un autre son) ?",q_en:"Do they clearly turn their head toward you when called by their name (rather than a different sound)?"},
 
-  {m:9,minMonths:7,maxMonths:11,
+  {track:"voc",m:9,minMonths:7,maxMonths:11,
     t:"Babillage en syllabes répétées",t_en:"Canonical babbling",
     summary:"Les vraies syllabes (ba-ba, da-da) arrivent — les mots ne sont plus loin.",
     summary_en:"Real syllables (ba-ba, da-da) arrive — words are not far off.",
@@ -1031,7 +1031,7 @@ const LANG_OBS=[
     refs:["Oller, D. K. (2000). The Emergence of the Speech Capacity. Lawrence Erlbaum.","Koopmans-van Beinum, F. J. & van der Stelt, J. M. (1986). Early stages in infant vocalization. Precursors of Speech."],
     q:"Enchaîne-t-il des syllabes répétées — comme « ba-ba-ba », « da-da » ou « ma-ma » — même sans savoir ce qu'elles veulent dire ?",q_en:"Do they string repeated syllables — like 'ba-ba-ba', 'da-da' or 'ma-ma' — even without knowing what they mean?"},
 
-  {m:10,minMonths:8,maxMonths:13,
+  {track:"comp",m:10,minMonths:8,maxMonths:13,
     t:"Comprend « non » et les gestes sociaux",t_en:"Understands 'no' & social gestures",
     summary:"Le langage compris décolle plusieurs mois avant la parole — c'est normal et sain.",
     summary_en:"Understood language takes off months before speech — this is normal and healthy.",
@@ -1040,7 +1040,7 @@ const LANG_OBS=[
     refs:["Benedict, H. (1979). Early lexical development. Journal of Child Language.","Bates, E. et al. (1979). The Emergence of Symbols. Academic Press."],
     q:"Réagit-il au mot « non » en changeant de comportement, ou imite-t-il les gestes sociaux comme « au revoir » ou « bravo » ?",q_en:"Do they react to 'no' by changing behaviour, or imitate social gestures like waving or clapping?"},
 
-  {m:12,minMonths:10,maxMonths:15,
+  {track:"voc",m:12,minMonths:10,maxMonths:15,
     t:"Le premier vrai mot",t_en:"The first real word",
     summary:"Un son stable, utilisé intentionnellement pour désigner quelque chose de précis.",
     summary_en:"A stable sound, used intentionally to refer to something specific.",
@@ -1049,7 +1049,7 @@ const LANG_OBS=[
     refs:["Nelson, K. (1973). Structure and strategy in learning to talk. Monographs SRCD.","Bloom, P. (2000). How Children Learn the Meanings of Words. MIT Press."],
     q:"Utilise-t-il au moins un mot de façon stable et intentionnelle — pas juste en imitation, mais pour demander ou désigner quelque chose ?",q_en:"Do they use at least one word consistently and intentionally — not just imitating, but to ask for or point to something?"},
 
-  {m:13,minMonths:11,maxMonths:16,
+  {track:"prag",m:13,minMonths:11,maxMonths:16,
     t:"Pointer pour partager",t_en:"Pointing to share",
     summary:"Pointer pour te montrer quelque chose (pas juste réclamer) révèle une conscience que tu as un esprit distinct du sien.",
     summary_en:"Pointing to show you something (not just to ask) reveals an understanding that you have a separate mind.",
@@ -1058,7 +1058,7 @@ const LANG_OBS=[
     refs:["Tomasello, M. (1995). Joint attention as social cognition. In C. Moore & P. Dunham (Eds.).","Baron-Cohen, S. (1989). Perceptual role taking and protodeclarative pointing in autism. BJDP."],
     q:"Pointe-t-il du doigt quelque chose d'intéressant juste pour te le montrer — pas pour le réclamer, mais pour partager ?",q_en:"Do they point at something interesting just to show you — not to ask for it, but to share it?"},
 
-  {m:14,minMonths:12,maxMonths:18,
+  {track:"comp",m:14,minMonths:12,maxMonths:18,
     t:"Suit une consigne simple sans geste",t_en:"Follows a request without a gesture",
     summary:"Il relie le mot à l'action par la seule force du son — pas besoin de montrer.",
     summary_en:"They link a word to an action through sound alone — no need to point.",
@@ -1067,7 +1067,7 @@ const LANG_OBS=[
     refs:["Bates, E. et al. (1994). Developmental and stylistic variation in composition. Journal of Child Language.","Tamis-LeMonda, C. et al. (2001). Maternal responsiveness and language. Child Development."],
     q:"Exécute-t-il une consigne simple — « donne-moi la balle », « va chercher ton doudou » — sans que tu montres du doigt ou fasses le geste ?",q_en:"Do they follow a simple instruction — 'give me the ball', 'get your blanket' — without you pointing or gesturing?"},
 
-  {m:15,minMonths:12,maxMonths:19,
+  {track:"voc",m:15,minMonths:12,maxMonths:19,
     t:"Trois à cinq mots différents",t_en:"Three to five different words",
     summary:"Le vocabulaire actif démarre pour de bon — chaque nouveau mot est une victoire.",
     summary_en:"Their active vocabulary truly gets going — each new word is a milestone.",
@@ -1076,7 +1076,7 @@ const LANG_OBS=[
     refs:["Nelson, K. (1973). Structure and strategy in learning to talk. Monographs SRCD.","Hoff, E. (2003). The specificity of environmental influence. Child Development."],
     q:"Dit-il 3 à 5 mots différents de façon cohérente — en dehors de « mama » et « papa » ?",q_en:"Do they say 3–5 different words consistently — beyond 'mama' and 'dada'?"},
 
-  {m:16,minMonths:13,maxMonths:20,
+  {track:"comp",m:16,minMonths:13,maxMonths:20,
     t:"Désigne une image quand on la nomme",t_en:"Points to a named picture",
     summary:"Il fait le lien entre un son entendu et une image vue — les prémices de la lecture.",
     summary_en:"They link a heard sound to a seen image — the very beginnings of reading.",
@@ -1085,7 +1085,7 @@ const LANG_OBS=[
     refs:["Whitehurst, G. J. et al. (1988). Accelerating language development through picture book reading. Developmental Psychology.","Bus, A. G. et al. (1995). Joint book reading makes for success. Review of Educational Research."],
     q:"Dans un livre ou sur une image, montre-t-il du doigt l'image que tu viens de nommer (sans la montrer toi-même) ?",q_en:"In a book or picture, do they point to the image you just named (without you pointing to it first)?"},
 
-  {m:17,minMonths:14,maxMonths:21,
+  {track:"comp",m:17,minMonths:14,maxMonths:21,
     t:"Désigne une partie du corps nommée",t_en:"Points to a named body part",
     summary:"Il cartographie le vocabulaire sur son propre corps — la carte la plus concrète qui soit.",
     summary_en:"They map vocabulary onto their own body — the most concrete map of all.",
@@ -1094,7 +1094,7 @@ const LANG_OBS=[
     refs:["Fenson, L. et al. (1994). Variability in early communicative development. Monographs SRCD.","CDC (2022). Learn the Signs. Act Early. Developmental milestones."],
     q:"Montre-t-il son nez, ses oreilles, ses pieds ou ses mains quand tu les nommes un par un ?",q_en:"Do they point to their nose, ears, feet, or hands when you name them one by one?"},
 
-  {m:18,minMonths:15,maxMonths:23,
+  {track:"voc",m:18,minMonths:15,maxMonths:23,
     t:"Une dizaine de mots",t_en:"About ten words",
     summary:"Le seuil des 10 mots est la rampe de lancement de l'explosion lexicale.",
     summary_en:"The 10-word threshold is the launchpad for the vocabulary explosion.",
@@ -1103,7 +1103,7 @@ const LANG_OBS=[
     refs:["Goldfield, B. A. & Reznick, J. S. (1990). Early lexical acquisition: Rate, content, and vocabulary spurt. Journal of Child Language.","Bates, E. et al. (1994). Developmental and stylistic variation. Journal of Child Language."],
     q:"Utilise-t-il environ une dizaine de mots différents de façon fiable, et essaie-t-il d'imiter de nouveaux mots que tu dis ?",q_en:"Do they use about ten different words reliably, and try to imitate new words you say?"},
 
-  {m:19,minMonths:16,maxMonths:24,
+  {track:"comp",m:19,minMonths:16,maxMonths:24,
     t:"Va chercher un objet demandé",t_en:"Fetches a named object",
     summary:"Il comprend le mot, mémorise l'objet et va le chercher — trois opérations cognitives en une.",
     summary_en:"They understand the word, remember the object, and go get it — three cognitive steps in one.",
@@ -1112,7 +1112,7 @@ const LANG_OBS=[
     refs:["Diamond, A. (2013). Executive functions. Annual Review of Psychology.","Fenson, L. et al. (1994). Variability in early communicative development. Monographs SRCD."],
     q:"Va-t-il chercher et t'apporter un objet précis que tu lui demandes, même si l'objet est dans une autre pièce ?",q_en:"Will they go and fetch a specific object you ask for, even if it's in another room?"},
 
-  {m:20,minMonths:17,maxMonths:26,
+  {track:"comp",m:20,minMonths:17,maxMonths:26,
     t:"Comprend une consigne en deux étapes",t_en:"Follows a two-step instruction",
     summary:"Il comprend maintenant une séquence — preuve que le langage et la mémoire coopèrent.",
     summary_en:"They now understand a sequence — proof that language and memory are cooperating.",
@@ -1121,7 +1121,7 @@ const LANG_OBS=[
     refs:["AAP (2020). Developmental milestones: 18 and 24 months. Healthy Children.","Gathercole, S. E. (1998). The development of memory. Journal of Child Psychology & Psychiatry."],
     q:"Suit-il une consigne en deux étapes — par exemple « prends ton manteau et mets-le sur la chaise » — sans que tu aies besoin de répéter ?",q_en:"Do they follow a two-step instruction — like 'get your jacket and put it on the chair' — without you needing to repeat?"},
 
-  {m:21,minMonths:18,maxMonths:28,
+  {track:"prag",m:21,minMonths:18,maxMonths:28,
     t:"Nomme spontanément les choses",t_en:"Names things on their own",
     summary:"Il passe de « répéter quand on lui demande » à « nommer de lui-même » — une étape qualitative.",
     summary_en:"They shift from 'repeating when asked' to 'naming on their own' — a qualitative step.",
@@ -1130,7 +1130,7 @@ const LANG_OBS=[
     refs:["Tomasello, M. & Farrar, M. J. (1986). Joint attention and early language. Child Development.","Hoff, E. (2006). How social contexts support and shape language development. Developmental Review."],
     q:"Nomme-t-il spontanément des objets ou des personnes familières, sans qu'on lui demande — juste parce qu'il les voit ?",q_en:"Do they spontaneously name familiar objects or people, unprompted — just because they see them?"},
 
-  {m:22,minMonths:18,maxMonths:30,
+  {track:"gram",m:22,minMonths:18,maxMonths:30,
     t:"Combine deux mots",t_en:"Two-word combinations",
     summary:"Les deux premiers mots mis ensemble marquent l'entrée dans la syntaxe — le début de la grammaire.",
     summary_en:"The first two words put together mark the entry into syntax — the beginning of grammar.",
@@ -1139,7 +1139,7 @@ const LANG_OBS=[
     refs:["Brown, R. (1973). A First Language: The Early Stages. Harvard University Press.","Braine, M. D. S. (1976). Children's first word combinations. Monographs SRCD."],
     q:"Assemble-t-il deux mots pour exprimer une idée — comme « encore lait », « papa viens » ou « chien là » ?",q_en:"Do they put two words together to express an idea — like 'more milk', 'daddy come', or 'dog there'?"},
 
-  {m:24,minMonths:20,maxMonths:32,
+  {track:"voc",m:24,minMonths:20,maxMonths:32,
     t:"Cinquante mots et mini-phrases",t_en:"Fifty words and mini-sentences",
     summary:"À 2 ans, le langage devient un vrai outil : il peut exprimer ses besoins, ses observations, ses désirs.",
     summary_en:"At age 2, language becomes a real tool: they can express needs, observations, desires.",
@@ -1148,7 +1148,7 @@ const LANG_OBS=[
     refs:["Rescorla, L. (1989). The Language Development Survey. Journal of Speech & Hearing Disorders.","Fenson, L. et al. (1994). Variability in early communicative development. Monographs SRCD."],
     q:"Dit-il environ une cinquantaine de mots différents et assemble-t-il des mini-phrases de deux mots ou plus ?",q_en:"Do they say roughly fifty different words and put together mini-phrases of two words or more?"},
 
-  {m:27,minMonths:22,maxMonths:36,
+  {track:"gram",m:27,minMonths:22,maxMonths:36,
     t:"Pronoms et premières questions",t_en:"Pronouns and first questions",
     summary:"« Moi », « toi », « lui » — il se pense comme un sujet à part entière. Les questions commencent.",
     summary_en:"'Me', 'you', 'him' — they think of themselves as a subject in their own right. Questions begin.",
@@ -1157,7 +1157,7 @@ const LANG_OBS=[
     refs:["Chiat, S. (1982). If I were you and you were me: The analysis of pronouns in a pronoun-reversing child. Journal of Child Language.","Bloom, L. et al. (1982). Wh-questions: Linguistic factors that contribute to the sequence of acquisition. Child Development."],
     q:"Utilise-t-il « moi » ou « toi » (même avec des erreurs) et commence-t-il à poser des questions simples du type « c'est quoi ? » ou « où est papa ? » ?",q_en:"Do they use 'me' or 'you' (even with errors) and begin asking simple questions like 'what's that?' or 'where's daddy?'?"},
 
-  {m:30,minMonths:24,maxMonths:40,
+  {track:"gram",m:30,minMonths:24,maxMonths:40,
     t:"Phrases de trois mots",t_en:"Three-word sentences",
     summary:"Les phrases s'allongent — un étranger commence à comprendre la moitié de ce qu'il dit.",
     summary_en:"Sentences lengthen — a stranger can now understand about half of what they say.",
@@ -1166,7 +1166,7 @@ const LANG_OBS=[
     refs:["Owens, R. E. (2015). Language Development: An Introduction (9th ed.). Pearson.","ASHA (2020). Speech Sound Development. American Speech-Language-Hearing Association."],
     q:"Fait-il des phrases de 3 mots régulièrement, et une personne qui ne le connaît pas peut-elle comprendre environ la moitié de ce qu'il dit ?",q_en:"Do they regularly make 3-word sentences, and can someone who doesn't know them understand about half of what they say?"},
 
-  {m:36,minMonths:30,maxMonths:48,
+  {track:"prag",m:36,minMonths:30,maxMonths:48,
     t:"Vraie conversation et récit",t_en:"Real conversation and narration",
     summary:"Il raconte, négocie, demande « pourquoi » — le langage est devenu son outil de pensée principal.",
     summary_en:"They tell stories, negotiate, ask 'why' — language has become their main thinking tool.",
@@ -1174,6 +1174,139 @@ const LANG_OBS=[
     detail_en:"Around age 3, children enter what Vygotsky called 'inner speech': they use language to regulate their own thinking, not only to communicate. The ensuing 'why' phase is a sign of remarkable cognitive health — the child seeks causal explanations. Nelson (1996) showed that narrative ability at age 3 predicts academic success far better than IQ measured at the same age.",
     refs:["Vygotsky, L. S. (1934/1986). Thought and Language. MIT Press.","Nelson, K. (1996). Language in Cognitive Development. Cambridge University Press."],
     q:"Tient-il une véritable petite conversation (pas juste répondre) et te raconte-t-il un événement passé avec un début et une fin ?",q_en:"Do they hold a real little conversation (not just responding) and recount a past event with a beginning and end?"},
+
+  {track:"prag",m:24,minMonths:20,maxMonths:32,
+    t:"Parle de ce qui n'est pas là",t_en:"Talks about what isn't there",
+    summary:"Il évoque un objet absent ou un petit événement passé — le langage se détache de l'ici-et-maintenant.",summary_en:"They mention an absent object or a past event — language detaches from the here-and-now.",
+    detail:"Quand un enfant montre son front et dit « bobo » en pointant l'endroit où il s'est cogné plus tôt, il fait de la référence déplacée : utiliser un mot pour parler de quelque chose hors du présent immédiat. Hockett rangeait ce « déplacement » parmi les propriétés qui définissent le langage humain. C'est un marqueur cognitif majeur : la mémoire autobiographique et le langage commencent à coopérer pour reconstruire le passé.",detail_en:"When a child points to their forehead and says 'ouch' pointing at where they bumped earlier, they are using displaced reference: a word to talk about something outside the immediate present. Hockett listed this 'displacement' among the properties that define human language. It is a major cognitive marker: autobiographical memory and language begin to cooperate to reconstruct the past.",
+    refs:["Hockett, C. F. (1960). The Origin of Speech. Scientific American.","Tomasello, M. (2003). Constructing a Language. Harvard University Press."],
+    q:"Évoque-t-il spontanément un objet absent (« où papa ? ») ou un petit événement passé (un bobo, un chien vu tout à l'heure) ?",q_en:"Do they spontaneously mention an absent object ('where daddy?') or a past event (a bump, a dog seen earlier)?"},
+
+  {track:"prag",m:30,minMonths:26,maxMonths:42,
+    t:"Fait parler ses jouets",t_en:"Makes their toys talk",
+    summary:"Il prête une voix et des intentions à ses figurines — le jeu symbolique devient verbal.",summary_en:"They give a voice and intentions to their figures — symbolic play becomes verbal.",
+    detail:"Faire dire « bonjour » à une peluche ou organiser un dialogue entre deux personnages révèle la capacité de représentation symbolique décrite par Leslie : l'enfant manipule des fictions tout en sachant qu'elles sont fausses. Vygotsky voyait dans ce jeu la matrice de la pensée abstraite — l'objet devient un signe que l'enfant contrôle.",detail_en:"Making a stuffed toy say 'hello' or staging a dialogue between two characters reveals the symbolic representation capacity described by Leslie: the child manipulates fictions while knowing they are not real. Vygotsky saw this play as the matrix of abstract thought — the object becomes a sign the child controls.",
+    refs:["Leslie, A. M. (1987). Pretense and Representation. Psychological Review.","Vygotsky, L. S. (1978). Mind in Society. Harvard University Press."],
+    q:"Fait-il parler ses jouets, leur prête-t-il une voix ou organise-t-il de petits dialogues entre eux ?",q_en:"Do they make their toys talk, give them a voice, or stage little dialogues between them?"},
+
+  {track:"prag",m:42,minMonths:34,maxMonths:54,
+    t:"Raconte une histoire en séquence",t_en:"Tells a story in sequence",
+    summary:"Début, milieu, fin : il enchaîne les événements dans l'ordre — la trame narrative apparaît.",summary_en:"Beginning, middle, end: they order events in sequence — the narrative arc appears.",
+    detail:"Raconter « on est allés au parc, j'ai glissé, et après on a mangé une glace » suppose d'ordonner des événements dans le temps et de les relier. Applebee a montré que les récits d'enfants évoluent de simples listes vers de vraies trames vers 4-5 ans. La capacité narrative à cet âge prédit la compréhension en lecture plusieurs années plus tard.",detail_en:"Telling 'we went to the park, I slid down, and then we had ice cream' requires ordering events in time and linking them. Applebee showed children's narratives evolve from simple lists into true arcs around age 4-5. Narrative ability at this age predicts reading comprehension years later.",
+    refs:["Applebee, A. N. (1978). The Child's Concept of Story. University of Chicago Press.","Nelson, K. (1996). Language in Cognitive Development. Cambridge University Press."],
+    q:"Te raconte-t-il un petit événement vécu en mettant deux ou trois actions dans le bon ordre ?",q_en:"Do they recount a small event putting two or three actions in the right order?"},
+
+  {track:"prag",m:54,minMonths:44,maxMonths:66,
+    t:"Adapte son langage à l'interlocuteur",t_en:"Adapts language to the listener",
+    summary:"Il parle plus simplement à un bébé qu'à un adulte — il modélise ce que l'autre comprend.",summary_en:"They speak more simply to a baby than to an adult — modelling what the other understands.",
+    detail:"Shatz et Gelman ont montré dès 1973 que des enfants de 4 ans simplifient spontanément leurs phrases quand ils s'adressent à un plus petit. Ce réglage révèle une théorie de l'esprit en action : l'enfant tient compte de ce que son interlocuteur sait et comprend, pas seulement de ce que lui-même veut dire.",detail_en:"Shatz and Gelman showed as early as 1973 that 4-year-olds spontaneously simplify their sentences when addressing a younger child. This adjustment reveals theory of mind in action: the child accounts for what the listener knows and understands, not only what they themselves want to say.",
+    refs:["Shatz, M. & Gelman, R. (1973). The Development of Communication Skills. SRCD Monographs.","Tomasello, M. (2008). Origins of Human Communication. MIT Press."],
+    q:"Parle-t-il différemment selon l'interlocuteur — plus simplement à un bébé, autrement à un adulte ?",q_en:"Do they speak differently depending on the listener — more simply to a baby, differently to an adult?"},
+
+  {track:"prag",m:60,minMonths:50,maxMonths:72,
+    t:"Raconte sa journée avec des détails",t_en:"Recounts their day with detail",
+    summary:"Hors contexte, sans objets sous les yeux, il reconstruit un récit riche — la clé de l'écrit à venir.",summary_en:"Out of context, with nothing in sight, they rebuild a rich account — the key to future literacy.",
+    detail:"Raconter sa journée à quelqu'un qui n'y était pas mobilise le « langage décontextualisé » : on ne peut pas montrer du doigt, il faut tout dire avec des mots. Snow a montré que la richesse de ces conversations à la maison prédit fortement la réussite en lecture à l'école — bien plus que le simple décodage des lettres.",detail_en:"Recounting their day to someone who wasn't there mobilises 'decontextualised language': you cannot point, everything must be carried by words. Snow showed that the richness of these home conversations strongly predicts later reading achievement — far more than letter decoding alone.",
+    refs:["Snow, C. E. (1983). Literacy and Language. Harvard Educational Review.","Dickinson, D. K. & Tabors, P. O. (2001). Beginning Literacy with Language. Brookes."],
+    q:"Te raconte-t-il sa journée ou un moment vécu sans que tu aies à lui poser des questions à chaque phrase ?",q_en:"Do they recount their day or an event without you having to prompt every sentence?"},
+
+  {track:"comp",m:26,minMonths:22,maxMonths:34,
+    t:"Comprend dans, sur, sous",t_en:"Understands in, on, under",
+    summary:"Il situe les objets dans l'espace sur consigne verbale seule — la grammaire spatiale s'installe.",summary_en:"They place objects in space on a verbal cue alone — spatial grammar settles in.",
+    detail:"Comprendre « mets le cube DANS la boîte » vs « SOUS la boîte » sans aucun geste demande de traiter une relation spatiale encodée par un seul petit mot. Bowerman a montré que ces prépositions s'acquièrent dans un ordre régulier (dans/sur avant sous/à côté) et que leur maîtrise reflète la façon dont la langue découpe l'espace.",detail_en:"Understanding 'put the block IN the box' vs 'UNDER the box' with no gesture requires processing a spatial relation encoded by a single small word. Bowerman showed these prepositions are acquired in a regular order (in/on before under/beside) and that mastering them reflects how language carves up space.",
+    refs:["Bowerman, M. (1996). Learning How to Structure Space. In Language and Space, MIT Press.","Clark, E. V. (2009). First Language Acquisition. Cambridge University Press."],
+    q:"Pose-t-il un objet « dans », « sur » ou « sous » quelque chose quand tu le demandes sans faire le geste ?",q_en:"Do they put an object 'in', 'on' or 'under' something when you ask without making the gesture?"},
+
+  {track:"comp",m:32,minMonths:27,maxMonths:44,
+    t:"Comprend grand, petit, encore",t_en:"Understands big, small, more",
+    summary:"Il saisit des notions relatives de taille et de quantité — la comparaison entre dans le langage.",summary_en:"They grasp relative notions of size and quantity — comparison enters language.",
+    detail:"« Donne-moi le GRAND », « encore un PEU » : ces mots n'ont pas de référent fixe, ils dépendent du contexte. Les comprendre suppose de comparer deux éléments, pas seulement d'étiqueter. C'est une étape vers les concepts quantitatifs qui sous-tendront plus tard les mathématiques.",detail_en:"'Give me the BIG one', 'a little MORE': these words have no fixed referent, they depend on context. Understanding them requires comparing two items, not just labelling. It is a step toward the quantitative concepts that will later underpin mathematics.",
+    refs:["Clark, E. V. (2009). First Language Acquisition. Cambridge University Press.","Gentner, D. (2003). Why We're So Smart. In Language in Mind, MIT Press."],
+    q:"Comprend-il « le grand », « le petit » ou « encore un peu » et agit-il en conséquence ?",q_en:"Do they understand 'the big one', 'the small one' or 'a little more' and act accordingly?"},
+
+  {track:"comp",m:40,minMonths:34,maxMonths:52,
+    t:"Suit une consigne en trois étapes",t_en:"Follows a three-step instruction",
+    summary:"Il retient et exécute une suite de trois actions — la mémoire de travail verbale grandit.",summary_en:"They hold and carry out a sequence of three actions — verbal working memory grows.",
+    detail:"« Prends ton manteau, mets-le sur la chaise et viens t'asseoir » : exécuter trois consignes enchaînées suppose de garder l'instruction en mémoire de travail tout en agissant. Baddeley reliait cette capacité à la « boucle phonologique », un système qui se développe nettement entre 3 et 5 ans et qui prédit l'apprentissage scolaire.",detail_en:"'Take your coat, put it on the chair, and come sit down': carrying out three chained instructions requires holding the instruction in working memory while acting. Baddeley linked this capacity to the 'phonological loop', a system that develops markedly between ages 3 and 5 and predicts school learning.",
+    refs:["Baddeley, A. (2003). Working Memory and Language. Journal of Communication Disorders.","Gathercole, S. E. & Baddeley, A. (1993). Working Memory and Language. Erlbaum."],
+    q:"Exécute-t-il une consigne en trois temps (« prends X, pose-le sur Y, puis viens ») sans que tu la répètes ?",q_en:"Do they carry out a three-part instruction ('take X, put it on Y, then come') without you repeating it?"},
+
+  {track:"comp",m:54,minMonths:44,maxMonths:66,
+    t:"Comprend hier, demain, après",t_en:"Understands yesterday, tomorrow, later",
+    summary:"Le temps devient une dimension qu'il manipule par les mots — au-delà du seul présent.",summary_en:"Time becomes a dimension they manipulate through words — beyond the present alone.",
+    detail:"Comprendre « on ira au parc demain » suppose de se projeter dans un temps qui n'existe pas encore perceptivement. Busby et Suddendorf ont montré que la maîtrise verbale d'« hier » et « demain » émerge vers 4-5 ans et accompagne le « voyage mental dans le temps » — la capacité à se représenter le passé et l'avenir.",detail_en:"Understanding 'we'll go to the park tomorrow' requires projecting into a time that does not yet perceptually exist. Busby and Suddendorf showed that verbal mastery of 'yesterday' and 'tomorrow' emerges around age 4-5 and accompanies 'mental time travel' — the ability to represent past and future.",
+    refs:["Busby, J. & Suddendorf, T. (2005). Recalling Yesterday and Predicting Tomorrow. Cognitive Development.","Friedman, W. J. (2005). Developmental Perspectives on the Psychology of Time."],
+    q:"Comprend-il « hier », « demain » ou « tout à l'heure » et les utilise-t-il à peu près correctement ?",q_en:"Do they understand 'yesterday', 'tomorrow' or 'later' and use them roughly correctly?"},
+
+  {track:"comp",m:60,minMonths:50,maxMonths:72,
+    t:"Saisit les devinettes et l'humour des mots",t_en:"Gets riddles and word humour",
+    summary:"Il joue avec le double sens, comprend une devinette — la conscience métalinguistique éclôt.",summary_en:"They play with double meanings, get a riddle — metalinguistic awareness blooms.",
+    detail:"Rire d'un jeu de mots ou résoudre une devinette suppose de traiter le langage comme un objet en soi, manipulable — pas seulement comme un canal vers le sens. Cette « conscience métalinguistique » que décrit Gombert est un prédicteur solide de l'apprentissage de la lecture, car lire exige justement de réfléchir sur les sons et les mots.",detail_en:"Laughing at a pun or solving a riddle requires treating language as an object in itself, manipulable — not just a channel to meaning. This 'metalinguistic awareness' described by Gombert is a strong predictor of learning to read, because reading precisely demands reflecting on sounds and words.",
+    refs:["Gombert, J. E. (1992). Metalinguistic Development. University of Chicago Press.","Cazden, C. B. (1976). Play with Language and Metalinguistic Awareness."],
+    q:"Comprend-il une devinette simple ou rit-il d'un jeu de mots, d'un mot rigolo employé exprès ?",q_en:"Do they get a simple riddle or laugh at a pun, a silly word used on purpose?"},
+
+  {track:"voc",m:26,minMonths:22,maxMonths:34,
+    t:"L'explosion du vocabulaire",t_en:"The vocabulary explosion",
+    summary:"Les mots arrivent par dizaines chaque semaine — un nouveau mot suffit parfois d'une seule écoute.",summary_en:"Words arrive by the dozen each week — sometimes a single hearing is enough.",
+    detail:"Vers 18-24 mois, beaucoup d'enfants passent de quelques dizaines à plusieurs centaines de mots en quelques mois. Goldfield et Reznick ont décrit cette accélération souvent appelée « explosion lexicale ». Elle s'appuie sur le « fast mapping » : l'enfant attache un mot nouveau à un sens après une exposition minime, parfois unique.",detail_en:"Around 18-24 months, many children go from a few dozen to several hundred words in a few months. Goldfield and Reznick described this acceleration often called the 'vocabulary spurt'. It relies on 'fast mapping': the child attaches a new word to a meaning after minimal, sometimes single, exposure.",
+    refs:["Goldfield, B. A. & Reznick, J. S. (1990). Early Lexical Acquisition. Journal of Child Language.","Carey, S. & Bartlett, E. (1978). Acquiring a Single New Word."],
+    q:"Apprend-il visiblement de nouveaux mots très vite, plusieurs par semaine, parfois après les avoir entendus une seule fois ?",q_en:"Are they visibly learning new words very fast, several a week, sometimes after hearing them once?"},
+
+  {track:"voc",m:36,minMonths:30,maxMonths:48,
+    t:"Nomme les couleurs",t_en:"Names colours",
+    summary:"Il associe le mot à la teinte — une catégorie abstraite que la langue lui apprend à découper.",summary_en:"They link the word to the hue — an abstract category language teaches them to carve.",
+    detail:"Les noms de couleurs s'acquièrent étonnamment tard et lentement, souvent bien après d'autres mots concrets. La raison : la couleur est une propriété abstraite détachée de l'objet. La recherche montre que l'enfant comprend d'abord que « rouge » est ce type de mot, avant d'en stabiliser le sens exact — d'où les erreurs longtemps persistantes.",detail_en:"Colour names are acquired surprisingly late and slowly, often well after other concrete words. The reason: colour is an abstract property detached from the object. Research shows the child first grasps that 'red' is that kind of word, before stabilising its exact meaning — hence long-persisting errors.",
+    refs:["Wagner, K. et al. (2013). Color Word Learning. Cognitive Psychology.","Sandhofer, C. M. & Smith, L. B. (1999). Learning Color Words."],
+    q:"Nomme-t-il correctement au moins quelques couleurs quand tu lui montres un objet et demandes « c'est quelle couleur ? »",q_en:"Do they correctly name at least a few colours when you show an object and ask 'what colour is it?'"},
+
+  {track:"voc",m:48,minMonths:40,maxMonths:60,
+    t:"Range les mots en catégories",t_en:"Sorts words into categories",
+    summary:"Chien et chat sont des « animaux » ; voiture et vélo des « véhicules » — le vocabulaire s'organise.",summary_en:"Dog and cat are 'animals'; car and bike are 'vehicles' — vocabulary gets organised.",
+    detail:"Utiliser des mots superordonnés (« animal », « véhicule », « fruit ») montre que le lexique n'est plus une liste plate mais une structure hiérarchique. Markman a montré que les enfants supposent spontanément qu'un mot nouveau désigne une catégorie entière d'objets semblables — un biais qui rend l'apprentissage du vocabulaire si rapide.",detail_en:"Using superordinate words ('animal', 'vehicle', 'fruit') shows the lexicon is no longer a flat list but a hierarchical structure. Markman showed children spontaneously assume a new word names a whole category of similar objects — a bias that makes vocabulary learning so fast.",
+    refs:["Markman, E. M. (1989). Categorization and Naming in Children. MIT Press.","Waxman, S. R. & Gelman, S. A. (2009). Early Word-Learning and Conceptual Development."],
+    q:"Emploie-t-il des mots de catégorie (« animal », « véhicule », « fruit ») pour regrouper plusieurs choses ?",q_en:"Do they use category words ('animal', 'vehicle', 'fruit') to group several things?"},
+
+  {track:"voc",m:60,minMonths:50,maxMonths:72,
+    t:"Des mots pour les pensées et les émotions",t_en:"Words for thoughts and emotions",
+    summary:"Penser, croire, espérer, être déçu : il nomme l'invisible — la vie mentale entre dans la langue.",summary_en:"Think, believe, hope, be disappointed: they name the invisible — mental life enters language.",
+    detail:"Employer des verbes mentaux (« je crois que », « j'espère », « il pense que ») marque un tournant : l'enfant parle d'états internes invisibles, les siens et ceux des autres. Bartsch et Wellman ont montré que l'usage spontané de ces mots vers 3-5 ans accompagne le développement de la théorie de l'esprit — comprendre que l'esprit représente le monde.",detail_en:"Using mental verbs ('I think that', 'I hope', 'he thinks that') marks a turning point: the child talks about invisible internal states, their own and others'. Bartsch and Wellman showed that spontaneous use of these words around age 3-5 accompanies theory of mind development — understanding that the mind represents the world.",
+    refs:["Bartsch, K. & Wellman, H. M. (1995). Children Talk About the Mind. Oxford University Press.","Wellman, H. M. (2014). Making Minds. Oxford University Press."],
+    q:"Utilise-t-il des mots comme « je crois », « j'espère », « il pense » ou nomme-t-il des émotions plus fines (déçu, jaloux, fier) ?",q_en:"Do they use words like 'I think', 'I hope', 'he thinks' or name finer emotions (disappointed, jealous, proud)?"},
+
+  {track:"gram",m:28,minMonths:24,maxMonths:38,
+    t:"Pluriels et premières marques grammaticales",t_en:"Plurals and first grammatical markers",
+    summary:"Un « s » au pluriel, « encore », « pas » : il ajoute la grammaire qui relie les mots.",summary_en:"A plural 's', 'more', 'not': they add the grammar that links words.",
+    detail:"Après la phase des mots isolés, l'enfant commence à ajouter les petits éléments grammaticaux : pluriels, négation, articles. Brown a décrit un ordre d'acquisition remarquablement régulier de ces « morphèmes ». Leur apparition montre que l'enfant n'imite plus seulement des blocs, il applique des règles productives.",detail_en:"After the single-word phase, the child starts adding small grammatical elements: plurals, negation, articles. Brown described a remarkably regular order of acquisition for these 'morphemes'. Their appearance shows the child is no longer merely imitating chunks but applying productive rules.",
+    refs:["Brown, R. (1973). A First Language. Harvard University Press.","de Villiers, J. & de Villiers, P. (1973). Acquisition of Grammatical Morphemes."],
+    q:"Marque-t-il le pluriel, la négation (« pas ») ou ajoute-t-il « encore » dans des phrases courtes ?",q_en:"Do they mark plurals, negation ('not') or add 'more' in short sentences?"},
+
+  {track:"gram",m:34,minMonths:28,maxMonths:46,
+    t:"Conjugue le passé (et se trompe joliment)",t_en:"Marks the past (with charming errors)",
+    summary:"« Il a pati », « j'ai prendu » : ces erreurs sont la preuve qu'il applique une règle, pas qu'il l'a oubliée.",summary_en:"'He goed', 'I taked': these errors prove they are applying a rule, not forgetting one.",
+    detail:"Les surrégularisations (« vous disez », « il a prendu ») sont contre-intuitivement un signe de progrès : l'enfant a extrait la règle générale et l'applique aux verbes irréguliers. Marcus a montré que ces erreurs apparaissent APRÈS que l'enfant ait d'abord dit la forme correcte — preuve qu'une vraie règle, et non l'imitation, est désormais à l'œuvre.",detail_en:"Overregularisations ('he goed', 'I taked') are counter-intuitively a sign of progress: the child has extracted the general rule and applies it to irregular verbs. Marcus showed these errors appear AFTER the child first said the correct form — evidence that a true rule, not imitation, is now at work.",
+    refs:["Marcus, G. F. et al. (1992). Overregularization in Language Acquisition. SRCD Monographs.","Pinker, S. (1999). Words and Rules. Basic Books."],
+    q:"Parle-t-il au passé, même avec des erreurs « logiques » (« il a prendu », « j'ai vené ») ?",q_en:"Do they speak in the past tense, even with 'logical' errors ('he taked', 'I goed')?"},
+
+  {track:"gram",m:42,minMonths:36,maxMonths:54,
+    t:"Relie ses idées avec parce que",t_en:"Links ideas with because",
+    summary:"Cause, condition, opposition : il enchâsse deux idées dans une phrase — la syntaxe se complexifie.",summary_en:"Cause, condition, contrast: they embed two ideas in one sentence — syntax grows complex.",
+    detail:"Dire « je pleure PARCE QUE je suis tombé » relie deux propositions par un rapport de cause. Bloom a montré que les connecteurs apparaissent dans un ordre stable (« et » puis « parce que », « mais », « si ») et que « parce que » signale une étape clé : l'enfant ne juxtapose plus, il subordonne et raisonne à voix haute.",detail_en:"Saying 'I'm crying BECAUSE I fell' links two clauses by a cause relation. Bloom showed connectives appear in a stable order ('and' then 'because', 'but', 'if') and that 'because' signals a key step: the child no longer juxtaposes but subordinates and reasons aloud.",
+    refs:["Bloom, L. et al. (1980). Complex Sentences. Journal of Child Language.","Diessel, H. (2004). The Acquisition of Complex Sentences. Cambridge University Press."],
+    q:"Relie-t-il deux idées avec « parce que », « mais » ou « si » dans une même phrase ?",q_en:"Do they link two ideas with 'because', 'but' or 'if' in a single sentence?"},
+
+  {track:"gram",m:54,minMonths:44,maxMonths:66,
+    t:"Parle au futur et au conditionnel",t_en:"Uses future and conditional",
+    summary:"« On ira », « si je pouvais » : il manie des temps qui parlent du possible et de l'imaginaire.",summary_en:"'We will go', 'if I could': they handle tenses that speak of the possible and the imagined.",
+    detail:"Employer le futur et surtout le conditionnel suppose de parler de situations non réelles — projetées ou hypothétiques. Cette maîtrise, qui se consolide vers 4-5 ans, accompagne la capacité à raisonner sur des « et si ». Elle reflète une syntaxe désormais assez souple pour détacher complètement le langage de la réalité immédiate.",detail_en:"Using the future and especially the conditional requires talking about non-real situations — projected or hypothetical. This mastery, consolidating around age 4-5, accompanies the ability to reason about 'what ifs'. It reflects a syntax now flexible enough to fully detach language from immediate reality.",
+    refs:["Weist, R. M. (1986). Tense and Aspect. In Language Acquisition, Cambridge University Press.","Clark, E. V. (2009). First Language Acquisition. Cambridge University Press."],
+    q:"Emploie-t-il le futur (« on ira ») et le conditionnel (« si je pouvais », « ce serait bien ») ?",q_en:"Do they use the future ('we will go') and the conditional ('if I could', 'it would be nice')?"},
+
+  {track:"gram",m:60,minMonths:50,maxMonths:72,
+    t:"Construit des phrases complexes",t_en:"Builds complex sentences",
+    summary:"Subordonnées, relatives, discours rapporté : ses phrases atteignent la structure de l'adulte.",summary_en:"Subordinates, relatives, reported speech: sentences reach adult structure.",
+    detail:"Vers 5 ans, l'enfant produit des phrases enchâssées (« le chien QUI court est à moi », « il a dit QU'il viendrait »). Cette syntaxe complexe, longtemps en construction, est largement en place à l'entrée à l'école. Elle ouvre la porte au langage écrit, dont les phrases sont en moyenne plus longues et plus enchâssées que celles de l'oral.",detail_en:"By age 5, the child produces embedded sentences ('the dog THAT runs is mine', 'he said THAT he would come'). This complex syntax, long under construction, is largely in place by school entry. It opens the door to written language, whose sentences are on average longer and more embedded than spoken ones.",
+    refs:["Diessel, H. (2004). The Acquisition of Complex Sentences. Cambridge University Press.","Tomasello, M. (2003). Constructing a Language. Harvard University Press."],
+    q:"Fait-il des phrases complexes avec des subordonnées (« le jouet que tu m'as donné », « il a dit qu'il viendrait ») ?",q_en:"Do they make complex sentences with subordinate clauses ('the toy you gave me', 'he said he would come')?"}
 ];
 function milestoneKey(child){return (child?.firstName||'')+'|'+(child?.birthDate||'');}
 function getMilestones(child){try{return (JSON.parse(localStorage.getItem('bebeMilestones')||'{}'))[milestoneKey(child)]||{};}catch(_){return{};}}
@@ -1284,14 +1417,35 @@ const SECTION_MS={
               journey:'Activités essayées',journey_en:'Activities tried'},
 };
 function getLadder(sid){const cfg=SECTION_MS[sid];if(!cfg)return[];return cfg.obs.map((e,i)=>({e:{...e,title:e.t,title_en:e.t_en},i,mid:cfg.pfx+i}));}
+// Sous-pistes par section : chaque piste a sa propre frontière développementale.
+const SECTION_TRACKS={
+  langage:[
+    {key:'comp',label:'Compréhension',label_en:'Comprehension'},
+    {key:'voc', label:'Vocabulaire',  label_en:'Vocabulary'},
+    {key:'gram',label:'Grammaire & phrases',label_en:'Grammar & sentences'},
+    {key:'prag',label:'Usage & récit', label_en:'Use & narrative'},
+  ],
+};
+function getTracks(sid){return SECTION_TRACKS[sid]||[];}
+// Échelle d'une piste donnée, triée par âge typique
+function getTrackLadder(sid,trackKey){return getLadder(sid).filter(x=>(x.e.track||'')===trackKey).sort((a,b)=>a.e.m-b.e.m);}
 function confirmEarlier(child,sid,upto){
   let all;try{all=JSON.parse(localStorage.getItem('bebeMilestones')||'{}');}catch(_){all={};}
   const k=milestoneKey(child);const m=all[k]||{};
   getLadder(sid).forEach(x=>{if(x.i<upto&&m[x.mid]?.status!=='done')m[x.mid]={status:'done',lastSeen:Date.now(),firstDone:null};});
   all[k]=m;localStorage.setItem('bebeMilestones',JSON.stringify(all));
 }
-function getFocus(child,months,sid){
-  const ladder=getLadder(sid);if(!ladder.length)return ladder[0];
+// Marque "acquis" toutes les étapes d'une piste situées avant uptoMid (par âge)
+function confirmEarlierTrack(child,sid,trackKey,uptoMid){
+  let all;try{all=JSON.parse(localStorage.getItem('bebeMilestones')||'{}');}catch(_){all={};}
+  const k=milestoneKey(child);const m=all[k]||{};
+  const lad=getTrackLadder(sid,trackKey);const pos=lad.findIndex(x=>x.mid===uptoMid);
+  lad.forEach((x,i)=>{if(i<pos&&m[x.mid]?.status!=='done')m[x.mid]={status:'done',lastSeen:Date.now(),firstDone:null};});
+  all[k]=m;localStorage.setItem('bebeMilestones',JSON.stringify(all));
+}
+// Sélecteur de frontière générique, appliqué à une échelle (section entière ou piste)
+function pickFocus(ladder,child,months){
+  if(!ladder.length)return null;
   const st=getMilestones(child);
   const status=x=>st[x.mid]?.status;const seen=x=>st[x.mid]?.lastSeen||0;
   const open=arr=>arr.find(x=>status(x)==='unsure')
@@ -1303,6 +1457,20 @@ function getFocus(child,months,sid){
   if(!pick)pick=open(ladder.filter(x=>months>x.e.maxMonths&&status(x)!=='done'));
   if(!pick)pick=ladder[ladder.length-1];
   return pick;
+}
+function getFocus(child,months,sid){const ladder=getLadder(sid);return ladder.length?pickFocus(ladder,child,months):undefined;}
+function getTrackFocus(child,months,sid,trackKey){const lad=getTrackLadder(sid,trackKey);return lad.length?{...pickFocus(lad,child,months),track:trackKey}:null;}
+// Frontière "à la une" d'une section : tourne entre les pistes vivantes selon le jour (fraîcheur quotidienne)
+function getSectionFocus(child,months,sid,doy){
+  const tracks=getTracks(sid);
+  if(!tracks.length)return getFocus(child,months,sid);
+  const st=getMilestones(child);
+  const focs=tracks.map(tk=>{const f=getTrackFocus(child,months,sid,tk.key);return f?{...f,trackKey:tk.key,trackLabel:tk.label,trackLabel_en:tk.label_en}:null;}).filter(Boolean);
+  if(!focs.length)return getFocus(child,months,sid);
+  // une piste est "vivante" si sa frontière n'est pas une étape déjà acquise et dépassée
+  const live=focs.filter(f=>!(st[f.mid]?.status==='done'&&months>f.e.maxMonths));
+  const pool=live.length?live:focs;
+  return pool[(doy||0)%pool.length];
 }
 function langLadder(){return getLadder('langage');}
 function confirmEarlierLang(child,upto){confirmEarlier(child,'langage',upto);}
@@ -2706,7 +2874,7 @@ ${sections.map(({s,entry},i)=>{
   // Sections avec boucle de suivi milestone
   const msCfgRow=SECTION_MS[s.id];
   if(msCfgRow){
-    const f=getFocus(child,data.ageInMonths,s.id);
+    const f=getSectionFocus(child,data.ageInMonths,s.id,data.doy);
     const fe=f.e;const st=getMilestones(child)[f.mid]?.status;
     const acquired=getLadder(s.id).filter(x=>getMilestones(child)[x.mid]?.status==='done').length;
     const en=S.lang==='en';
@@ -2715,10 +2883,11 @@ ${sections.map(({s,entry},i)=>{
       :st==='pending'?(en?msCfgRow.tagObs_en:msCfgRow.tagObs)
       :(en?msCfgRow.tagObs_en:msCfgRow.tagObs);
     const tagCol=st==='unsure'?'#A06C2A':f.upcoming?'#9C9790':'#3D5A8A';
+    const trackLbl=f.trackLabel?(en?(f.trackLabel_en||f.trackLabel):f.trackLabel):'';
     return`<button class="s-row" data-section="${s.id}" ${borderless}>
   <div class="s-icon ${s.colorBg}">${s.icon}</div>
   <div style="flex:1;min-width:0">
-    <p style="font-size:0.875rem;font-weight:600;color:#1A1918">${e(S.lang==='en'?(s.label_en||s.label):s.label)}</p>
+    <p style="font-size:0.875rem;font-weight:600;color:#1A1918">${e(S.lang==='en'?(s.label_en||s.label):s.label)}${trackLbl?` <span style="font-size:0.6875rem;font-weight:600;color:#B8B2AA">· ${e(trackLbl)}</span>`:''}</p>
     <p style="font-size:0.75rem;color:#9C9790;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><span style="color:${tagCol};font-weight:600">${tag}</span> · ${e(S.lang==='en'?(fe.title_en||fe.title):fe.title)}</p>
   </div>
   <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">
@@ -2848,7 +3017,7 @@ function renderChat(child,data){
   const _sfChips=['langage','motricite','caractere','activite'].map(sid=>{
     const sec=ALL_SECTIONS.find(x=>x.id===sid);
     const cfg=SECTION_MS[sid];
-    const f=getFocus(child,data.ageInMonths,sid);
+    const f=getSectionFocus(child,data.ageInMonths,sid,data.doy);
     const fe=f.e;
     const sLabel=en?(sec.label_en||sec.label):sec.label;
     const title=en?(fe.title_en||fe.title):fe.title;
@@ -3574,16 +3743,16 @@ function renderCarolineModal(data,child){
 function renderMilestoneModal(s,data,child){
   const sid=s.id;const cfg=SECTION_MS[sid];if(!cfg)return'';
   const ladder=getLadder(sid);
-  const mid=S.modalMid||getFocus(child,data.ageInMonths,sid).mid;
+  const mid=S.modalMid||(getSectionFocus(child,data.ageInMonths,sid,data.doy)||getFocus(child,data.ageInMonths,sid)).mid;
   const idx=+mid.replace(cfg.pfx,'');
   const item=ladder.find(x=>x.mid===mid)||ladder[0];
   const entry=item.e;const N=ladder.length;
   const ms=getMilestones(child);const status=ms[mid]?.status;
   const reached=data.ageInMonths>=entry.minMonths;
   const en=S.lang==='en';
+  const tracks=getTracks(sid);
   const ageHint=entry.m<24?entry.m+(en?' mo':' mois'):(entry.m/12%1?(entry.m/12).toFixed(1):entry.m/12)+(en?' yr':' ans');
   const acquired=ladder.filter(x=>ms[x.mid]?.status==='done');
-  const earlierUndone=ladder.filter(x=>x.i<idx&&ms[x.mid]?.status!=='done');
   const fid=child?favId(child.firstName,'section',s.id):'';
   const faved=child&&isFavorited(fid);
   const dateFmt=ts=>new Date(ts).toLocaleDateString(en?'en-GB':'fr-FR',{day:'numeric',month:'short'});
@@ -3599,6 +3768,68 @@ function renderMilestoneModal(s,data,child){
     status==='done'?(en?'Acquired':'Acquis')
     :status==='unsure'?(en?'Not sure yet':'Pas sûr')
     :(en?'In progress':'En cours')}</span>`:'';
+  // Une ligne navigable de l'échelle
+  const renderRow=x=>{
+    const st=ms[x.mid]?.status;const isCur=x.mid===mid;const done=st==='done';
+    const upcoming=data.ageInMonths<x.e.minMonths;
+    const ringCol=done?'#3F7A55':st==='unsure'?'#A06C2A':st==='pending'?'#3D5A8A':upcoming?'#DDD8D1':'#C8C2BA';
+    const glyph=done
+      ?`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#3F7A55" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>`
+      :`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="${ringCol}" stroke-width="2" style="flex-shrink:0"><circle cx="12" cy="12" r="8"/>${st==='pending'?'<circle cx="12" cy="12" r="3" fill="'+ringCol+'" stroke="none"/>':st==='unsure'?'<line x1="12" y1="8.5" x2="12" y2="12.5" stroke-linecap="round"/><circle cx="12" cy="15.6" r="0.6" fill="'+ringCol+'" stroke="none"/>':''}</svg>`;
+    const titleCol=done?'#5C5752':upcoming?'#B8B2AA':'#2A2926';
+    const right=done?(ms[x.mid]?.firstDone?`<span style="font-size:0.6875rem;color:#B8B2AA;flex-shrink:0">${dateFmt(ms[x.mid].firstDone)}</span>`:'')
+      :isCur?`<span style="font-size:0.625rem;font-weight:700;color:#3D5A8A;flex-shrink:0">${en?'CURRENT':'EN COURS'}</span>`
+      :upcoming?`<span style="font-size:0.625rem;font-weight:600;color:#C8C2BA;flex-shrink:0">${en?'soon':'bientôt'}</span>`:'';
+    return`<button data-ms-goto="${x.mid}" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;background:${isCur?'#F4F7FB':'none'};border:none;width:100%;text-align:left;cursor:pointer">
+      ${glyph}
+      <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:0.8125rem;font-weight:${isCur?'700':'500'};color:${titleCol}">${e(en?(x.e.title_en||x.e.title):x.e.title)}</span>
+      ${right}
+    </button>`;
+  };
+  // Bloc d'une piste : titre + progression + étapes
+  const renderTrackBlock=tk=>{
+    const lad=getTrackLadder(sid,tk.key);if(!lad.length)return'';
+    const acq=lad.filter(x=>ms[x.mid]?.status==='done').length;
+    const pos=lad.findIndex(x=>x.mid===mid);
+    const earlierUndone=lad.filter((x,i)=>i<(pos<0?lad.length:pos)&&ms[x.mid]?.status!=='done');
+    const hasCur=pos>=0;
+    return`<div style="margin-bottom:18px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+        <span style="font-size:0.6875rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:${hasCur?'#3D5A8A':'#B8B2AA'}">${e(en?(tk.label_en||tk.label):tk.label)}</span>
+        <span style="font-size:0.75rem;font-weight:700;color:#3D5A8A">${acq}/${lad.length}</span>
+      </div>
+      <div style="height:5px;background:#EDE9E3;border-radius:999px;overflow:hidden;margin-bottom:8px">
+        <div style="height:100%;width:${Math.round(acq/lad.length*100)}%;background:#6E96C4;border-radius:999px"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:1px">${lad.map(renderRow).join('')}</div>
+      ${earlierUndone.length>1?`<button data-ms-confirm-track="${sid}|${tk.key}|${mid}" style="width:100%;padding:7px 12px;margin-top:6px;border-radius:9px;background:none;border:none;color:#9C9790;font-size:0.75rem;font-weight:600;cursor:pointer">${en?`Mark all ${earlierUndone.length} earlier steps acquired`:`Tout marquer acquis (${earlierUndone.length} étapes avant)`}</button>`:''}
+    </div>`;
+  };
+  // Indicateur d'étape : relatif à la piste si la section en a
+  let stepLine;
+  if(tracks.length){
+    const tk=tracks.find(t=>t.key===entry.track);const lad=tk?getTrackLadder(sid,tk.key):[];
+    const k=lad.findIndex(x=>x.mid===mid);
+    stepLine=`${tk?e(en?(tk.label_en||tk.label):tk.label):''}${k>=0?` · ${en?'step':'étape'} ${k+1}/${lad.length}`:''} · ${en?'around':'vers'} ${ageHint}`;
+  }else{
+    stepLine=`${en?'Step':'Étape'} ${idx+1}/${N} · ${en?'around':'vers'} ${ageHint}`;
+  }
+  const journeyHTML=tracks.length
+    ?`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:0.6875rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#B8B2AA">${en?cfg.journey_en:cfg.journey}</span>
+        <span style="font-size:0.75rem;font-weight:700;color:#3D5A8A">${acquired.length}/${N} ${en?'acquired':'acquis'}</span>
+      </div>
+      <p style="font-size:0.75rem;color:#9C9790;margin-bottom:14px;line-height:1.5">${en?'Four parallel tracks — tap any step to read it and tell us where '+e(child.firstName)+' is.':'Quatre pistes parallèles — touche une étape pour la lire et nous dire où en est '+e(child.firstName)+'.'}</p>
+      ${tracks.map(renderTrackBlock).join('')}`
+    :`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <span style="font-size:0.6875rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#B8B2AA">${en?cfg.journey_en:cfg.journey}</span>
+        <span style="font-size:0.75rem;font-weight:700;color:#3D5A8A">${acquired.length}/${N} ${en?'acquired':'acquis'}</span>
+      </div>
+      <div style="height:6px;background:#EDE9E3;border-radius:999px;overflow:hidden;margin-bottom:12px">
+        <div style="height:100%;width:${Math.round(acquired.length/N*100)}%;background:#6E96C4;border-radius:999px"></div>
+      </div>
+      <p style="font-size:0.75rem;color:#9C9790;margin-bottom:10px;line-height:1.5">${en?'Tap a step to read it and tell us where '+e(child.firstName)+' is.':'Touche une étape pour la lire et nous dire où en est '+e(child.firstName)+'.'}</p>
+      <div style="display:flex;flex-direction:column;gap:2px">${ladder.map(renderRow).join('')}</div>`;
   return`<div class="overlay" id="modal-overlay">
 <div class="sheet">
   <div class="sheet-handle"></div>
@@ -3614,7 +3845,7 @@ function renderMilestoneModal(s,data,child){
   </div>
   <div class="sheet-body">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-      <span style="font-size:0.625rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#B8B2AA">${en?'Step':'Étape'} ${idx+1}/${N} · ${en?'around':'vers'} ${ageHint}</span>
+      <span style="font-size:0.625rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#B8B2AA">${stepLine}</span>
       ${statusChip}
     </div>
     <div style="display:flex;gap:14px;align-items:center;margin-bottom:14px">
@@ -3633,36 +3864,9 @@ function renderMilestoneModal(s,data,child){
         ${opt('unsure',cfg.btnUnsure,cfg.btnUnsure_en,"#F4EADA","#8A5A1E")}
       </div>`:`<p style="font-size:0.8125rem;color:#9C9790;font-style:italic">${en?'This usually comes a bit later — observe gently, no rush.':'Ça vient en général un peu plus tard — observe tranquillement, sans presser.'}</p>`}
     </div>
-    <!-- Le parcours : 12 étapes navigables -->
+    <!-- Le parcours : pistes navigables -->
     <div style="margin-bottom:18px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <span style="font-size:0.6875rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#B8B2AA">${en?cfg.journey_en:cfg.journey}</span>
-        <span style="font-size:0.75rem;font-weight:700;color:#3D5A8A">${acquired.length}/${N} ${en?'acquired':'acquis'}</span>
-      </div>
-      <div style="height:6px;background:#EDE9E3;border-radius:999px;overflow:hidden;margin-bottom:12px">
-        <div style="height:100%;width:${Math.round(acquired.length/N*100)}%;background:#6E96C4;border-radius:999px"></div>
-      </div>
-      <p style="font-size:0.75rem;color:#9C9790;margin-bottom:10px;line-height:1.5">${en?'Tap a step to read it and tell us where '+e(child.firstName)+' is.':'Touche une étape pour la lire et nous dire où en est '+e(child.firstName)+'.'}</p>
-      <div style="display:flex;flex-direction:column;gap:2px">
-        ${ladder.map(x=>{
-          const st=ms[x.mid]?.status;const isCur=x.mid===mid;const done=st==='done';
-          const upcoming=data.ageInMonths<x.e.minMonths;
-          const ringCol=done?'#3F7A55':st==='unsure'?'#A06C2A':st==='pending'?'#3D5A8A':upcoming?'#DDD8D1':'#C8C2BA';
-          const glyph=done
-            ?`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#3F7A55" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>`
-            :`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="${ringCol}" stroke-width="2" style="flex-shrink:0"><circle cx="12" cy="12" r="8"/>${st==='pending'?'<circle cx="12" cy="12" r="3" fill="'+ringCol+'" stroke="none"/>':st==='unsure'?'<line x1="12" y1="8.5" x2="12" y2="12.5" stroke-linecap="round"/><circle cx="12" cy="15.6" r="0.6" fill="'+ringCol+'" stroke="none"/>':''}</svg>`;
-          const titleCol=done?'#5C5752':upcoming?'#B8B2AA':'#2A2926';
-          const right=done?(ms[x.mid]?.firstDone?`<span style="font-size:0.6875rem;color:#B8B2AA;flex-shrink:0">${dateFmt(ms[x.mid].firstDone)}</span>`:'')
-            :isCur?`<span style="font-size:0.625rem;font-weight:700;color:#3D5A8A;flex-shrink:0">${en?'CURRENT':'EN COURS'}</span>`
-            :upcoming?`<span style="font-size:0.625rem;font-weight:600;color:#C8C2BA;flex-shrink:0">${en?'soon':'bientôt'}</span>`:'';
-          return`<button data-ms-goto="${x.mid}" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;background:${isCur?'#F4F7FB':'none'};border:none;width:100%;text-align:left;cursor:pointer">
-            ${glyph}
-            <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:0.8125rem;font-weight:${isCur?'700':'500'};color:${titleCol}">${e(en?(x.e.title_en||x.e.title):x.e.title)}</span>
-            ${right}
-          </button>`;
-        }).join('')}
-      </div>
-      ${earlierUndone.length>1?`<button data-ms-confirm-upto="${sid}|${idx}" style="width:100%;padding:8px 12px;margin-top:8px;border-radius:9px;background:none;border:none;color:#9C9790;font-size:0.75rem;font-weight:600;cursor:pointer">${en?`Or mark all ${earlierUndone.length} earlier steps as acquired`:`Ou tout marquer acquis (${earlierUndone.length} étapes précédentes)`}</button>`:''}
+      ${journeyHTML}
     </div>
     ${entry.refs?.length?`<div class="refs-block ${s.colorBg}">
       <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:5px">${_svgIco.book}${t('further')}</p>
@@ -4063,7 +4267,7 @@ function bind(child,data){
     ev.target.value='';
   });
   document.getElementById('btn-share')?.addEventListener('click',()=>shareHighlight(child,data));
-  document.querySelectorAll('[data-section]').forEach(b=>b.addEventListener('click',()=>{S.modal='section';S.modalSection=b.dataset.section;S.modalMid=SECTION_MS[b.dataset.section]?getFocus(child,data.ageInMonths,b.dataset.section).mid:null;render();}));
+  document.querySelectorAll('[data-section]').forEach(b=>b.addEventListener('click',()=>{S.modal='section';S.modalSection=b.dataset.section;S.modalMid=SECTION_MS[b.dataset.section]?getSectionFocus(child,data.ageInMonths,b.dataset.section,data.doy).mid:null;render();}));
   // Boucle de suivi : enregistrer l'état d'un milestone (Il le fait / Pas encore / Pas sûr)
   document.querySelectorAll('[data-ms-set]').forEach(b=>b.addEventListener('click',()=>{
     const[mid,status]=b.dataset.msSet.split('|');
@@ -4073,6 +4277,11 @@ function bind(child,data){
   }));
   document.querySelectorAll('[data-ms-confirm-upto]').forEach(b=>b.addEventListener('click',()=>{
     const[_csid,_cupto]=b.dataset.msConfirmUpto.split('|');confirmEarlier(child,_csid,+_cupto);
+    toast(S.lang==='en'?'Earlier steps confirmed':'Étapes précédentes confirmées');
+    render();
+  }));
+  document.querySelectorAll('[data-ms-confirm-track]').forEach(b=>b.addEventListener('click',()=>{
+    const[_csid,_ctk,_cmid]=b.dataset.msConfirmTrack.split('|');confirmEarlierTrack(child,_csid,_ctk,_cmid);
     toast(S.lang==='en'?'Earlier steps confirmed':'Étapes précédentes confirmées');
     render();
   }));
