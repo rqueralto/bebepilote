@@ -3076,8 +3076,23 @@ function renderControverseModal(child,data){
 }
 
 // ═══════════════════════ "J'AI OBSERVÉ…" ═══════════════════════
-const OBS_EXAMPLES_FR=['Il montre son front, dit « bobo » et pointe le mur','Elle empile 4 cubes puis applaudit toute seule','Il tend le livre en disant « encore »','Elle fait semblant de donner à manger à sa peluche'];
-const OBS_EXAMPLES_EN=['He points to his forehead, says "ouch" and points at the wall','She stacks 4 blocks then claps for herself','He hands me the book saying "again"','She pretends to feed her teddy'];
+function getObsExamples(child,en){
+  const g=child?.gender;
+  const il=g==='girl'?(en?'She':'Elle'):(en?'He':'Il');
+  const son=g==='girl'?(en?'her':'sa'):(en?'his':'son');
+  const tout=g==='girl'?(en?'herself':'toute seule'):(en?'himself':'tout seul');
+  return en?[
+    `${il} points to ${son} forehead, says "ouch" and points at the wall`,
+    `${il} stacks 4 blocks then claps for ${tout}`,
+    `${il} hands me the book saying "again"`,
+    `${il} pretends to feed ${son} teddy`
+  ]:[
+    `${il} montre ${son} front, dit « bobo » et pointe le mur`,
+    `${il} empile 4 cubes puis applaudit ${tout}`,
+    `${il} tend le livre en disant « encore »`,
+    `${il} fait semblant de donner à manger à sa peluche`
+  ];
+}
 function renderObserveModal(child,data){
   const en=S.lang==='en';const o=S.observe;
   const sw='stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"';
@@ -3097,7 +3112,7 @@ function renderObserveModal(child,data){
   } else if(o.result){
     body=renderObserveResult(child,data,o.result);
   } else {
-    const examples=en?OBS_EXAMPLES_EN:OBS_EXAMPLES_FR;
+    const examples=getObsExamples(child,en);
     const journal=getObservations(child);
     body=`
     <p style="font-size:0.9375rem;color:#5C5752;line-height:1.6;margin-bottom:14px">${en?`Describe a real moment you just saw — a word, a gesture, a reaction. I'll tell you what it reveals about ${e(child.firstName)}'s development.`:`Décris un moment réel que tu viens d'observer — un mot, un geste, une réaction. Je te dis ce qu'il révèle du développement de ${e(child.firstName)}.`}</p>
