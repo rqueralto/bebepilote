@@ -2236,7 +2236,7 @@ function renderFavCard(it){
   // Extra line for observations: show the raw quoted text
   const obsQuote=it.type==='observe'&&it.obsData?.text
     ?`<p style="font-size:0.75rem;color:var(--c-t4);font-style:italic;margin-bottom:4px;line-height:1.45">« ${e(it.obsData.text.length>60?it.obsData.text.substring(0,60)+'…':it.obsData.text)} »</p>`:'';
-  return`<div class="fav-flat">
+  return`<div class="fav-flat" data-fav-open="${it._xid}">
   <div class="fav-flat-head">
     <div class="fav-flat-accent" style="background:${cat.color}"></div>
     <div class="fav-flat-inner">
@@ -2280,6 +2280,7 @@ const S={
   savedExp:{},
   favFilter:'all',
   favExp:{},
+  favDetailItem:null,
   viewCtrv:null,
   viewCtrvDate:null,
   _claudeTest:null,
@@ -3238,6 +3239,51 @@ function renderObserveResult(child,data,r){
 
   <button id="obs-new" class="btn" style="background:var(--c-bg2);color:#5C5752;display:flex;align-items:center;justify-content:center;gap:7px"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>${en?'Note another observation':'Noter une autre observation'}</button>
   `;
+}
+
+// ═══════════════════════ FAV DETAIL MODAL ═══════════════════════
+function renderFavDetailModal(child){
+  const it=S.favDetailItem;if(!it)return'';
+  const cat=FAV_CATS[it._cat]||FAV_CATS.section;
+  const en=S.lang==='en';
+  const title=it._kind==='saved'?it.question:it.title;
+  const dl=new Date(it._date).toLocaleDateString(en?'en-GB':'fr-FR',{day:'numeric',month:'long',year:'numeric'});
+  const shareSvg='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>';
+  const heartSvg='<svg viewBox="0 0 24 24" width="14" height="14" fill="#E05A5A" stroke="#E05A5A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
+  const trashSvg='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>';
+  let body;
+  if(it._kind==='saved'){
+    body=`<p style="font-size:0.9375rem;color:var(--c-t2);line-height:1.72">${mdFull(it.answer||'')}</p>
+    ${it.refs?.length?`<div style="display:flex;flex-direction:column;gap:4px;margin-top:14px">${it.refs.map(r=>`<a href="https://www.google.com/search?q=${encodeURIComponent(r)}" target="_blank" rel="noopener" class="msg-ref-link"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>${e(r)}</a>`).join('')}</div>`:''}`;
+  } else if(it.type==='observe'&&it.obsData){body=renderObserveFavBody(it.obsData);}
+  else if(it.type==='controverse'&&it.ctrv){body=renderCtrvFavBody(it.ctrv);}
+  else if(it.type==='creuser'&&it.blocks){body=renderDiveFavBody(it);}
+  else if(it.type==='zoecamps'&&it.campsData){body=renderZoeCampsFavBody(it);}
+  else{
+    body=`<p style="font-size:0.9375rem;color:var(--c-t2);line-height:1.7">${mdFull(it.summary||'')}</p>
+    ${it.refsHtml?`<div class="refs-block ${it.refsColorBg||'acc-blue'}" style="margin-top:16px"><p style="font-size:0.625rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;opacity:.7">${en?'Further reading':'Pour aller plus loin'}</p>${it.refsHtml}</div>`:''}`;
+  }
+  const actions=`<div style="display:flex;gap:8px;padding-top:16px;border-top:1px solid var(--c-bd)">
+    <button class="fav-act-btn red" data-unfav-detail="${it.id}">${heartSvg}${en?'Remove from favourites':'Retirer des favoris'}</button>
+    ${it.canShare||it._kind==='saved'?`<button class="fav-act-btn" data-share-fav-detail="${it.id}">${shareSvg}${en?'Share':'Partager'}</button>`:''}
+  </div>`;
+  return`<div class="overlay" id="modal-overlay"><div class="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head">
+    <div style="display:flex;align-items:center;gap:9px;flex:1;min-width:0">
+      <span class="fav-type-badge" style="background:${cat.bg};color:${cat.color};flex-shrink:0">${cat.label}</span>
+      <span style="font-size:0.75rem;color:var(--c-t4);font-weight:500">${dl}</span>
+    </div>
+    ${xBtn()}
+  </div>
+  <div class="sheet-body">
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500;line-height:1.25;margin-bottom:16px">${e(title)}</h2>
+    ${body}
+    <div style="height:20px"></div>
+    ${actions}
+    <div style="height:8px"></div>
+  </div>
+</div></div>`;
 }
 
 // ═══════════════════════ NAV ICONS ═══════════════════════
@@ -4642,6 +4688,7 @@ function render(){
   else if(S.modal==='prenatalSection')modalHTML=renderPrenatalSectionModal(S.modalSection,child);
   else if(S.modal==='controverse')modalHTML=renderControverseModal(child,data);
   else if(S.modal==='observe')modalHTML=renderObserveModal(child,data);
+  else if(S.modal==='favDetail')modalHTML=renderFavDetailModal(child);
 
   else if(S.modal==='settings')modalHTML=renderSettingsModal();
   else if(S.modal==='renameConv')modalHTML=renderRenameConvModal();
@@ -4983,6 +5030,35 @@ function bind(child,data){
   document.querySelectorAll('[data-prenatal-section]').forEach(b=>b.addEventListener('click',()=>{S.modal='prenatalSection';S.modalSection=b.dataset.prenatalSection;render();}));
   document.querySelectorAll('[data-fav-filter]').forEach(b=>b.addEventListener('click',()=>{S.favFilter=b.dataset.favFilter;render();}));
   document.querySelectorAll('[data-fav-exp]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.favExp;S.favExp[k]=!S.favExp[k];render();}));
+  // Clic sur une carte favori → ouvrir le détail
+  document.querySelectorAll('[data-fav-open]').forEach(el=>el.addEventListener('click',ev=>{
+    // Ne pas déclencher si on a cliqué sur un bouton d'action
+    if(ev.target.closest('[data-unfav],[data-share-fav],[data-del-saved],[data-share-saved]'))return;
+    const xid=el.dataset.favOpen;
+    const favs=getFavorites();const saves=getSavedChats().filter(x=>x.childName===child.firstName);
+    const all=[...favs.map(f=>({...f,_cat:f.type,_date:f.date||new Date().toISOString(),_kind:'fav',_xid:'f'+f.id})),...saves.map(s=>({...s,_cat:'chat',_date:s.date,_kind:'saved',_xid:'s'+s.id}))];
+    const it=all.find(x=>x._xid===xid);
+    if(!it)return;
+    // Routing selon le type
+    if(it.type==='observe'&&it.obsData){S.observe.result=it.obsData;S.modal='observe';render();return;}
+    if(it.type==='controverse'&&it.ctrv){S.viewCtrv=it.ctrv;S.viewCtrvDate=null;S.modal='ctrvView';render();return;}
+    S.favDetailItem=it;S.modal='favDetail';render();
+  }));
+  // Actions depuis le modal détail
+  document.querySelector('[data-unfav-detail]')?.addEventListener('click',()=>{
+    const id=document.querySelector('[data-unfav-detail]')?.dataset.unfavDetail;
+    if(!id)return;const favs=getFavorites();const idx=favs.findIndex(f=>String(f.id)===id);
+    if(idx>=0){favs.splice(idx,1);localStorage.setItem('bebeFavorites',JSON.stringify(favs));}
+    S.modal=null;S.favDetailItem=null;render();
+  });
+  document.querySelector('[data-share-fav-detail]')?.addEventListener('click',()=>{
+    const it=S.favDetailItem;if(!it)return;
+    if(it.type==='observe'&&it.obsData){shareTextContent('Observation — '+it.title,obsShareText(it.obsData));return;}
+    if(it.type==='controverse'&&it.ctrv){shareTextContent('Controverse — '+it.ctrv.topic,ctrvFullText(it.ctrv));return;}
+    if(it.type==='creuser'&&it.blocks){shareTextContent('Creuser — '+it.title,diveFullText({q:it.title,blocks:it.blocks,sources:it.diveSources}));return;}
+    if(it._kind==='saved'){const text=it.question+'\n\n'+it.answer+'\n\n— Zoé via BébéPilote';shareTextContent('Zoé — BébéPilote',text);return;}
+    if(it.shareData)shareCardCanvas(child,{...it.shareData});
+  });
   document.querySelectorAll('[data-hist]').forEach(b=>b.addEventListener('click',()=>{const d=b.dataset.hist;S.histExp[d]=!S.histExp[d];render();}));
   document.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>{S.childIdx=+b.dataset.edit;S.modal='editChild';S.modalChildIdx=+b.dataset.edit;render();}));
   document.getElementById('btn-add-child')?.addEventListener('click',()=>{S.modal='addChild';render();});
