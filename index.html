@@ -3247,9 +3247,10 @@ function renderFavDetailModal(child){
   const en=S.lang==='en';
   const title=it._kind==='saved'?it.question:it.title;
   const dl=new Date(it._date).toLocaleDateString(en?'en-GB':'fr-FR',{day:'numeric',month:'short'});
-  // Since the item IS in favorites, heart is always active; saved chats use del+share only
+  // Header buttons: fav items show active heart + share; saved chats show only share
+  const shareBtnHtml=`<button data-share-fav-detail="${it.id}" style="width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#F2F0EB;border:none;cursor:pointer;transition:background .12s;flex-shrink:0" title="${en?'Share':'Partager'}"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#7A7570" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></button>`;
   const headerBtns=it._kind==='saved'
-    ?modalActBtns('data-noop','0','data-share-fav-detail',it.id,false).replace(/data-noop="0"/,'style="display:none"')
+    ?shareBtnHtml
     :modalActBtns('data-unfav-detail',it.id,'data-share-fav-detail',it.id,true);
   let body;
   if(it._kind==='saved'){
@@ -3942,7 +3943,7 @@ function renderAllCtrvModal(child){
 }
 function renderCtrvViewModal(child){
   const d=S.viewCtrv;if(!d)return'';
-  const fid=`${child.firstName}|controverse|${d.topic}|${S.viewCtrvDate}`;
+  const fid=favId(child.firstName,'controverse',d.topic);
   const faved=isFavorited(fid);
   return`<div class="overlay" id="modal-overlay">
 <div class="sheet" style="max-height:90dvh">
@@ -5081,7 +5082,7 @@ function bind(child,data){
   document.querySelector('[data-fav-ctrvview]')?.addEventListener('click',()=>{
     const d=S.viewCtrv;if(!d)return;
     const isoDate=S.viewCtrvDate?new Date(S.viewCtrvDate+'T12:00:00').toISOString():new Date().toISOString();
-    toggleFavorite({id:`${child.firstName}|controverse|${d.topic}|${S.viewCtrvDate}`,childName:child.firstName,childAge:data.ageLabel,type:'controverse',typeLabel:'Controverse',title:d.question,summary:d.why_now,ctrv:d,refsColorBg:'acc-plum',date:isoDate,canShare:true,shareData:{headerBg:'#A06C2A',accentColor:'#A06C2A',categoryLabel:'Controverse · '+d.topic,title:d.question,body:ctrvShareText(d),ageLabel:data.ageLabel}});
+    toggleFavorite({id:favId(child.firstName,'controverse',d.topic),childName:child.firstName,childAge:data.ageLabel,type:'controverse',typeLabel:'Controverse',title:d.question,summary:d.why_now,ctrv:d,refsColorBg:'acc-plum',date:isoDate,canShare:true,shareData:{headerBg:'#A06C2A',accentColor:'#A06C2A',categoryLabel:'Controverse · '+d.topic,title:d.question,body:ctrvShareText(d),ageLabel:data.ageLabel}});
     render();
   });
   document.querySelector('[data-share-ctrvview]')?.addEventListener('click',()=>{
