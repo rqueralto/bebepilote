@@ -252,15 +252,24 @@ a{color:#2D4A8A}
 /* ── Favorites section ── */
 .fav-card{background:var(--c-card);border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 3px 10px rgba(0,0,0,.08);margin-bottom:10px}
 .fav-card-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.fav-type-badge{font-size:0.625rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:99px}
+.fav-type-badge{font-size:0.5938rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:2px 8px;border-radius:99px}
 .fav-filter-row{display:flex;gap:7px;overflow-x:auto;padding:2px 16px 14px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .fav-filter-row::-webkit-scrollbar{display:none}
 .fav-chip{flex-shrink:0;padding:7px 13px;border-radius:99px;font-size:0.75rem;font-weight:600;background:var(--c-bg3);color:var(--c-t2);border:1.5px solid transparent;white-space:nowrap;transition:background .15s,color .15s}
 .fav-chip.on{background:var(--c-ink);color:var(--c-bg)}
-.fav-flat{background:var(--c-card);border:1px solid var(--c-bd);border-radius:14px;margin-bottom:9px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.04)}
-.fav-flat-head{display:flex;align-items:center;gap:9px;width:100%;padding:13px 14px;text-align:left}
-.fav-flat-title{flex:1;min-width:0;font-size:0.8438rem;font-weight:600;color:var(--c-ink);line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.fav-flat-date{font-size:0.6875rem;color:var(--c-t4);flex-shrink:0;font-weight:500}
+.fav-flat{background:var(--c-card);border:1px solid var(--c-bd);border-radius:14px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.fav-flat-head{display:flex;align-items:flex-start;gap:0;width:100%;padding:0;text-align:left;cursor:pointer}
+.fav-flat-accent{width:4px;flex-shrink:0;align-self:stretch;border-radius:14px 0 0 14px}
+.fav-flat-inner{flex:1;min-width:0;padding:13px 14px}
+.fav-flat-meta{display:flex;align-items:center;gap:7px;margin-bottom:6px}
+.fav-flat-title{font-size:0.9375rem;font-weight:700;color:var(--c-ink);line-height:1.3;margin-bottom:5px}
+.fav-flat-preview{font-size:0.8125rem;color:var(--c-t3);line-height:1.55;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.fav-flat-date{font-size:0.6875rem;color:var(--c-t4);font-weight:500}
+.fav-flat-actions{display:flex;align-items:center;gap:5px;margin-top:10px;padding-top:9px;border-top:1px solid var(--c-bd4)}
+.fav-act-btn{display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:7px;font-size:0.75rem;font-weight:600;background:var(--c-bg2);border:none;cursor:pointer;color:var(--c-t3);transition:background .12s}
+.fav-act-btn:hover{background:var(--c-bg3)}
+.fav-act-btn.red{color:#C45A5A}
+.fav-act-btn.red:hover{background:#FFF0F0}
 .ctrv-learned-badge{display:inline-flex;align-items:center;gap:3px;font-size:0.625rem;font-weight:700;color:#3A5E38;background:#EAF0E8;padding:2px 7px;border-radius:99px;flex-shrink:0}
 /* ── Reference links (in modals) ── */
 .ref-link{display:flex;align-items:flex-start;gap:7px;font-size:0.75rem;color:inherit;text-decoration:none;padding:7px 10px;border-radius:9px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);margin-bottom:6px;line-height:1.5;transition:background .12s}
@@ -2188,41 +2197,48 @@ function renderFavoritesUnified(child){
   </div>`;
   return chips+`<div style="padding:0 16px 16px">${shown.map(it=>renderFavCard(it)).join('')}</div>`;
 }
+function favPreview(it){
+  // Returns a short plain-text preview for the card (2 lines max)
+  if(it._kind==='saved')return it.answer||'';
+  if(it.type==='observe'&&it.obsData)return it.obsData.interpretation||it.summary||'';
+  if(it.type==='controverse'&&it.ctrv)return it.ctrv.why_now||it.summary||'';
+  if(it.type==='creuser'&&it.blocks){const txt=it.blocks.find(b=>b.type==='plain'||b.type==='fait'||b.type==='interp');return txt?.text||it.summary||'';}
+  if(it.type==='zoecamps'&&it.campsData){const c=it.campsData.camps?.[0];return c?c.name+' — '+c.logic:it.summary||'';}
+  return it.summary||'';
+}
 function renderFavCard(it){
   const cat=FAV_CATS[it._cat]||FAV_CATS.section;
-  const exp=!!S.favExp[it._xid];
+  const en=S.lang==='en';
   const title=it._kind==='saved'?it.question:it.title;
-  const dl=new Date(it._date).toLocaleDateString(S.lang==='en'?'en-GB':'fr-FR',{day:'numeric',month:'short'});
+  const dl=new Date(it._date).toLocaleDateString(en?'en-GB':'fr-FR',{day:'numeric',month:'short'});
+  const preview=favPreview(it);
   const shareSvg='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>';
-  let body;
-  if(it._kind==='saved'){
-    body=`<p style="font-size:0.8125rem;color:#3A3835;line-height:1.7;margin-bottom:${it.refs&&it.refs.length?'10px':'0'}">${e(it.answer)}</p>
-    ${it.refs&&it.refs.length?`<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:4px">${it.refs.map(r=>`<a href="https://www.google.com/search?q=${encodeURIComponent(r)}" target="_blank" rel="noopener" class="msg-ref-link"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>${e(r)}</a>`).join('')}</div>`:''}`;
-  } else if(it.type==='observe'&&it.obsData){body=renderObserveFavBody(it.obsData);}
-  else if(it.type==='controverse'&&it.ctrv){body=renderCtrvFavBody(it.ctrv);}
-  else if(it.type==='creuser'&&it.blocks){body=renderDiveFavBody(it);}
-  else if(it.type==='zoecamps'&&it.campsData){body=renderZoeCampsFavBody(it);}
-  else{body=`<p style="font-size:0.8125rem;color:#5C5752;line-height:1.65;margin-bottom:${it.refsHtml?'12px':'0'}">${e(it.summary)}</p>
-  ${it.refsHtml?`<div class="refs-block ${it.refsColorBg||'acc-blue'}"><p style="font-size:0.625rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;opacity:.75;display:flex;align-items:center;gap:5px">${_svgIco.book}Pour aller plus loin</p>${it.refsHtml}</div>`:''}`;}
-  const actions=`<div style="display:flex;gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid var(--c-bd)">
+  const heartSvg='<svg viewBox="0 0 24 24" width="12" height="12" fill="#E05A5A" stroke="#E05A5A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
+  const trashSvg='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>';
+  const actions=`<div class="fav-flat-actions">
     ${it._kind==='saved'
-      ?`<button class="msg-act" data-share-saved="${it.id}" style="width:auto;padding:0 8px;font-size:0.75rem;color:#3D5570;gap:4px">${shareSvg}${S.lang==='en'?'Share':'Partager'}</button>
-        <button class="msg-act" data-del-saved="${it.id}" style="width:auto;padding:0 6px;font-size:0.75rem;color:#C45A5A;gap:4px"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>${S.lang==='en'?'Delete':'Supprimer'}</button>`
-      :`<button class="msg-act fav-on" data-unfav="${it.id}" style="width:auto;padding:0 8px;font-size:0.75rem;gap:5px"><svg viewBox="0 0 24 24" width="12" height="12" fill="#E05A5A" stroke="#E05A5A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>${S.lang==='en'?'Remove':'Retirer'}</button>
-        ${it.canShare?`<button class="msg-act" data-share-fav="${it.id}" style="width:auto;padding:0 8px;font-size:0.75rem;gap:5px;color:#3D5570">${shareSvg}${S.lang==='en'?'Share':'Partager'}</button>`:''}`}
+      ?`<button class="fav-act-btn" data-share-saved="${it.id}">${shareSvg}${en?'Share':'Partager'}</button>
+         <button class="fav-act-btn red" data-del-saved="${it.id}">${trashSvg}${en?'Delete':'Supprimer'}</button>`
+      :`<button class="fav-act-btn red" data-unfav="${it.id}">${heartSvg}${en?'Remove':'Retirer'}</button>
+         ${it.canShare?`<button class="fav-act-btn" data-share-fav="${it.id}">${shareSvg}${en?'Share':'Partager'}</button>`:''}`}
   </div>`;
+  // Extra line for observations: show the raw quoted text
+  const obsQuote=it.type==='observe'&&it.obsData?.text
+    ?`<p style="font-size:0.75rem;color:var(--c-t4);font-style:italic;margin-bottom:4px;line-height:1.45">« ${e(it.obsData.text.length>60?it.obsData.text.substring(0,60)+'…':it.obsData.text)} »</p>`:'';
   return`<div class="fav-flat">
-  <button class="fav-flat-head" data-fav-exp="${it._xid}">
-    <div style="flex:1;min-width:0">
-      <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px">
+  <div class="fav-flat-head">
+    <div class="fav-flat-accent" style="background:${cat.color}"></div>
+    <div class="fav-flat-inner">
+      <div class="fav-flat-meta">
         <span class="fav-type-badge" style="background:${cat.bg};color:${cat.color}">${cat.label}</span>
         <span class="fav-flat-date">${dl}</span>
       </div>
       <p class="fav-flat-title">${e(title)}</p>
+      ${obsQuote}
+      ${preview?`<p class="fav-flat-preview">${e(preview)}</p>`:''}
+      ${actions}
     </div>
-    ${chev(exp)}
-  </button>
-  ${exp?`<div style="border-top:1px solid var(--c-bd);padding:13px 14px">${body}${actions}</div>`:''}
+  </div>
 </div>`;
 }
 function chev(open=false){return`<svg viewBox="0 0 24 24" class="chev${open?' chev-open':''}" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;}
