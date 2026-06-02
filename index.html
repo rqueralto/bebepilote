@@ -2165,6 +2165,7 @@ const FAV_CATS={
   zoecamps:{label:'Débats Zoé',bg:'#FBF3E5',color:'#A06C2A'},
   conseil:{label:'Conseils',bg:'#FBF3E5',color:'#A06C2A'},
   caroline:{label:'Caroline',bg:'#EAF0E8',color:'#3A5E38'},
+  observe:{label:'Observations',bg:'#EAF0E8',color:'#3A5E38'},
   section:{label:'Développement',bg:'#EBF0FA',color:'#2D4A8A'},
   highlight:{label:'Développement',bg:'#EBF0FA',color:'#2D4A8A'},
   chat:{label:'Chat Zoé',bg:'#EBF0FA',color:'#3D5570'},
@@ -2176,7 +2177,7 @@ function renderFavoritesUnified(child){
   if(!items.length)return`<div style="padding:34px 24px;text-align:center">
   <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#D4D0CA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:12px"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
   <p style="font-size:0.8125rem;color:#B0A89E;line-height:1.6">${t('fav_empty')}</p></div>`;
-  const order=['controverse','creuser','zoecamps','conseil','caroline','section','highlight','chat'];
+  const order=['controverse','creuser','zoecamps','conseil','caroline','observe','section','highlight','chat'];
   const present=order.filter(c=>items.some(i=>i._cat===c));
   const filter=(filter=>present.includes(filter)?filter:'all')(S.favFilter);
   const shown=filter==='all'?items:items.filter(i=>i._cat===filter);
@@ -2197,7 +2198,8 @@ function renderFavCard(it){
   if(it._kind==='saved'){
     body=`<p style="font-size:0.8125rem;color:#3A3835;line-height:1.7;margin-bottom:${it.refs&&it.refs.length?'10px':'0'}">${e(it.answer)}</p>
     ${it.refs&&it.refs.length?`<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:4px">${it.refs.map(r=>`<a href="https://www.google.com/search?q=${encodeURIComponent(r)}" target="_blank" rel="noopener" class="msg-ref-link"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>${e(r)}</a>`).join('')}</div>`:''}`;
-  } else if(it.type==='controverse'&&it.ctrv){body=renderCtrvFavBody(it.ctrv);}
+  } else if(it.type==='observe'&&it.obsData){body=renderObserveFavBody(it.obsData);}
+  else if(it.type==='controverse'&&it.ctrv){body=renderCtrvFavBody(it.ctrv);}
   else if(it.type==='creuser'&&it.blocks){body=renderDiveFavBody(it);}
   else if(it.type==='zoecamps'&&it.campsData){body=renderZoeCampsFavBody(it);}
   else{body=`<p style="font-size:0.8125rem;color:#5C5752;line-height:1.65;margin-bottom:${it.refsHtml?'12px':'0'}">${e(it.summary)}</p>
@@ -3084,6 +3086,20 @@ function renderControverseModal(child,data){
 }
 
 // ═══════════════════════ "J'AI OBSERVÉ…" ═══════════════════════
+function obsShareText(r){
+  const L=[r.title||'','','« '+r.text+' »','',r.interpretation||''];
+  if(r.reveals?.length){L.push('');r.reveals.forEach(rv=>L.push('▸ '+rv.dimension+' — '+rv.detail));}
+  if(r.watch_next){L.push('','→ '+r.watch_next);}
+  L.push('','— BébéPilote');
+  return L.join('\n');
+}
+function renderObserveFavBody(r){
+  if(!r)return'';
+  return`<p style="font-size:0.75rem;color:#9C9790;font-style:italic;line-height:1.5;margin-bottom:8px">« ${e(r.text)} »</p>
+  <p style="font-size:0.8125rem;color:#5C5752;line-height:1.6;margin-bottom:${r.reveals?.length?'10px':'0'}">${e(r.interpretation||'')}</p>
+  ${(r.reveals||[]).length?`<div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">${r.reveals.map(rv=>`<div style="border-left:2px solid #6AAA78;padding-left:8px"><p style="font-size:0.75rem;font-weight:700;color:var(--c-ink);margin-bottom:1px">${e(rv.dimension)}</p><p style="font-size:0.75rem;color:#5C5752;line-height:1.45">${e(rv.detail)}</p></div>`).join('')}</div>`:''}
+  ${r.watch_next?`<p style="font-size:0.75rem;color:#6AAA78;margin-top:10px;line-height:1.45;font-weight:600">→ ${e(r.watch_next)}</p>`:''}`;
+}
 function getObsExamples(child,en){
   const g=child?.gender;
   const il=g==='girl'?(en?'She':'Elle'):(en?'He':'Il');
@@ -3105,20 +3121,26 @@ function renderObserveModal(child,data){
   const en=S.lang==='en';const o=S.observe;
   const sw='stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"';
   const eyeIcon=`<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" ${sw}><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>`;
+  const obsResult=o.result;
+  const obsFid=obsResult?favId(child.firstName,'observe',String(obsResult.ts)):null;
+  const obsFaved=obsFid?isFavorited(obsFid):false;
   const head=`<div class="sheet-head">
     <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
       <div class="s-icon acc-sage" style="width:34px;height:34px;flex-shrink:0">${eyeIcon}</div>
       <span style="font-weight:600;font-size:0.875rem">${en?'I observed…':'J\'ai observé…'}</span>
     </div>
-    ${xBtn()}
+    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+      ${obsResult?modalActBtns('data-fav-observe','1','data-share-observe','1',obsFaved):''}
+      ${xBtn()}
+    </div>
   </div>`;
   let body;
   if(o.loading){
     body=`<div style="padding:40px 8px;text-align:center">
       <div style="display:inline-flex;align-items:center;gap:9px;color:#3A5E38;font-size:0.875rem"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9" style="opacity:.25"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>${en?'Reading what this moment reveals…':'J\'analyse ce que ce moment révèle…'}</div>
     </div>`;
-  } else if(o.result){
-    body=renderObserveResult(child,data,o.result);
+  } else if(obsResult){
+    body=renderObserveResult(child,data,obsResult);
   } else {
     const examples=getObsExamples(child,en);
     const journal=getObservations(child);
@@ -4794,6 +4816,17 @@ function bind(child,data){
     toast(S.lang==='en'?'Milestone confirmed':'Jalon confirmé');render();
   }));
   document.querySelectorAll('[data-obs-hist]').forEach(b=>b.addEventListener('click',()=>{const ts=+b.dataset.obsHist;const it=getObservations(child).find(o=>o.ts===ts);if(it){S.observe.result=it;render();}}));
+  document.querySelector('[data-fav-observe]')?.addEventListener('click',()=>{
+    const r=S.observe.result;if(!r)return;
+    const id=favId(child.firstName,'observe',String(r.ts));
+    const en=S.lang==='en';
+    toggleFavorite({id,childName:child.firstName,childAge:data.ageLabel,type:'observe',typeLabel:en?'Observation':'Observation',title:r.title||'',summary:r.text||'',obsData:r,refsColorBg:'acc-sage',date:new Date(r.ts).toISOString(),canShare:true,shareData:{headerBg:'#3A5E38',accentColor:'#3A5E38',categoryLabel:en?'Observation':'Observation',title:r.title||'',body:obsShareText(r),ageLabel:data.ageLabel}});
+    render();
+  });
+  document.querySelector('[data-share-observe]')?.addEventListener('click',()=>{
+    const r=S.observe.result;if(!r)return;
+    shareTextContent((S.lang==='en'?'Observation — ':'Observation — ')+r.title,obsShareText(r));
+  });
   // Coach "Là, maintenant"
   // Creuser (deep dive)
   document.getElementById('btn-ctrv-creuser')?.addEventListener('click',()=>{S.controverse.dive.open=true;S.controverse.dive.error=null;render();});
@@ -4914,6 +4947,7 @@ function bind(child,data){
     if(fav.type==='controverse'&&fav.ctrv){shareTextContent('Controverse — '+fav.ctrv.topic,ctrvFullText(fav.ctrv));return;}
     if(fav.type==='creuser'&&fav.blocks){shareTextContent('Creuser — '+fav.title,diveFullText({q:fav.title,blocks:fav.blocks,sources:fav.diveSources}));return;}
     if(fav.type==='zoecamps'&&fav.campsData){shareTextContent('Les écoles divergent — '+fav.title,zoeCampsFullText({creuserLabel:fav.title,camps:fav.campsData}));return;}
+    if(fav.type==='observe'&&fav.obsData){shareTextContent('Observation — '+fav.title,obsShareText(fav.obsData));return;}
     if(fav.shareData)shareCardCanvas(child,{...fav.shareData});
   }));
   document.querySelectorAll('[data-fratrie-prep]').forEach(b=>b.addEventListener('click',()=>{S.modal='fratriePrep';S.modalSection=+b.dataset.fratriePrep;render();}));
