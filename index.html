@@ -2111,9 +2111,20 @@ function toggleFavorite(item){
   return idx<0; // true = added
 }
 function favId(childName,type,sectionId){
-  // Daily ID — one favourite per section per day
-  const day=new Date().toISOString().split('T')[0];
-  return`${childName}|${type}|${sectionId||''}|${day}`;
+  return`${childName}|${type}|${sectionId||''}`;
+}
+function migrateFavIds(){
+  // Strip old daily-date suffix from IDs (format: ...|YYYY-MM-DD) and deduplicate
+  let favs;try{favs=JSON.parse(localStorage.getItem('bebeFavorites')||'[]');}catch{favs=[];}
+  const dateRe=/\|\d{4}-\d{2}-\d{2}$/;
+  const seen=new Set();const out=[];let changed=false;
+  for(const f of favs){
+    const newId=(f.id||'').replace(dateRe,'');
+    if(seen.has(newId)){changed=true;continue;}// drop duplicate
+    seen.add(newId);
+    if(newId!==f.id){changed=true;out.push({...f,id:newId});}else{out.push(f);}
+  }
+  if(changed)localStorage.setItem('bebeFavorites',JSON.stringify(out));
 }
 
 // ── Generic canvas share card ──
@@ -3864,7 +3875,7 @@ function renderAllCtrvModal(child){
   const starBadge=`<span class="ctrv-learned-badge" style="color:#A06C2A;background:#FBF3E5"><svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor" stroke="none"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.6 6.8L12 17.3 5.8 20.9l1.6-6.8L2.2 8.9l6.9-.6z"/></svg>${S.lang==='en'?'Saved':'Favori'}</span>`;
   const rows=order.filter(g=>groups[g]?.length).map(g=>`
     <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t4);padding:14px 16px 4px">${g}</p>
-    ${groups[g].map(c=>{const faved=favIds.includes(`${child.firstName}|controverse|${c.data.topic}|${c.date}`);return`<button class="drawer-conv-item" data-ctrv-hist="${c.date}" style="border-radius:0;padding:11px 16px;border-bottom:1px solid var(--c-bg3);align-items:flex-start">
+    ${groups[g].map(c=>{const faved=favIds.includes(`${child.firstName}|controverse|${c.data.topic}`);return`<button class="drawer-conv-item" data-ctrv-hist="${c.date}" style="border-radius:0;padding:11px 16px;border-bottom:1px solid var(--c-bg3);align-items:flex-start">
       <div style="flex:1;min-width:0">
         <p style="font-size:0.625rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#A06C2A;margin-bottom:3px">${e(c.data.topic||'')}</p>
         <p style="font-size:0.875rem;color:var(--c-ink);line-height:1.35;font-weight:500">${e(c.question||c.data.question)}</p>
@@ -4293,7 +4304,7 @@ function renderSavedChatsModal(child){
 function renderCarolineModal(data,child){
   const entry=getCarolineEntry(data.ageInMonths,data.doy);
   if(!entry)return'';
-  const fid=child?favId(child.firstName,'caroline','caroline'):'';
+  const fid=child?favId(child.firstName,'caroline',entry.topic||'caroline'):'';
   const faved=child&&isFavorited(fid);
   return`<div class="overlay" id="modal-overlay">
 <div class="sheet">
@@ -4502,7 +4513,7 @@ function renderSectionModal(id,data,child){
 
 function renderConseilModal(milestone,data,child){
   if(!milestone)return'';
-  const fid=child?favId(child.firstName,'conseil','conseil'):'';
+  const fid=child?favId(child.firstName,'conseil',milestone.tip?.substring(0,50)||milestone.fact?.substring(0,50)||'conseil'):'';
   const faved=child&&isFavorited(fid);
   return`<div class="overlay" id="modal-overlay">
 <div class="sheet">
@@ -4922,7 +4933,7 @@ function bind(child,data){
   // Conseil du jour like/share (dans le modal)
   document.querySelector('[data-fav-conseil]')?.addEventListener('click',()=>{
     const ms=data.milestone;
-    const id=favId(child.firstName,'conseil','conseil');
+    const id=favId(child.firstName,'conseil',ms?.tip?.substring(0,50)||ms?.fact?.substring(0,50)||'conseil');
     const refsHtml=[
       refLink('Brazelton, T. B. & Greenspan, S. I. (2000). The Irreducible Needs of Children.'),
       refLink('Gopnik, A., Meltzoff, A. N. & Kuhl, P. K. (1999). The Scientist in the Crib.'),
@@ -4938,7 +4949,7 @@ function bind(child,data){
   // Caroline like/share (dans le modal)
   document.querySelector('[data-fav-caroline]')?.addEventListener('click',()=>{
     const ce=getCarolineEntry(data.ageInMonths,data.doy);
-    const id=favId(child.firstName,'caroline','caroline');
+    const id=favId(child.firstName,'caroline',ce?.topic||'caroline');
     const refLabel=ce?.ref?.label||'';
     const refSearch='Caroline Goldman '+refLabel;
     const refText=refLabel.includes('Comprendre et accompagner')?'Caroline Goldman — Comprendre et accompagner les enfants difficiles (Odile Jacob)':refLabel;
@@ -5492,6 +5503,7 @@ initTheme();
 initLang();
 initFontSize();
 initKeyboardAwareness();
+migrateFavIds();
 render();
 
 function initKeyboardAwareness(){
