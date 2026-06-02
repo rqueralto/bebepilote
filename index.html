@@ -2226,13 +2226,12 @@ function renderFavCard(it){
   const shareSvg='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>';
   const heartSvg='<svg viewBox="0 0 24 24" width="12" height="12" fill="#E05A5A" stroke="#E05A5A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
   const trashSvg='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>';
-  const actions=`<div class="fav-flat-actions">
-    ${it._kind==='saved'
-      ?`<button class="fav-act-btn" data-share-saved="${it.id}">${shareSvg}${en?'Share':'Partager'}</button>
-         <button class="fav-act-btn red" data-del-saved="${it.id}">${trashSvg}${en?'Delete':'Supprimer'}</button>`
-      :`<button class="fav-act-btn red" data-unfav="${it.id}">${heartSvg}${en?'Remove':'Retirer'}</button>
-         ${it.canShare?`<button class="fav-act-btn" data-share-fav="${it.id}">${shareSvg}${en?'Share':'Partager'}</button>`:''}`}
-  </div>`;
+  const removeBtn=it._kind==='saved'
+    ?`<button class="fav-act-btn red" data-del-saved="${it.id}">${heartSvg}${en?'Remove':'Retirer'}</button>`
+    :`<button class="fav-act-btn red" data-unfav="${it.id}">${heartSvg}${en?'Remove':'Retirer'}</button>`;
+  const shareBtn=(it.canShare||it._kind==='saved')
+    ?`<button class="fav-act-btn" data-share-fav="${it.id}" ${it._kind==='saved'?`data-share-saved="${it.id}"`:''} >${shareSvg}${en?'Share':'Partager'}</button>`:'';
+  const actions=`<div class="fav-flat-actions">${removeBtn}${shareBtn}</div>`;
   // Extra line for observations: show the raw quoted text
   const obsQuote=it.type==='observe'&&it.obsData?.text
     ?`<p style="font-size:0.75rem;color:var(--c-t4);font-style:italic;margin-bottom:4px;line-height:1.45">« ${e(it.obsData.text.length>60?it.obsData.text.substring(0,60)+'…':it.obsData.text)} »</p>`:'';
@@ -3247,10 +3246,11 @@ function renderFavDetailModal(child){
   const cat=FAV_CATS[it._cat]||FAV_CATS.section;
   const en=S.lang==='en';
   const title=it._kind==='saved'?it.question:it.title;
-  const dl=new Date(it._date).toLocaleDateString(en?'en-GB':'fr-FR',{day:'numeric',month:'long',year:'numeric'});
-  const shareSvg='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>';
-  const heartSvg='<svg viewBox="0 0 24 24" width="14" height="14" fill="#E05A5A" stroke="#E05A5A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
-  const trashSvg='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>';
+  const dl=new Date(it._date).toLocaleDateString(en?'en-GB':'fr-FR',{day:'numeric',month:'short'});
+  // Since the item IS in favorites, heart is always active; saved chats use del+share only
+  const headerBtns=it._kind==='saved'
+    ?modalActBtns('data-noop','0','data-share-fav-detail',it.id,false).replace(/data-noop="0"/,'style="display:none"')
+    :modalActBtns('data-unfav-detail',it.id,'data-share-fav-detail',it.id,true);
   let body;
   if(it._kind==='saved'){
     body=`<p style="font-size:0.9375rem;color:var(--c-t2);line-height:1.72">${mdFull(it.answer||'')}</p>
@@ -3263,10 +3263,6 @@ function renderFavDetailModal(child){
     body=`<p style="font-size:0.9375rem;color:var(--c-t2);line-height:1.7">${mdFull(it.summary||'')}</p>
     ${it.refsHtml?`<div class="refs-block ${it.refsColorBg||'acc-blue'}" style="margin-top:16px"><p style="font-size:0.625rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;opacity:.7">${en?'Further reading':'Pour aller plus loin'}</p>${it.refsHtml}</div>`:''}`;
   }
-  const actions=`<div style="display:flex;gap:8px;padding-top:16px;border-top:1px solid var(--c-bd)">
-    <button class="fav-act-btn red" data-unfav-detail="${it.id}">${heartSvg}${en?'Remove from favourites':'Retirer des favoris'}</button>
-    ${it.canShare||it._kind==='saved'?`<button class="fav-act-btn" data-share-fav-detail="${it.id}">${shareSvg}${en?'Share':'Partager'}</button>`:''}
-  </div>`;
   return`<div class="overlay" id="modal-overlay"><div class="sheet">
   <div class="sheet-handle"></div>
   <div class="sheet-head">
@@ -3274,13 +3270,14 @@ function renderFavDetailModal(child){
       <span class="fav-type-badge" style="background:${cat.bg};color:${cat.color};flex-shrink:0">${cat.label}</span>
       <span style="font-size:0.75rem;color:var(--c-t4);font-weight:500">${dl}</span>
     </div>
-    ${xBtn()}
+    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+      ${headerBtns}
+      ${xBtn()}
+    </div>
   </div>
   <div class="sheet-body">
     <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500;line-height:1.25;margin-bottom:16px">${e(title)}</h2>
     ${body}
-    <div style="height:20px"></div>
-    ${actions}
     <div style="height:8px"></div>
   </div>
 </div></div>`;
@@ -4350,7 +4347,7 @@ function renderSavedChatsModal(child){
 function renderCarolineModal(data,child){
   const entry=getCarolineEntry(data.ageInMonths,data.doy);
   if(!entry)return'';
-  const fid=child?favId(child.firstName,'caroline',entry.topic||'caroline'):'';
+  const fid=child?favId(child.firstName,'caroline','caroline'):'';
   const faved=child&&isFavorited(fid);
   return`<div class="overlay" id="modal-overlay">
 <div class="sheet">
@@ -4559,7 +4556,7 @@ function renderSectionModal(id,data,child){
 
 function renderConseilModal(milestone,data,child){
   if(!milestone)return'';
-  const fid=child?favId(child.firstName,'conseil',milestone.tip?.substring(0,50)||milestone.fact?.substring(0,50)||'conseil'):'';
+  const fid=child?favId(child.firstName,'conseil','conseil'):'';
   const faved=child&&isFavorited(fid);
   return`<div class="overlay" id="modal-overlay">
 <div class="sheet">
@@ -4980,7 +4977,7 @@ function bind(child,data){
   // Conseil du jour like/share (dans le modal)
   document.querySelector('[data-fav-conseil]')?.addEventListener('click',()=>{
     const ms=data.milestone;
-    const id=favId(child.firstName,'conseil',ms?.tip?.substring(0,50)||ms?.fact?.substring(0,50)||'conseil');
+    const id=favId(child.firstName,'conseil','conseil');
     const refsHtml=[
       refLink('Brazelton, T. B. & Greenspan, S. I. (2000). The Irreducible Needs of Children.'),
       refLink('Gopnik, A., Meltzoff, A. N. & Kuhl, P. K. (1999). The Scientist in the Crib.'),
@@ -4996,7 +4993,7 @@ function bind(child,data){
   // Caroline like/share (dans le modal)
   document.querySelector('[data-fav-caroline]')?.addEventListener('click',()=>{
     const ce=getCarolineEntry(data.ageInMonths,data.doy);
-    const id=favId(child.firstName,'caroline',ce?.topic||'caroline');
+    const id=favId(child.firstName,'caroline','caroline');
     const refLabel=ce?.ref?.label||'';
     const refSearch='Caroline Goldman '+refLabel;
     const refText=refLabel.includes('Comprendre et accompagner')?'Caroline Goldman — Comprendre et accompagner les enfants difficiles (Odile Jacob)':refLabel;
