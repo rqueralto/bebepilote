@@ -719,7 +719,7 @@ activite:[
 
 const _sw='stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
 const _ico=(path,extra='')=>`<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" ${_sw} ${extra}>${path}</svg>`;
-const VERSION='1.3.0';
+const VERSION='1.3.1';
 const ALL_SECTIONS=[
   {id:'langage',  label:'Langage & Communication',  label_en:'Language & Communication', icon:_ico('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/>'),colorBg:'acc-blue',  colorText:'acc-blue'},
   {id:'motricite',label:'La Motricité',              label_en:'Motor Skills',              icon:_ico('<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>'),colorBg:'acc-green', colorText:'acc-green'},
@@ -2026,14 +2026,14 @@ async function loadZoeCamps(idx){
     if(useAnthropic){
       const res=await fetch('https://api.anthropic.com/v1/messages',{
         method:'POST',headers:anthropicHeaders(),
-        body:JSON.stringify({model:ANTHROPIC_MODEL,max_tokens:1024,system:sys,
-          tools:[{name:'camps',description:'Retourne les positions/écoles sur le sujet.',input_schema:inputSchema}],
-          tool_choice:{type:'tool',name:'camps'},
+        body:JSON.stringify({model:ANTHROPIC_MODEL,max_tokens:1500,system:anthropicToolSystem(sys,'camps'),
+          ...anthropicToolRequest('camps','Retourne les positions/écoles sur le sujet.',inputSchema),
           messages:[{role:'user',content:prompt}]})
       });
       if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`${tr('Erreur','Error')} ${res.status}`);}
       const j=await res.json();
-      parsed=(j.content||[]).find(b=>b.type==='tool_use')?.input||{};
+      parsed=anthropicToolInput(j,'camps');
+      if(!parsed)throw new Error(tr('Réponse Claude sans données','Claude returned no data'));
     }else{
       const geminiSchema={type:'OBJECT',properties:{camps:{type:'ARRAY',minItems:2,maxItems:3,items:{type:'OBJECT',properties:{name:{type:'STRING'},logic:{type:'STRING'}},required:['name','logic']}},unknown:{type:'STRING'},refs:{type:'ARRAY',maxItems:3,items:{type:'STRING'}}},required:['camps','unknown','refs']};
       const res=await fetch(geminiUrl('generateContent'),{
@@ -2433,6 +2433,22 @@ const OBS_SCHEMA={type:'OBJECT',properties:{
 const ANTHROPIC_MODEL='claude-sonnet-5-5';
 const GEMINI_MODEL='gemini-flash-latest';
 function geminiUrl(method){return`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:${method}?key=${S.apiKey}`;}
+// Les modèles Claude récents refusent tool_choice "tool"/"any" : on laisse le modèle appeler l'outil ("auto")
+// avec une consigne explicite, et on accepte aussi un JSON écrit directement dans le texte.
+function anthropicToolRequest(name,description,schema){
+  return{tools:[{name,description,input_schema:schema}],tool_choice:{type:'auto'}};
+}
+function anthropicToolSystem(sys,name){
+  return sys+`\n\nIMPORTANT : réponds en appelant l'outil « ${name} » (une seule fois), sans texte autour. / Answer by calling the "${name}" tool once, with no surrounding text.`;
+}
+function anthropicToolInput(j,name){
+  const tb=(j.content||[]).find(b=>b.type==='tool_use'&&(!name||b.name===name))||(j.content||[]).find(b=>b.type==='tool_use');
+  if(tb?.input)return tb.input;
+  const txt=(j.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n');
+  const a=txt.indexOf('{'),z=txt.lastIndexOf('}');
+  if(a>=0&&z>a){try{return JSON.parse(txt.slice(a,z+1));}catch{}}
+  return null;
+}
 function anthropicHeaders(){return{'content-type':'application/json','x-api-key':S.anthropicKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};}
 function netErrMsg(err){
   // TypeError = network failure (CORS, offline, SSL…)
@@ -2455,10 +2471,9 @@ async function aiControverse(sys,userMsg){
       headers:anthropicHeaders(),
       signal:ac.signal,
       body:JSON.stringify({
-        model:ANTHROPIC_MODEL,max_tokens:1800,stream:false,system:sys,
+        model:ANTHROPIC_MODEL,max_tokens:2500,stream:false,system:anthropicToolSystem(sys,'controverse'),
         messages:[{role:'user',content:userMsg}],
-        tools:[{name:'controverse',description:'Renvoie la controverse du jour, structurée.',input_schema:CTRV_TOOL_SCHEMA}],
-        tool_choice:{type:'tool',name:'controverse'}
+        ...anthropicToolRequest('controverse','Renvoie la controverse du jour, structurée.',CTRV_TOOL_SCHEMA)
       })
     });}catch(e){clearTimeout(tid);if(e.name==='AbortError')throw new Error(tr('Délai dépassé (60s) — réessaie.','Timed out (60s) — try again.'));throw new TypeError(e.message);}
     clearTimeout(tid);
@@ -2466,9 +2481,9 @@ async function aiControverse(sys,userMsg){
     let j;
     try{j=await res.json();}catch(e){throw new Error(tr(`Réponse tronquée — réessaie. (${e.message})`,`Truncated answer — try again. (${e.message})`));}
     if(j.stop_reason==='max_tokens')throw new Error(tr('Réponse trop longue (max_tokens atteint) — réessaie.','Answer too long (max_tokens reached) — try again.'));
-    const toolBlock=(j.content||[]).find(b=>b.type==='tool_use');
-    if(!toolBlock?.input)throw new Error(tr('Réponse Claude sans données (tool_use absent)','Claude returned no data (tool_use missing)'));
-    return toolBlock.input;
+    const input=anthropicToolInput(j,'controverse');
+    if(!input)throw new Error(tr('Réponse Claude sans données (tool_use absent)','Claude returned no data (tool_use missing)'));
+    return input;
   }
   if(!S.apiKey)throw new Error(tr('Clé Gemini manquante (Paramètres).','Gemini key missing (Settings).'));
   const ac2=new AbortController();const tid2=setTimeout(()=>ac2.abort(),55000);
@@ -2494,19 +2509,18 @@ async function aiObservation(sys,userMsg){
     try{res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',headers:anthropicHeaders(),signal:ac.signal,
       body:JSON.stringify({
-        model:ANTHROPIC_MODEL,max_tokens:1500,stream:false,system:sys,
+        model:ANTHROPIC_MODEL,max_tokens:2000,stream:false,system:anthropicToolSystem(sys,'observation'),
         messages:[{role:'user',content:userMsg}],
-        tools:[{name:'observation',description:'Analyse le moment observé et renvoie la structure.',input_schema:OBS_TOOL_SCHEMA}],
-        tool_choice:{type:'tool',name:'observation'}
+        ...anthropicToolRequest('observation','Analyse le moment observé et renvoie la structure.',OBS_TOOL_SCHEMA)
       })
     });}catch(e){clearTimeout(tid);if(e.name==='AbortError')throw new Error(tr('Délai dépassé (60s) — réessaie.','Timed out (60s) — try again.'));throw new TypeError(e.message);}
     clearTimeout(tid);
     if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`${tr('Erreur','Error')} ${res.status}`);}
     let j;try{j=await res.json();}catch(e){throw new Error(tr(`Réponse tronquée — réessaie. (${e.message})`,`Truncated answer — try again. (${e.message})`));}
     if(j.stop_reason==='max_tokens')throw new Error(tr('Réponse trop longue — réessaie.','Answer too long — try again.'));
-    const tb=(j.content||[]).find(b=>b.type==='tool_use');
-    if(!tb?.input)throw new Error(tr('Réponse Claude sans données (tool_use absent)','Claude returned no data (tool_use missing)'));
-    return tb.input;
+    const input=anthropicToolInput(j,'observation');
+    if(!input)throw new Error(tr('Réponse Claude sans données (tool_use absent)','Claude returned no data (tool_use missing)'));
+    return input;
   }
   if(!S.apiKey)throw new Error(tr('Clé Gemini manquante (Paramètres).','Gemini key missing (Settings).'));
   const ac2=new AbortController();const tid2=setTimeout(()=>ac2.abort(),55000);
