@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content"/>
 <title>BébéPilote</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231A1918' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 5V3a2 2 0 0 1 4 0v2'/%3E%3Cpath d='M9 5h6v2H9z'/%3E%3Cpath d='M7 7h10v12a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V7z'/%3E%3Cline x1='7' y1='13' x2='17' y2='13'/%3E%3C/svg%3E"/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <style>
@@ -339,7 +340,6 @@ a{color:#2D4A8A}
 .share-btn:hover,.share-btn:active{background:rgba(255,255,255,.27)}
 
 /* ── Neuron chart ── */
-.neuron-chart{margin:0 16px 12px;background:var(--c-card);border-radius:14px;padding:16px 16px 12px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.08)}
 
 /* ── Prenatal / Fratrie ── */
 .prenatal-alert{background:#FEF4E8;border-radius:12px;padding:11px 14px;margin:0 16px 12px;font-size:0.8125rem;color:#8A4A10;line-height:1.55;display:flex;align-items:flex-start;gap:9px}
@@ -378,6 +378,16 @@ a{color:#2D4A8A}
 [data-theme="dark"] [style*="color:#5C4A2A"]{color:var(--c-t2)!important}
 [data-theme="dark"] [style*="color:#3A2A0A"]{color:var(--c-t2)!important}
 [data-theme="dark"] [style*="color:#6B6480"]{color:var(--c-t3)!important}
+/* Couleurs profondes codées en dur (vue grossesse, fratrie, erreurs) : versions claires en mode sombre */
+[data-theme="dark"] [style*="color:#1B4A3A"]{color:#8FD1BC!important}
+[data-theme="dark"] [style*="color:#1B7060"]{color:#6CC4A8!important}
+[data-theme="dark"] [style*="color:#2D4A8A"]{color:#8AAAD8!important}
+[data-theme="dark"] [style*="color:#A03828"]{color:#E08A78!important}
+[data-theme="dark"] [style*="color:#5C3020"]{color:#E0B4A2!important}
+[data-theme="dark"] [style*="color:#3F7A55"]{color:#7CC08F!important}
+[data-theme="dark"] [style*="background:#FFFBF2"]{background:#2A2418!important;border-color:#4A3D24!important}
+[data-theme="dark"] [style*="background:#E6F4F1"]{background:#142820!important}
+[data-theme="dark"] [style*="background:#EBF0FA"]{background:#1A2840!important}
 [data-theme="dark"] [style*="color:#7A7570"]{color:var(--c-t3)!important}
 [data-theme="dark"] [style*="color:#B0A89E"]{color:var(--c-t4)!important}
 [data-theme="dark"] [style*="color:#B8B2AA"]{color:var(--c-t4)!important}
@@ -441,7 +451,6 @@ fr:{
   tab_today:"Aujourd'hui",tab_history:'Favoris',tab_chat:'Chat',tab_profile:'Profil',
   today_highlight:'Highlight du jour',today_conseil:'Conseil du jour',
   today_dev:'Le développement de',today_updated:'Actualisé chaque jour',
-  today_connections:'connexions neuronales aujourd\'hui',
   today_day:'Jour',
   caroline_title:'Les conseils de Caroline',caroline_sub:'Caroline Goldman · Psychologue clinicienne',
   ask_zoe:'Demander à Zoé',ask_zoe_sub:'Votre assistante IA répond à vos questions',
@@ -458,8 +467,8 @@ fr:{
   prenatal_fratrie_title:'Préparer la fratrie',prenatal_fratrie_sub:'Comment aider vos autres enfants à accueillir ce bébé',
   hist_title:'Favoris',hist_sub:'Tout ce que vous avez gardé',
   hist_favs:'Sauvegardés',hist_saved_zoe:'Chat',hist_activities:'Activités par jour',
-  fav_empty:'Aucun favori — appuyez sur ♥ dans une section.',
-  saved_empty:'Aucune réponse — utilisez 🔖 sous une réponse de Zoé.',
+  fav_empty:'Aucun favori — appuyez sur le cœur dans une section.',
+  saved_empty:'Aucune réponse — utilisez le signet sous une réponse de Zoé.',
   hist_empty:'Aucun événement enregistré',
   profile_title:'Profil',profile_appearance:'Apparence',profile_language:'Langue',
   profile_theme:'Thème',profile_theme_light:'Clair',profile_theme_dark:'Sombre',profile_theme_auto:'Système',
@@ -467,7 +476,7 @@ fr:{
   profile_add_child:'+ Ajouter un enfant',
   profile_ai:'Intelligence artificielle',profile_api_title:'Clé API Gemini',
   profile_api_set:'Configurée ✓',profile_api_unset:'Non configurée',
-  badge_coming:'à venir',badge_eldest:'aîné·e',badge_youngest:'cadet·te',
+  badge_coming:'à venir',badge_eldest:'aîné·e',badge_youngest:'cadet·te',badge_middle:'du milieu',
   modal_child_add:'Ajouter un enfant',modal_child_edit:'Modifier',
   modal_child_firstname:'Prénom',modal_child_birthdate:'Date de naissance ou date prévue',
   modal_child_future:'Entrez une date future pour un bébé à venir.',
@@ -506,8 +515,6 @@ fr:{
   ob_api_optional:'Optionnel — vous pouvez l\'ajouter plus tard dans Profil.',
   ob_api_stored:'Stockée uniquement sur votre appareil, jamais envoyée ailleurs.',
   ob_go:"C'est parti !",ob_skip:"Passer pour l'instant",
-  neuron_14:'Connexions neuronales · 14 jours',
-  neuron_today:"Aujourd'hui",neuron_peak:'Pic',neuron_avg:'Moyenne',
   fratrie_prep_label:'· Préparer l\'arrivée de',
   fratrie_bond_label:'· Fratrie',fratrie_bond_at:'À retenir',
   prenatal_senses_awake:'Sens en éveil',
@@ -519,7 +526,6 @@ en:{
   tab_today:'Today',tab_history:'Favourites',tab_chat:'Chat',tab_profile:'Profile',
   today_highlight:'Highlight of the day',today_conseil:'Tip of the day',
   today_dev:'Development of',today_updated:'Updated daily',
-  today_connections:'neural connections today',
   today_day:'Day',
   caroline_title:"Caroline's tips",caroline_sub:'Caroline Goldman · Clinical psychologist',
   ask_zoe:'Ask Zoé',ask_zoe_sub:'Your AI assistant answers your questions',
@@ -536,8 +542,8 @@ en:{
   prenatal_fratrie_title:'Preparing siblings',prenatal_fratrie_sub:'How to help your other children welcome this baby',
   hist_title:'Favourites',hist_sub:'Everything you have kept',
   hist_favs:'Saved',hist_saved_zoe:'Chat',hist_activities:'Activities by day',
-  fav_empty:'No favourites — tap ♥ in any section.',
-  saved_empty:'No responses — use 🔖 under a Zoé response.',
+  fav_empty:'No favourites — tap the heart in any section.',
+  saved_empty:'No responses — use the bookmark under a Zoé response.',
   hist_empty:'No events recorded',
   profile_title:'Profile',profile_appearance:'Appearance',profile_language:'Language',
   profile_theme:'Theme',profile_theme_light:'Light',profile_theme_dark:'Dark',profile_theme_auto:'System',
@@ -545,7 +551,7 @@ en:{
   profile_add_child:'+ Add a child',
   profile_ai:'Artificial intelligence',profile_api_title:'Gemini API Key',
   profile_api_set:'Configured ✓',profile_api_unset:'Not configured',
-  badge_coming:'coming',badge_eldest:'eldest',badge_youngest:'youngest',
+  badge_coming:'coming',badge_eldest:'eldest',badge_youngest:'youngest',badge_middle:'middle',
   modal_child_add:'Add a child',modal_child_edit:'Edit',
   modal_child_firstname:'First name',modal_child_birthdate:'Birth date (or expected due date)',
   modal_child_future:'Enter a future date for an upcoming baby.',
@@ -584,8 +590,6 @@ en:{
   ob_api_optional:'Optional — you can add it later in Profile.',
   ob_api_stored:'Stored only on your device, never sent anywhere else.',
   ob_go:'Get started!',ob_skip:'Skip for now',
-  neuron_14:'Neural connections · 14 days',
-  neuron_today:'Today',neuron_peak:'Peak',neuron_avg:'Average',
   fratrie_prep_label:'· Preparing arrival of',
   fratrie_bond_label:'· Siblings',fratrie_bond_at:'Key takeaway',
   prenatal_senses_awake:'Awakening senses',
@@ -596,6 +600,8 @@ en:{
 };
 
 function t(key){return(TEXTS[S&&S.lang?S.lang:'fr']||TEXTS.fr)[key]??TEXTS.fr[key]??key;}
+// Texte bilingue inline : tr('français','english')
+function tr(fr,en){return S.lang==='en'?en:fr;}
 
 function initLang(){
   const saved=localStorage.getItem('bebe_lang');
@@ -713,7 +719,7 @@ activite:[
 
 const _sw='stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
 const _ico=(path,extra='')=>`<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" ${_sw} ${extra}>${path}</svg>`;
-const VERSION='1.2.1';
+const VERSION='1.3.0';
 const ALL_SECTIONS=[
   {id:'langage',  label:'Langage & Communication',  label_en:'Language & Communication', icon:_ico('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/>'),colorBg:'acc-blue',  colorText:'acc-blue'},
   {id:'motricite',label:'La Motricité',              label_en:'Motor Skills',              icon:_ico('<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>'),colorBg:'acc-green', colorText:'acc-green'},
@@ -829,6 +835,67 @@ const prenatal=[
     ]
   },
 ];
+// Traductions anglaises du suivi prénatal (même ordre que `prenatal`)
+const PRENATAL_EN=[
+  {details_en:"The buds of all four limbs appear. Size: about 6 to 8 mm, the size of a grain of rice. The vital organs — heart, liver, kidneys — are being wired up. The brain is already divided into three distinct regions.",
+   sens_en:"Touch is the first sense to awaken. Tactile receptors form around the mouth. Your baby does not yet perceive the outside world, but their nervous system is starting to process internal signals.",
+   tips_en:["Folic acid (400 µg/day) until 12 weeks: it protects the neural tube. If you haven't started yet, start today — every day counts in this trimester.",
+     "Start a pregnancy notebook. Write down your questions for the next appointment — the first weeks raise many, and forgetting them in front of the doctor is frustrating.",
+     "The intense fatigue of the first trimester is linked to progesterone, which is soaring. Sleep when you can, without guilt. It isn't laziness — it's physiology.",
+     "Choose your midwife or obstetrician for follow-up. The relationship matters as much as technical skill. You are allowed to change if it doesn't click.",
+     "Talk to your baby, even now. They can't hear you yet, but you are starting to build this relationship in your mind — and that matters for you.",
+     "First appointment before 10 weeks: that's the rule. If it isn't booked, block a slot this week."]},
+  {details_en:"The face is recognisable: eyelids formed, ears in place, fingers separated. Size around 12 weeks: 6 cm, 14 g. The placenta gradually takes over hormone production — nausea often starts to ease.",
+   sens_en:"The inner ear is forming. Your baby perceives vibrations, not yet distinct sounds. The skin, still transparent, is covered with fine touch receptors. Taste: the first taste buds appear.",
+   tips_en:["The first-trimester appointment (between 10 and 14 weeks) is the ideal time to ask all your questions: diet, exercise, sex, work, plans. Prepare your list in advance.",
+     "Down syndrome screening (nuchal translucency + blood test) takes place between 11 and 13+6 weeks. Book early — specialised scan slots fill up fast.",
+     "Nausea: ginger (tea, biscuits), small frequent meals and eating something dry before getting up help a lot. It usually passes after 12 weeks.",
+     "Dental check-up: pregnancy hormones make gums more fragile. A check-up and scaling early in pregnancy prevents complications later. In France it is fully covered.",
+     "Start looking for your maternity unit if you haven't yet. The ideal pre-admission visit is in the second trimester — natural birth rooms and birthing pools get booked early.",
+     "If you have a dog or a cat, now is a good time to plan their adjustment to the baby's arrival. Animals sense change — preparing them gradually avoids stress."]},
+  {details_en:"Thumb-sucking is visible on the scan. Frequent foetal hiccups — a breathing-training reflex. Fingerprints are unique and permanently formed. Size around 18 weeks: 14 cm, 190 g. Fine hair (lanugo) covers the whole body.",
+   sens_en:"Hearing is working: your baby perceives voices, music, the low sounds of the mother's body. Bright light through the abdomen is detected. Taste is active — the amniotic fluid is flavoured by what you eat.",
+   tips_en:["Sign up for antenatal classes now: in France they are covered by national health insurance (7 sessions + 1 partner session). Pool or sophrology slots often fill up from the 5th month.",
+     "Sleep on your left side: this position optimises blood flow to the placenta. A pregnancy pillow between the knees can transform the quality of your sleep.",
+     "Read aloud in the evening — a novel, the news, anything. The familiarity of your voice builds your baby's first auditory preferences.",
+     "Move: 30 minutes of moderate activity a day (swimming, brisk walking, prenatal yoga) reduces back pain, improves sleep and eases labour. The body is built for this.",
+     "Prepare your questions for the anomaly scan (around 22 weeks): placenta position, cervical length, growth. It's a dense session — a list avoids forgetting the essentials.",
+     "Plan your maternity leave notice to your employer. In France, statutory prenatal leave starts 6 weeks before the due date for a first child, 8 weeks from the second."]},
+  {details_en:"The brain develops massively: millions of neurons migrate and connect every hour. The vernix (a whitish coating) and lanugo protect the fragile skin. Size around 24 weeks: 30 cm, 600 g. The eyelids begin to open.",
+   sens_en:"The baby distinguishes their mother's voice from others. They react to music and loud sounds by moving. Touch is highly developed: they grab the umbilical cord and touch their face. They perceive the mother's emotions through stress hormones.",
+   tips_en:["Gestational diabetes screening (O'Sullivan) between 24 and 28 weeks. No fasting needed: you drink 50 g of glucose, blood test one hour later. Simple and important — gestational diabetes is very manageable once detected.",
+     "Tell the baby about your day. \"I'm making dinner\", \"we're going home\" — newborns recognise their native language at birth and prefer familiar voices.",
+     "Hydration: water needs increase during pregnancy. 1.5 to 2 L a day (water + food), more in hot weather or if you exercise. Good hydration prevents cramps and false contractions.",
+     "Prepare the nest: room, cot, equipment. Setting a deadline 6 weeks before the due date avoids last-minute stress. Start with the essentials; the rest can wait.",
+     "Think about freezing meals in advance from this trimester. The first weeks with a newborn are exhausting — having 10 dishes in the freezer really changes your quality of life.",
+     "Prenatal bath or sophrology: if you haven't tried it yet, now is the time. These approaches help tame apprehension about birth and build resources for the big day."]},
+  {details_en:"The eyes open and detect light. Stable sleep-wake cycles appear — your baby has their own schedule, often out of sync with yours. Size around 30 weeks: 40 cm, 1.5 kg. Fat begins to build up under the skin, rounding out the shape.",
+   sens_en:"The baby hears conversations, music, your heartbeat. They recognise familiar voices — those who talk to them regularly will be the first to soothe them after birth. Bright light through the abdominal wall is perceptible.",
+   tips_en:["Write your birth plan (1 page max). It tells the team your preferences: epidural, mobility, music, skin-to-skin, breastfeeding. It isn't a contract — it's a conversation ahead of time.",
+     "Whooping cough vaccination (Boostrix) between 20 and 36 weeks: antibodies pass to the baby through the placenta and protect them in their first weeks, before their own vaccines.",
+     "If you plan to breastfeed, get informed now: lactation consultant, local support groups, practical books. Good preparation makes a real difference in practice.",
+     "Plan the post-birth organisation: who comes to help, with which tasks, for how long. A month of concrete support (shopping, meals, housework) is worth more than social visits.",
+     "Perineal massage from 34 weeks (20 min, 3 times a week) improves tissue elasticity and significantly reduces the risk of tearing. Your midwife can show you how.",
+     "Infant first-aid course: half a day, and you leave with essential reflexes. Many maternity units and associations offer this training."]},
+  {details_en:"The sucking and swallowing reflexes are fully operational — your baby is practising. Size around 36 weeks: 47 cm, 2.6 kg. The head-down position gradually settles. The amniotic fluid slowly begins to decrease.",
+   sens_en:"Hearing is that of a newborn. The baby memorises melodies heard regularly — they will soothe them after birth. Their sense of touch is hypersensitive: they curl up in the most comfortable position.",
+   tips_en:["Finalise the hospital bag: pregnancy records, ID, birth plan, bodysuit, sleepsuit, sleeping bag, postpartum pads. Keep it where everyone knows it is.",
+     "Maternity pre-admission: a few forms filled in advance mean you won't be dealing with paperwork in active labour. Most units offer a dedicated slot.",
+     "Start listening to a playlist or guided meditation regularly in the evening. If you play it during labour, your baby will recognise it — and you will have linked those sounds to relaxation.",
+     "Think about coming home. Full fridge, frozen meals, clean laundry, dim lighting for the nights. The nest gets ready before its occupant arrives.",
+     "Perineum: it's now. 34 weeks is the time to start the massages — a few weeks of practice is enough to make a difference.",
+     "Plan reliable transport to the maternity unit, day or night. Route tested, taxi number saved, trusted neighbour identified."]},
+  {details_en:"Average weight at term: 3.3 kg, 50 cm. The baby's own cortisol production plays a role in triggering labour — they help decide the right moment. The placenta naturally begins to age after 41 weeks.",
+   sens_en:"All the senses are working. The baby recognises your voice, your smell, the tune you hum. The first hours after birth will be a recognition, not a discovery.",
+   tips_en:["Walk, stay active: gravity helps the baby engage. Movement remains your best ally for a natural start to labour.",
+     "Braxton-Hicks contractions are irregular and ease when you change position. Real contractions intensify, come closer together and last — ≥ 30 sec, every 5 min for an hour is the signal.",
+     "Enjoy these last days. Full nights, quiet meals, freedom of movement — in a few days, all of this takes on a whole new value. It isn't nostalgia, it's a clear-eyed goodbye.",
+     "If you breastfeed, know that the first 48 hours are often the most demanding — milk coming in, latching, fatigue. Ask for a midwife's support before leaving the maternity unit.",
+     "The due date is an estimate: your medical team will monitor and suggest an induction if needed after 41+3 weeks. Wait calmly — your body and your baby know.",
+     "Prepare a short list of people to notify on the day. Decide now who to call first and who can look after older siblings. On-the-spot logistics take energy you'll need elsewhere."]},
+];
+prenatal.forEach((p,i)=>Object.assign(p,PRENATAL_EN[i]||{}));
+
 
 // ═══════════════════════ FRATRIE DATA ═══════════════════════
 // For existing sibling when a new baby is coming (age of existing child in months)
@@ -903,7 +970,10 @@ function getCarolineEntry(ageMonths,doy){
 function isUnborn(c){return new Date(c.birthDate+'T12:00:00')>new Date();}
 function getGestWeeks(c){const due=new Date(c.birthDate+'T12:00:00'),now=new Date(),daysUntil=Math.ceil((due-now)/86400000);return Math.round(40-daysUntil/7);}
 function getDaysUntilDue(c){return Math.max(0,Math.ceil((new Date(c.birthDate+'T12:00:00')-new Date())/86400000));}
-function getPrenatalData(gestWeeks){return prenatal.find(p=>gestWeeks>=p.minW&&gestWeeks<p.maxW)||prenatal[prenatal.length-1];}
+function getPrenatalData(gestWeeks){
+  const p=prenatal.find(p=>gestWeeks>=p.minW&&gestWeeks<p.maxW)||prenatal[prenatal.length-1];
+  return S.lang==='en'?{...p,category:p.category_en||p.category,fact:p.fact_en||p.fact,details:p.details_en||p.details,sens:p.sens_en||p.sens,tips:p.tips_en||p.tips}:p;
+}
 function getFratriePrep(ageMonths){return fratriePrep.find(f=>ageMonths>=f.minM&&ageMonths<f.maxM)||fratriePrep[fratriePrep.length-1];}
 function getFratrieBond(gapMonths){return fratrieBond.find(f=>gapMonths>=f.minG&&gapMonths<f.maxG)||fratrieBond[fratrieBond.length-1];}
 function getGapMonths(olderChild,youngerChild){const a=new Date(olderChild.birthDate+'T12:00:00'),b=new Date(youngerChild.birthDate+'T12:00:00');return Math.round(Math.abs(b-a)/2629800000);}
@@ -958,39 +1028,6 @@ function getAgeLabel(d,s){
   if(m>0)return`${y} an${y>1?'s':''} et ${m} mois`;
   return`${y} an${y>1?'s':''}`;
 }
-function getNeuronStats(d,bk){
-  let daily;
-  if(d<365)daily=60e6+Math.floor(Math.random()*5e6);
-  else if(d<730)daily=45e6+Math.floor(Math.random()*4e6);
-  else if(d<1095)daily=30e6+Math.floor(Math.random()*3e6);
-  else if(d<1825)daily=15e6+Math.floor(Math.random()*2e6);
-  else daily=8e6+Math.floor(Math.random()*1e6);
-  // Persist once per day for chart
-  if(bk){
-    const hk='bebeNH_'+bk,t=new Date().toISOString().split('T')[0];
-    const h=JSON.parse(localStorage.getItem(hk)||'{}');
-    if(!h[t]){h[t]=daily;const ks=Object.keys(h).sort().slice(-30),r={};ks.forEach(k=>r[k]=h[k]);localStorage.setItem(hk,JSON.stringify(r));}
-  }
-  return{daily,total:50e12+Math.min(d,1095)*50e6};
-}
-// Returns 14 days of neuron data (stored + estimated for missing days)
-function getNeuronHistory(c,ageInDays){
-  const hk='bebeNH_'+c.birthDate;
-  const h=JSON.parse(localStorage.getItem(hk)||'{}');
-  const pts=[];
-  for(let i=13;i>=0;i--){
-    const dt=new Date(Date.now()-i*86400000),ds=dt.toISOString().split('T')[0];
-    let v=h[ds];
-    if(!v){
-      // deterministic estimate for missing days
-      const da=Math.max(0,ageInDays-i),s=(da*1234567)%1000;
-      if(da<365)v=60e6+s*5000;else if(da<730)v=45e6+s*4000;else if(da<1095)v=30e6+s*3000;else if(da<1825)v=15e6+s*2000;else v=8e6+s*1000;
-    }
-    pts.push({ds,v});
-  }
-  return pts;
-}
-function fmt(n){if(n>=1e12)return(n/1e12).toFixed(1)+' billion';if(n>=1e9)return(n/1e9).toFixed(1)+' milliard';if(n>=1e6)return(n/1e6).toFixed(1)+' million';return n.toLocaleString('fr-FR');}
 function getDailySectionEntry(id,months,doy){const entries=sections_data[id]||[];let pool=entries.filter(e=>months>=e.minMonths&&months<=e.maxMonths);if(!pool.length)pool=[...entries].sort((a,b)=>Math.abs((a.minMonths+a.maxMonths)/2-months)-Math.abs((b.minMonths+b.maxMonths)/2-months)).slice(0,5);return pool[doy%pool.length];}
 function getDayOfYear(d){return Math.floor((d-new Date(d.getFullYear(),0,0))/86400000);}
 // ── Boucle de suivi — prototype Langage ──
@@ -1328,6 +1365,14 @@ const LANG_OBS=[
     refs:["Diessel, H. (2004). The Acquisition of Complex Sentences. Cambridge University Press.","Tomasello, M. (2003). Constructing a Language. Harvard University Press."],
     q:"Fait-il des phrases complexes avec des subordonnées (« le jouet que tu m'as donné », « il a dit qu'il viendrait ») ?",q_en:"Do they make complex sentences with subordinate clauses ('the toy you gave me', 'he said he would come')?"}
 ];
+// Accorde au féminin les questions rédigées au masculin (hors citations « … » qui sont des paroles d'enfant)
+function gFr(s,child){
+  if(!s||child?.gender!=='girl')return s;
+  return s.split(/(«[^»]*»)/).map((seg,i)=>i%2?seg:seg
+    .replace(/\b([sS])['’]il\b/g,(_,c)=>c==='S'?'Si elle':'si elle')
+    .replace(/-t-il\b/g,'-t-elle').replace(/-il\b/g,'-elle')
+    .replace(/\bIl\b/g,'Elle').replace(/\bil\b/g,'elle')).join('');
+}
 function milestoneKey(child){return (child?.firstName||'')+'|'+(child?.birthDate||'');}
 function getMilestones(child){try{return (JSON.parse(localStorage.getItem('bebeMilestones')||'{}'))[milestoneKey(child)]||{};}catch(_){return{};}}
 function setMilestoneStatus(child,mid,status){
@@ -1765,39 +1810,20 @@ function getSectionFocus(child,months,sid,doy){
   const pool=live.length?live:focs;
   return pool[(doy||0)%pool.length];
 }
-function langLadder(){return getLadder('langage');}
-function confirmEarlierLang(child,upto){confirmEarlier(child,'langage',upto);}
-function getLangFocus(child,months){return getFocus(child,months,'langage');}
-// ──
-// Sélectionne l'étape "du moment" : on vise la frontière développementale de l'enfant,
-// pas le tout début de l'échelle. Piloté par l'état réel + l'âge.
-function getLangFocus(child,months){
-  const st=getMilestones(child);const ladder=langLadder();
-  const status=x=>st[x.mid]?.status;const seen=x=>st[x.mid]?.lastSeen||0;
-  // Dans une liste : "pas sûr" d'abord, puis ouverte non-relancée <3j, puis n'importe quelle ouverte
-  const open=arr=>arr.find(x=>status(x)==='unsure')
-    ||arr.find(x=>status(x)!=='done'&&!(status(x)==='pending'&&Date.now()-seen(x)<2592e5))
-    ||arr.find(x=>status(x)!=='done');
-  const inBand=ladder.filter(x=>months>=x.e.minMonths&&months<=x.e.maxMonths);
-  // 1. Étape dont la tranche d'âge contient l'enfant (la frontière du moment)
-  let pick=open(inBand);
-  // 2. Sinon on anticipe la prochaine étape à venir
-  if(!pick){const up=ladder.find(x=>months<x.e.minMonths&&status(x)!=='done');if(up){pick={...up,upcoming:true};}}
-  // 3. Sinon une étape déjà dépassée mais jamais confirmée (à cocher rétroactivement)
-  if(!pick)pick=open(ladder.filter(x=>months>x.e.maxMonths&&status(x)!=='done'));
-  if(!pick)pick=ladder[ladder.length-1];
-  return pick;
-}
 // ── Saved chats helpers ──
 function getSavedChats(){return JSON.parse(localStorage.getItem('bebeSavedChats')||'[]');}
-function addSavedChat(entry){const s=getSavedChats();s.unshift(entry);localStorage.setItem('bebeSavedChats',JSON.stringify(s.slice(0,100)));}
+function addSavedChat(entry){const s=getSavedChats();s.unshift(entry);lsSet('bebeSavedChats',JSON.stringify(s.slice(0,100)));}
 function deleteSavedChat(id){const s=getSavedChats().filter(x=>x.id!==id);localStorage.setItem('bebeSavedChats',JSON.stringify(s));}
 function getLikedExamples(){return getSavedChats().filter(x=>x.liked).slice(0,3);}
 // ── Conversations (historique chat) ──
 function getConversations(){return JSON.parse(localStorage.getItem('bebeConversations')||'[]');}
-function saveConversations(convs){localStorage.setItem('bebeConversations',JSON.stringify(convs.slice(0,200)));}
+function saveConversations(convs){
+  // Si le quota est atteint, on retire les plus anciennes conversations jusqu'à ce que ça passe
+  let list=convs.slice(0,200);
+  while(list.length){try{localStorage.setItem('bebeConversations',JSON.stringify(list));return;}catch{list=list.slice(0,Math.floor(list.length*0.8));}}
+}
 function serializeMsgs(msgs){return msgs.map(m=>{
-  const base={role:m.role,content:m.content,refs:m.refs||[],liked:m.liked||false,saved:m.saved||false,creuserLabel:m.creuserLabel||null};
+  const base={role:m.role,content:m.content,refs:m.refs||[],liked:m.liked||false,saved:m.saved||false,creuserLabel:m.creuserLabel||null,error:m.error||false};
   if(m.camps){base.camps={camps:(m.camps.camps||[]).map(c=>({name:c.name,logic:c.logic,dive:c.dive||null})),unknown:m.camps.unknown||'',refs:m.camps.refs||[]};}
   return base;
 });}
@@ -1839,8 +1865,8 @@ function renameConvById(id,title){
 }
 function convDateGroup(iso){
   const d=new Date(iso),now=new Date(),diff=Math.floor((now-d)/86400000);
-  if(diff===0)return"Aujourd'hui";if(diff===1)return'Hier';
-  if(diff<7)return'7 derniers jours';if(diff<30)return'Ce mois';return'Plus ancien';
+  if(diff===0)return tr("Aujourd'hui",'Today');if(diff===1)return tr('Hier','Yesterday');
+  if(diff<7)return tr('7 derniers jours','Last 7 days');if(diff<30)return tr('Ce mois','This month');return tr('Plus ancien','Older');
 }
 
 // ── Message block renderer ──
@@ -1851,13 +1877,13 @@ function renderMsgBlock(m,idx,child,data){
   return`<div class="msg-block">
   <div class="msg-bot">${mdFull(m.content)}</div>
   <div class="msg-actions">
-    <button class="msg-act${m.copied?' copied-flash':''}" data-msg-copy="${idx}" title="Copier">
+    <button class="msg-act${m.copied?' copied-flash':''}" data-msg-copy="${idx}" title="${tr('Copier','Copy')}">
       <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" ${sw}><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
     </button>
-    <button class="msg-act${m.liked?' on':''}" data-msg-like="${idx}" title="${m.liked?'Retirer':'Bonne réponse'}">
+    <button class="msg-act${m.liked?' on':''}" data-msg-like="${idx}" title="${m.liked?tr('Retirer','Remove'):tr('Bonne réponse','Good answer')}">
       <svg viewBox="0 0 24 24" width="13" height="13" fill="${m.liked?'#E05A5A':'none'}" stroke="${m.liked?'#E05A5A':'currentColor'}" ${sw}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
     </button>
-    <button class="msg-act${m.saved?' saved-on':''}" data-msg-save="${idx}" title="${m.saved?'Sauvegardé':'Sauvegarder'}">
+    <button class="msg-act${m.saved?' saved-on':''}" data-msg-save="${idx}" title="${m.saved?tr('Sauvegardé','Saved'):tr('Sauvegarder','Save')}">
       <svg viewBox="0 0 24 24" width="13" height="13" fill="${m.saved?'#3D5570':'none'}" stroke="${m.saved?'#3D5570':'currentColor'}" ${sw}><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
     </button>
   </div>
@@ -1866,18 +1892,18 @@ function renderMsgBlock(m,idx,child,data){
     ${e(r)}</a>`).join('')}</div>`:''}
   ${m.creuserLabel&&!m.camps&&!m.campLoading?`<button class="zoe-camps-btn" data-zoe-creuser="${idx}">
     <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
-    Les écoles divergent · ${e(m.creuserLabel)}</button>`:''}
-  ${m.campLoading?`<div class="zoe-camps-inline"><p style="font-size:0.75rem;color:#C48A40;display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9" style="opacity:.25"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>Analyse des positions en cours…</p></div>`:''}
+    ${tr('Les écoles divergent','Schools of thought diverge')} · ${e(m.creuserLabel)}</button>`:''}
+  ${m.campLoading?`<div class="zoe-camps-inline"><p style="font-size:0.75rem;color:#C48A40;display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9" style="opacity:.25"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>${tr('Analyse des positions en cours…','Mapping the positions…')}</p></div>`:''}
   ${m.camps?renderZoeCampsInline(m,idx):''}
 </div>`;
 }
 
 function zoeCampsFullText(m){
   const data=m.camps||{};
-  const L=['LES ÉCOLES DIVERGENT — '+m.creuserLabel,''];
+  const L=[tr('LES ÉCOLES DIVERGENT — ','SCHOOLS OF THOUGHT DIVERGE — ')+m.creuserLabel,''];
   (data.camps||[]).forEach(c=>{L.push('▸ '+c.name,'  '+c.logic,'');});
-  if(data.unknown)L.push('○ Ce qu\'on ne sait pas vraiment :','  '+data.unknown,'');
-  if((data.refs||[]).length){L.push('Références :');(data.refs||[]).forEach(r=>L.push('- '+r));L.push('');}
+  if(data.unknown)L.push(tr('○ Ce qu\'on ne sait pas vraiment :','○ What we don\'t really know:'),'  '+data.unknown,'');
+  if((data.refs||[]).length){L.push(tr('Références :','References:'));(data.refs||[]).forEach(r=>L.push('- '+r));L.push('');}
   L.push('— BébéPilote');
   return L.join('\n');
 }
@@ -1905,23 +1931,23 @@ function renderZoeCampsInline(m,idx){
   const saved=fid?isFavorited(fid):false;
   const sw='stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"';
   return`<div class="zoe-camps-inline">
-    <p style="font-size:0.625rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#A06C2A;margin-bottom:10px">◆ ${e(m.creuserLabel)} — Les positions</p>
+    <p style="font-size:0.625rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#A06C2A;margin-bottom:10px">◆ ${e(m.creuserLabel)} — ${tr('Les positions','The positions')}</p>
     ${camps.map((c,i)=>`<div class="zoe-camp-item" style="background:var(--c-bg2);border-left:3px solid ${campCols[i%3]}">
       <p style="font-size:0.6875rem;font-weight:700;color:${campCols[i%3]};margin-bottom:3px">${e(c.name)}</p>
       <p style="font-size:0.8125rem;color:var(--c-t2);line-height:1.6;margin-bottom:8px">${md(c.logic)}</p>
       ${c.dive?`<div style="margin-top:6px;padding-top:8px;border-top:1px dashed var(--c-bd)">${(c.dive.blocks||[]).map(renderDiveBlock).join('')}${c.dive.sources&&c.dive.sources.length?`<div style="margin-top:6px">${c.dive.sources.map(s=>`<a href="${e(s.uri)}" target="_blank" rel="noopener" class="msg-ref-link"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>${e(s.title||s.uri)}</a>`).join('')}</div>`:''}</div>`
-      :c.diveLoading?`<p style="font-size:0.6875rem;color:#C48A40;display:flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9" style="opacity:.25"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>Analyse en cours…</p>`
-      :`<button style="font-size:0.6875rem;font-weight:600;color:${campCols[i%3]};display:inline-flex;align-items:center;gap:4px;padding:0;opacity:.85" data-zoe-camp-dive="${idx}-${i}">Creuser <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>`}
+      :c.diveLoading?`<p style="font-size:0.6875rem;color:#C48A40;display:flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9" style="opacity:.25"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>${tr('Analyse en cours…','Analysing…')}</p>`
+      :`<button style="font-size:0.6875rem;font-weight:600;color:${campCols[i%3]};display:inline-flex;align-items:center;gap:4px;padding:0;opacity:.85" data-zoe-camp-dive="${idx}-${i}">${tr('Creuser','Dig deeper')} <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>`}
     </div>`).join('')}
-    ${unknown?`<p style="font-size:0.75rem;color:#C48A40;margin-top:4px;margin-bottom:10px;line-height:1.5">○ Ce qu'on ne sait pas vraiment : ${e(unknown)}</p>`:''}
+    ${unknown?`<p style="font-size:0.75rem;color:#C48A40;margin-top:4px;margin-bottom:10px;line-height:1.5">○ ${tr('Ce qu\'on ne sait pas vraiment :','What we don\'t really know:')} ${e(unknown)}</p>`:''}
     ${refs.length?`<div class="msg-refs" style="margin-bottom:10px">${refs.map(r=>`<a href="https://www.google.com/search?q=${encodeURIComponent(r)}" target="_blank" rel="noopener" class="msg-ref-link">
       <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
       ${e(r)}</a>`).join('')}</div>`:''}
     <div style="display:flex;gap:6px;padding-top:8px;border-top:1px solid var(--c-bd)">
-      <button class="msg-act${saved?' saved-on':''}" data-zoe-camps-save="${idx}" title="${saved?'Sauvegardé':'Sauvegarder'}">
+      <button class="msg-act${saved?' saved-on':''}" data-zoe-camps-save="${idx}" title="${saved?tr('Sauvegardé','Saved'):tr('Sauvegarder','Save')}">
         <svg viewBox="0 0 24 24" width="13" height="13" fill="${saved?'#3D5570':'none'}" stroke="${saved?'#3D5570':'currentColor'}" ${sw}><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
       </button>
-      <button class="msg-act" data-zoe-camps-share="${idx}" title="Partager">
+      <button class="msg-act" data-zoe-camps-share="${idx}" title="${tr('Partager','Share')}">
         <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" ${sw}><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
       </button>
     </div>
@@ -1935,7 +1961,23 @@ async function loadZoeCampDive(msgIdx,campIdx){
   const keyMissing=S.provider==='anthropic'?!S.anthropicKey:!S.apiKey;
   if(keyMissing){S.modal='apikey';render();return;}
   camp.diveLoading=true;patchChatMsgs();
-  const sys=`Tu approfondis une position spécifique dans un débat parental pour un parent universitaire exigeant dans l'app BébéPilote.
+  const sys=S.lang==='en'?`You are digging into one specific position in a parenting debate, for a demanding, university-educated parent using the BébéPilote app.
+
+## Your mission
+Analyse in depth the position "${camp.name}" on the topic: "${m.creuserLabel}".
+Present its core arguments, representative studies, the authors or institutions who hold it, and its most serious limits or criticisms.
+
+## MANDATORY format
+Structure your answer in 2 to 4 blocks. Each block starts on a new line with EXACTLY one of these tags:
+◆FACT: established, sourced empirical claim.
+◇INTERPRETATION: plausible reading, not settled.
+○POSITION: doctrine or recommendation — name who holds it.
+⚠SAFETY: only if there is a direct vital risk.
+
+## Rules
+- Use web research for facts. Never invent a study.
+- English, dense, no filler. Do not start with "Sure" or "Absolutely".`
+  :`Tu approfondis une position spécifique dans un débat parental pour un parent universitaire exigeant dans l'app BébéPilote.
 
 ## Ta mission
 Analyse en profondeur la position « ${camp.name} » sur le sujet : « ${m.creuserLabel} ».
@@ -1951,7 +1993,7 @@ Structure ta réponse en 2 à 4 blocs. Chaque bloc commence sur une nouvelle lig
 ## Règles
 - Sers-toi de la recherche web pour les faits. N'invente jamais d'étude.
 - Dense, sans remplissage. Pas de "Bien sûr" ni "Absolument".`;
-  const q=`Approfondis la position « ${camp.name} » sur : « ${m.creuserLabel} ».`;
+  const q=S.lang==='en'?`Dig into the position "${camp.name}" on: "${m.creuserLabel}".`:`Approfondis la position « ${camp.name} » sur : « ${m.creuserLabel} ».`;
   const callDive=async(grounded)=>{const {text,sources}=await aiDeepDive(sys,q,grounded);return{blocks:parseDiveAnswer(text),sources};};
   try{
     let result;
@@ -1959,7 +2001,7 @@ Structure ta réponse en 2 à 4 blocs. Chaque bloc commence sur une nouvelle lig
     camp.dive=result;camp.diveLoading=false;
     autoSaveConv(S.children[S.childIdx]);patchChatMsgs();
   }catch(err){
-    camp.dive={blocks:[{type:'plain',text:'Erreur : '+err.message}],sources:[]};
+    camp.dive={blocks:[{type:'plain',text:tr('Erreur : ','Error: ')+netErrMsg(err)}],sources:[]};
     camp.diveLoading=false;patchChatMsgs();
   }
 }
@@ -1971,8 +2013,12 @@ async function loadZoeCamps(idx){
   const useAnthropic=S.provider==='anthropic';
   if(useAnthropic?!S.anthropicKey:!S.apiKey){S.modal='apikey';render();return;}
   m.campLoading=true;patchChatMsgs();
-  const sys=`Tu es un analyste neutre en psychologie du développement de l'enfant. Ta mission : cartographier les grandes écoles de pensée sur un sujet parental contesté, de façon équilibrée et rigoureuse. Tu t'adresses à un parent universitaire francophone qui veut comprendre le débat, pas une réponse rassurante.`;
-  const prompt=`Sujet contesté : "${m.creuserLabel}"\nQuestion posée : "${question}"\n\nGénère une analyse structurée des 2 à 3 grandes positions ou écoles sur ce sujet. Chaque position doit avoir un nom clair (pas "Camp A") et une explication dense de 2-3 phrases (logique, arguments, courant ou auteurs représentatifs). Ajoute une phrase sur ce qui reste scientifiquement incertain. Ajoute 1 à 3 références académiques ou livres clés sur ce débat (auteur, année, titre court — pas d'URL).`;
+  const sys=S.lang==='en'
+    ?`You are a neutral analyst in child developmental psychology. Your mission: map the main schools of thought on a contested parenting topic, in a balanced and rigorous way. You are addressing a university-educated, English-speaking parent who wants to understand the debate, not a reassuring answer.`
+    :`Tu es un analyste neutre en psychologie du développement de l'enfant. Ta mission : cartographier les grandes écoles de pensée sur un sujet parental contesté, de façon équilibrée et rigoureuse. Tu t'adresses à un parent universitaire francophone qui veut comprendre le débat, pas une réponse rassurante.`;
+  const prompt=S.lang==='en'
+    ?`Contested topic: "${m.creuserLabel}"\nQuestion asked: "${question}"\n\nProduce a structured analysis of the 2 to 3 main positions or schools on this topic. Each position needs a clear name (not "Camp A") and a dense 2-3 sentence explanation (logic, arguments, representative current or authors). Add one sentence on what remains scientifically uncertain. Add 1 to 3 key academic references or books on this debate (author, year, short title — no URL). Write in English.`
+    :`Sujet contesté : "${m.creuserLabel}"\nQuestion posée : "${question}"\n\nGénère une analyse structurée des 2 à 3 grandes positions ou écoles sur ce sujet. Chaque position doit avoir un nom clair (pas "Camp A") et une explication dense de 2-3 phrases (logique, arguments, courant ou auteurs représentatifs). Ajoute une phrase sur ce qui reste scientifiquement incertain. Ajoute 1 à 3 références académiques ou livres clés sur ce débat (auteur, année, titre court — pas d'URL).`;
   const inputSchema={type:'object',properties:{camps:{type:'array',minItems:2,maxItems:3,items:{type:'object',properties:{name:{type:'string'},logic:{type:'string'}},required:['name','logic']}},unknown:{type:'string'},refs:{type:'array',maxItems:3,items:{type:'string'}}},required:['camps','unknown','refs']};
   const _campsT0=Date.now();
   try{
@@ -1985,7 +2031,7 @@ async function loadZoeCamps(idx){
           tool_choice:{type:'tool',name:'camps'},
           messages:[{role:'user',content:prompt}]})
       });
-      if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`Erreur ${res.status}`);}
+      if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`${tr('Erreur','Error')} ${res.status}`);}
       const j=await res.json();
       parsed=(j.content||[]).find(b=>b.type==='tool_use')?.input||{};
     }else{
@@ -1994,7 +2040,7 @@ async function loadZoeCamps(idx){
         method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{responseMimeType:'application/json',responseSchema:geminiSchema,temperature:0.7}})
       });
-      if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`Erreur ${res.status}`);}
+      if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`${tr('Erreur','Error')} ${res.status}`);}
       const j=await res.json();
       parsed=JSON.parse(j.candidates?.[0]?.content?.parts?.[0]?.text||'{}');
     }
@@ -2004,13 +2050,12 @@ async function loadZoeCamps(idx){
     autoSaveConv(S.children[S.childIdx]);patchChatMsgs();
   }catch(err){
     addApiLog({ts:new Date().toISOString(),provider:useAnthropic?'anthropic':'gemini',endpoint:'camps',status:'error',model:useAnthropic?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_campsT0,reqMsgs:1,reqSystem:sys,reqUserMsg:prompt,respText:'',error:err.message});
-    m.campLoading=false;m.camps={camps:[{name:'Erreur',logic:err.message,diveLoading:false,dive:null}],unknown:'',refs:[]};patchChatMsgs();
+    m.campLoading=false;m.camps={camps:[{name:tr('Erreur','Error'),logic:netErrMsg(err),diveLoading:false,dive:null}],unknown:'',refs:[]};patchChatMsgs();
   }
 }
 
-function getStreak(){const t=new Date().toISOString().split('T')[0],s=JSON.parse(localStorage.getItem('bebeStreak')||'{"date":"","count":0}');if(s.date===t)return s.count;const y=new Date(Date.now()-86400000).toISOString().split('T')[0],c=s.date===y?s.count+1:1;localStorage.setItem('bebeStreak',JSON.stringify({date:t,count:c}));return c;}
-function getAndUpdateHistory(){const t=new Date().toISOString().split('T')[0],s=JSON.parse(localStorage.getItem('bebeHistory')||'[]'),u=[t,...s.filter(d=>d!==t)].slice(0,10);localStorage.setItem('bebeHistory',JSON.stringify(u));return u;}
-function fmtDate(ds){const td=new Date().toISOString().split('T')[0],y=new Date(Date.now()-86400000).toISOString().split('T')[0];const loc=S.lang==='en'?'en-GB':'fr-FR';if(ds===td)return S.lang==='en'?'Today':"Aujourd'hui";if(ds===y)return S.lang==='en'?'Yesterday':'Hier';return new Date(ds+'T12:00:00').toLocaleDateString(loc,{weekday:'long',day:'numeric',month:'long'});}
+function localDateStr(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function getStreak(){const t=localDateStr(),s=JSON.parse(localStorage.getItem('bebeStreak')||'{"date":"","count":0}');if(s.date===t)return s.count;const y=localDateStr(new Date(Date.now()-86400000)),c=s.date===y?s.count+1:1;localStorage.setItem('bebeStreak',JSON.stringify({date:t,count:c}));return c;}
 function e(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 // Markdown → safe HTML (for AI-generated text: bold, italic, line breaks)
 function md(s){
@@ -2063,11 +2108,11 @@ function renderBridge(txt,fs){
   const iconObs=`<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" ${sw}><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
   const iconEss=`<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" ${sw}><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
   const sections=[
-    {re:/^Observer\s*:\s*/i,label:'Observer',icon:iconObs,color:'#2D4A8A'},
-    {re:/^Essayer\s*:\s*/i,  label:'Essayer', icon:iconEss,color:'#3A5E38'},
+    {re:/^(Observer|Observe)\s*:\s*/i,label:S.lang==='en'?'Observe':'Observer',icon:iconObs,color:'#2D4A8A'},
+    {re:/^(Essayer|Try)\s*:\s*/i,  label:S.lang==='en'?'Try':'Essayer', icon:iconEss,color:'#3A5E38'},
   ];
   const fontSize=fs||'0.8125rem';
-  return txt.split(/\n\n+/).filter(Boolean).map((seg,i)=>{
+  return txt.replace(/\\n/g,'\n').split(/\n\n+/).filter(Boolean).map((seg,i)=>{
     const match=sections.find(s=>s.re.test(seg.replace(/^\*\*?/,'')));
     const clean=seg.replace(/^\*?\*?\w[\w ]*\*?\*?\s*:\s*/,'');
     if(match){
@@ -2094,20 +2139,20 @@ function refLink(text,searchOverride){
 }
 // Share a saved Q&A entry
 async function shareEntry(entry){
-  const refs=entry.refs?.length?'\n\nRéférences :\n'+entry.refs.join('\n'):'';
-  const text=`${entry.question}\n\n${entry.answer}${refs}\n\n— Zoé via BébéPilote`;
-  if(navigator.share){try{await navigator.share({title:'Conseil de Zoé — BébéPilote',text});}catch{}}
-  else{try{await navigator.clipboard.writeText(text);}catch{}}
+  const refs=entry.refs?.length?tr('\n\nRéférences :\n','\n\nReferences:\n')+entry.refs.join('\n'):'';
+  const text=`${entry.question}\n\n${entry.answer}${refs}\n\n— ${tr('Zoé via BébéPilote','Zoé via BébéPilote')}`;
+  await shareTextContent(tr('Conseil de Zoé — BébéPilote','Advice from Zoé — BébéPilote'),text);
 }
 
 // ── Favorites ──
-function getFavorites(){return JSON.parse(localStorage.getItem('bebeFavorites')||'[]');}
+function getFavorites(){try{return JSON.parse(localStorage.getItem('bebeFavorites')||'[]');}catch{return[];}}
+function lsSet(k,v){try{localStorage.setItem(k,v);return true;}catch(err){console.warn('[storage]',k,err);toast(S.lang==='en'?'Storage full — delete old conversations':'Stockage plein — supprime d\'anciennes conversations');return false;}}
 function isFavorited(id){return getFavorites().some(f=>f.id===id);}
 function toggleFavorite(item){
   const favs=getFavorites();
   const idx=favs.findIndex(f=>f.id===item.id);
   if(idx>=0)favs.splice(idx,1);else favs.unshift(item);
-  localStorage.setItem('bebeFavorites',JSON.stringify(favs.slice(0,200)));
+  lsSet('bebeFavorites',JSON.stringify(favs.slice(0,200)));
   return idx<0; // true = added
 }
 function favId(childName,type,sectionId){
@@ -2119,7 +2164,11 @@ function migrateFavIds(){
   const dateRe=/\|\d{4}-\d{2}-\d{2}$/;
   const seen=new Set();const out=[];let changed=false;
   for(const f of favs){
-    const newId=(f.id||'').replace(dateRe,'');
+    let newId=(f.id||'').replace(dateRe,'');
+    // Anciennes clés statiques (une seule carte Caroline/Conseil/Section possible) → clé par contenu
+    const pre=f.childName+'|';
+    if(newId===pre+'caroline|caroline'||newId===pre+'conseil|conseil')newId=pre+f.type+'|'+(f.title||'');
+    else if(f.type==='section'&&/^[a-z]+$/.test(newId.slice((pre+'section|').length)))newId+=':legacy:'+(f.title||'');
     if(seen.has(newId)){changed=true;continue;}// drop duplicate
     seen.add(newId);
     if(newId!==f.id){changed=true;out.push({...f,id:newId});}else{out.push(f);}
@@ -2180,19 +2229,20 @@ async function shareCardCanvas(child,{headerBg,accentColor,categoryLabel,title,b
 
 // ── Render favorites section (replaces neuron chart) ──
 const FAV_CATS={
-  controverse:{label:'Controverses',bg:'#FBF3E5',color:'#A06C2A'},
-  creuser:{label:'Creuser',bg:'#FBF3E5',color:'#A06C2A'},
-  zoecamps:{label:'Débats Zoé',bg:'#FBF3E5',color:'#A06C2A'},
-  conseil:{label:'Conseils',bg:'#FBF3E5',color:'#A06C2A'},
-  caroline:{label:'Caroline',bg:'#EAF0E8',color:'#3A5E38'},
-  observe:{label:'Observations',bg:'#EAF0E8',color:'#3A5E38'},
-  section:{label:'Développement',bg:'#EBF0FA',color:'#2D4A8A'},
-  highlight:{label:'Développement',bg:'#EBF0FA',color:'#2D4A8A'},
-  chat:{label:'Chat Zoé',bg:'#EBF0FA',color:'#3D5570'},
+  controverse:{label:'Controverses',label_en:'Debates',bg:'#FBF3E5',color:'#A06C2A'},
+  creuser:{label:'Creuser',label_en:'Deep dives',bg:'#FBF3E5',color:'#A06C2A'},
+  zoecamps:{label:'Débats Zoé',label_en:'Zoé debates',bg:'#FBF3E5',color:'#A06C2A'},
+  conseil:{label:'Conseils',label_en:'Tips',bg:'#FBF3E5',color:'#A06C2A'},
+  caroline:{label:'Caroline',label_en:'Caroline',bg:'#EAF0E8',color:'#3A5E38'},
+  observe:{label:'Observations',label_en:'Observations',bg:'#EAF0E8',color:'#3A5E38'},
+  section:{label:'Développement',label_en:'Development',bg:'#EBF0FA',color:'#2D4A8A'},
+  highlight:{label:'Développement',label_en:'Development',bg:'#EBF0FA',color:'#2D4A8A'},
+  chat:{label:'Chat Zoé',label_en:'Zoé chat',bg:'#EBF0FA',color:'#3D5570'},
 };
 function renderFavoritesUnified(child){
   const favs=getFavorites().filter(f=>f.childName===child.firstName).map(f=>({...f,_cat:f.type,_date:f.date||new Date().toISOString(),_kind:'fav',_xid:'f'+f.id}));
-  const saves=getSavedChats().filter(x=>x.childName===child.firstName).map(s=>({...s,_cat:'chat',_date:s.date,_kind:'saved',_xid:'s'+s.id}));
+  const _seenQA=new Set();
+  const saves=getSavedChats().filter(x=>x.childName===child.firstName).filter(x=>{const k=x.question+'\u0000'+x.answer;if(_seenQA.has(k))return false;_seenQA.add(k);return true;}).map(s=>({...s,_cat:'chat',_date:s.date,_kind:'saved',_xid:'s'+s.id}));
   const items=[...favs,...saves].sort((a,b)=>new Date(b._date)-new Date(a._date));
   if(!items.length)return`<div style="padding:34px 24px;text-align:center">
   <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#D4D0CA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:12px"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
@@ -2204,7 +2254,7 @@ function renderFavoritesUnified(child){
   const chip=(id,label,count,on)=>`<button class="fav-chip${on?' on':''}" data-fav-filter="${id}">${label} · ${count}</button>`;
   const chips=`<div class="fav-filter-row">
     ${chip('all',S.lang==='en'?'All':'Tout',items.length,filter==='all')}
-    ${present.map(c=>chip(c,FAV_CATS[c].label,items.filter(i=>i._cat===c).length,filter===c)).join('')}
+    ${present.map(c=>chip(c,tr(FAV_CATS[c].label,FAV_CATS[c].label_en),items.filter(i=>i._cat===c).length,filter===c)).join('')}
   </div>`;
   return chips+`<div style="padding:0 16px 16px">${shown.map(it=>renderFavCard(it)).join('')}</div>`;
 }
@@ -2240,7 +2290,7 @@ function renderFavCard(it){
     <div class="fav-flat-accent" style="background:${cat.color}"></div>
     <div class="fav-flat-inner">
       <div class="fav-flat-meta">
-        <span class="fav-type-badge" style="background:${cat.bg};color:${cat.color}">${cat.label}</span>
+        <span class="fav-type-badge" style="background:${cat.bg};color:${cat.color}">${tr(cat.label,cat.label_en)}</span>
         <span class="fav-flat-date">${dl}</span>
       </div>
       <p class="fav-flat-title">${e(title)}</p>
@@ -2254,10 +2304,10 @@ function renderFavCard(it){
 function chev(open=false){return`<svg viewBox="0 0 24 24" class="chev${open?' chev-open':''}" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;}
 function xBtn(){return`<button class="close-x" id="modal-close"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg></button>`;}
 function modalActBtns(favAttr,favAttrVal,shareAttr,shareAttrVal,faved){
-  return`<button ${favAttr}="${favAttrVal}" style="width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:${faved?'#FFF0F0':'#F2F0EB'};border:none;cursor:pointer;transition:background .12s;flex-shrink:0" title="${faved?'Retirer des favoris':'Ajouter aux favoris'}">
+  return`<button ${favAttr}="${favAttrVal}" style="width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:${faved?'#FFF0F0':'#F2F0EB'};border:none;cursor:pointer;transition:background .12s;flex-shrink:0" title="${faved?tr('Retirer des favoris','Remove from favourites'):tr('Ajouter aux favoris','Add to favourites')}">
     <svg viewBox="0 0 24 24" width="15" height="15" fill="${faved?'#C45A5A':'none'}" stroke="${faved?'#C45A5A':'#7A7570'}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
   </button>
-  <button ${shareAttr}="${shareAttrVal}" style="width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#F2F0EB;border:none;cursor:pointer;transition:background .12s;flex-shrink:0" title="Partager">
+  <button ${shareAttr}="${shareAttrVal}" style="width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#F2F0EB;border:none;cursor:pointer;transition:background .12s;flex-shrink:0" title="${tr('Partager','Share')}">
     <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#7A7570" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
   </button>`;
 }
@@ -2308,13 +2358,13 @@ function ctrvIdent(child){return child.firstName+'|'+S.provider;}
 function childData(c){
   const b=new Date(c.birthDate+'T12:00:00'),n=new Date(),d=Math.floor((n-b)/86400000);
   const doy=getDayOfYear(n);
-  if(d<0)return{ageInDays:d,ageInMonths:0,doy,milestone:null,neuron:null,ageLabel:null,sections:[],unborn:true};
+  if(d<0)return{ageInDays:d,ageInMonths:0,doy,milestone:null,ageLabel:null,sections:[],unborn:true};
   const m=Math.floor(d/30.44);
-  return{ageInDays:d,ageInMonths:m,doy,milestone:getMilestoneForAge(d),neuron:getNeuronStats(d,c.birthDate),ageLabel:getAgeLabel(d,c.birthDate),sections:ALL_SECTIONS.map(s=>({s,entry:getDailySectionEntry(s.id,m,doy)})),unborn:false};
+  return{ageInDays:d,ageInMonths:m,doy,milestone:getMilestoneForAge(d),ageLabel:getAgeLabel(d,c.birthDate),sections:ALL_SECTIONS.map(s=>({s,entry:getDailySectionEntry(s.id,m,doy)})),unborn:false};
 }
 
 // ═══════════════════════ CONTROVERSE DU JOUR (proto) ═══════════════════════
-function ctrvDateStr(){return new Date().toISOString().slice(0,10);}
+function ctrvDateStr(){return localDateStr();}
 function ctrvCacheKey(c){return 'bebeCtrv_v2_'+S.provider+'_'+c.firstName+'_'+ctrvDateStr()+'_'+(S.lang||'fr');}
 function getCtrvHistory(){try{return JSON.parse(localStorage.getItem('bebeCtrvHistory')||'[]');}catch{return[];}}
 function upsertCtrvToday(obj,childName){const h=getCtrvHistory();const today=ctrvDateStr();const ex=h.find(x=>x.date===today&&x.childName===childName);if(ex){const changed=ex.topic!==obj.topic||ex.question!==obj.question;ex.topic=obj.topic;ex.question=obj.question;ex.data=obj;if(changed)ex.signal=null;}else{h.unshift({date:today,childName,topic:obj.topic,question:obj.question,signal:null,data:obj});}localStorage.setItem('bebeCtrvHistory',JSON.stringify(h.slice(0,60)));}
@@ -2380,15 +2430,15 @@ const OBS_SCHEMA={type:'OBJECT',properties:{
   watch_next:{type:'STRING'}
 },required:['title','interpretation','reveals','milestones','watch_next']};
 
-const ANTHROPIC_MODEL='claude-sonnet-4-6';
+const ANTHROPIC_MODEL='claude-sonnet-5-5';
 const GEMINI_MODEL='gemini-flash-latest';
 function geminiUrl(method){return`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:${method}?key=${S.apiKey}`;}
 function anthropicHeaders(){return{'content-type':'application/json','x-api-key':S.anthropicKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};}
 function netErrMsg(err){
   // TypeError = network failure (CORS, offline, SSL…)
-  if(err instanceof TypeError)return`Erreur réseau — vérifie ta connexion et que la clé ${S.provider==='anthropic'?'Claude':'Gemini'} est correcte. (${err.message})`;
+  if(err instanceof TypeError)return tr(`Erreur réseau — vérifie ta connexion et que la clé ${S.provider==='anthropic'?'Claude':'Gemini'} est correcte. (${err.message})`,`Network error — check your connection and that your ${S.provider==='anthropic'?'Claude':'Gemini'} key is correct. (${err.message})`);
   const m=err.message||'';
-  if(m.toLowerCase().includes('quota'))return`Quota Gemini dépassé — soit attendre demain (limite gratuite), soit activer la facturation sur aistudio.google.com, soit basculer sur Claude (Paramètres).`;
+  if(m.toLowerCase().includes('quota'))return tr(`Quota Gemini dépassé — soit attendre demain (limite gratuite), soit activer la facturation sur aistudio.google.com, soit basculer sur Claude (Paramètres).`,`Gemini quota exceeded — wait until tomorrow (free tier), enable billing on aistudio.google.com, or switch to Claude (Settings).`);
   return m;
 }
 
@@ -2396,7 +2446,7 @@ function netErrMsg(err){
 async function aiControverse(sys,userMsg){
   userMsg=userMsg||'Génère la controverse du jour.';
   if(S.provider==='anthropic'){
-    if(!S.anthropicKey)throw new Error('Clé Claude manquante (Paramètres).');
+    if(!S.anthropicKey)throw new Error(tr('Clé Claude manquante (Paramètres).','Claude key missing (Settings).'));
     // Non-streaming. max_tokens=1600 : ~1100-1200 tokens réels + marge
     const ac=new AbortController();const tid=setTimeout(()=>ac.abort(),60000);
     let res;
@@ -2410,35 +2460,35 @@ async function aiControverse(sys,userMsg){
         tools:[{name:'controverse',description:'Renvoie la controverse du jour, structurée.',input_schema:CTRV_TOOL_SCHEMA}],
         tool_choice:{type:'tool',name:'controverse'}
       })
-    });}catch(e){clearTimeout(tid);if(e.name==='AbortError')throw new Error('Délai dépassé (60s) — réessaie.');throw new TypeError(e.message);}
+    });}catch(e){clearTimeout(tid);if(e.name==='AbortError')throw new Error(tr('Délai dépassé (60s) — réessaie.','Timed out (60s) — try again.'));throw new TypeError(e.message);}
     clearTimeout(tid);
-    if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`Erreur ${res.status}`);}
+    if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`${tr('Erreur','Error')} ${res.status}`);}
     let j;
-    try{j=await res.json();}catch(e){throw new Error(`Réponse tronquée — réessaie. (${e.message})`);}
-    if(j.stop_reason==='max_tokens')throw new Error('Réponse trop longue (max_tokens atteint) — réessaie.');
+    try{j=await res.json();}catch(e){throw new Error(tr(`Réponse tronquée — réessaie. (${e.message})`,`Truncated answer — try again. (${e.message})`));}
+    if(j.stop_reason==='max_tokens')throw new Error(tr('Réponse trop longue (max_tokens atteint) — réessaie.','Answer too long (max_tokens reached) — try again.'));
     const toolBlock=(j.content||[]).find(b=>b.type==='tool_use');
-    if(!toolBlock?.input)throw new Error('Réponse Claude sans données (tool_use absent)');
+    if(!toolBlock?.input)throw new Error(tr('Réponse Claude sans données (tool_use absent)','Claude returned no data (tool_use missing)'));
     return toolBlock.input;
   }
-  if(!S.apiKey)throw new Error('Clé Gemini manquante (Paramètres).');
+  if(!S.apiKey)throw new Error(tr('Clé Gemini manquante (Paramètres).','Gemini key missing (Settings).'));
   const ac2=new AbortController();const tid2=setTimeout(()=>ac2.abort(),55000);
   let res;
   try{res=await fetch(geminiUrl('generateContent'),{
     method:'POST',headers:{'Content-Type':'application/json'},signal:ac2.signal,
     body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents:[{role:'user',parts:[{text:userMsg}]}],generationConfig:{responseMimeType:'application/json',responseSchema:CTRV_SCHEMA,temperature:1.05}})
-  });}catch(e){clearTimeout(tid2);console.error('[aiControverse Gemini]',e);if(e.name==='AbortError')throw new Error('Délai dépassé — réessaie.');throw new TypeError(e.message);}
+  });}catch(e){clearTimeout(tid2);console.error('[aiControverse Gemini]',e);if(e.name==='AbortError')throw new Error(tr('Délai dépassé — réessaie.','Timed out — try again.'));throw new TypeError(e.message);}
   clearTimeout(tid2);
-  if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`Erreur ${res.status}`);}
+  if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`${tr('Erreur','Error')} ${res.status}`);}
   const j=await res.json();
   const txt=j.candidates?.[0]?.content?.parts?.[0]?.text;
-  if(!txt)throw new Error('Réponse vide du modèle');
+  if(!txt)throw new Error(tr('Réponse vide du modèle','Empty answer from the model'));
   return JSON.parse(txt);
 }
 
 // ── "J'ai observé…" : analyse structurée d'un moment réel ──
 async function aiObservation(sys,userMsg){
   if(S.provider==='anthropic'){
-    if(!S.anthropicKey)throw new Error('Clé Claude manquante (Paramètres).');
+    if(!S.anthropicKey)throw new Error(tr('Clé Claude manquante (Paramètres).','Claude key missing (Settings).'));
     const ac=new AbortController();const tid=setTimeout(()=>ac.abort(),60000);
     let res;
     try{res=await fetch('https://api.anthropic.com/v1/messages',{
@@ -2449,27 +2499,27 @@ async function aiObservation(sys,userMsg){
         tools:[{name:'observation',description:'Analyse le moment observé et renvoie la structure.',input_schema:OBS_TOOL_SCHEMA}],
         tool_choice:{type:'tool',name:'observation'}
       })
-    });}catch(e){clearTimeout(tid);if(e.name==='AbortError')throw new Error('Délai dépassé (60s) — réessaie.');throw new TypeError(e.message);}
+    });}catch(e){clearTimeout(tid);if(e.name==='AbortError')throw new Error(tr('Délai dépassé (60s) — réessaie.','Timed out (60s) — try again.'));throw new TypeError(e.message);}
     clearTimeout(tid);
-    if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`Erreur ${res.status}`);}
-    let j;try{j=await res.json();}catch(e){throw new Error(`Réponse tronquée — réessaie. (${e.message})`);}
-    if(j.stop_reason==='max_tokens')throw new Error('Réponse trop longue — réessaie.');
+    if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`${tr('Erreur','Error')} ${res.status}`);}
+    let j;try{j=await res.json();}catch(e){throw new Error(tr(`Réponse tronquée — réessaie. (${e.message})`,`Truncated answer — try again. (${e.message})`));}
+    if(j.stop_reason==='max_tokens')throw new Error(tr('Réponse trop longue — réessaie.','Answer too long — try again.'));
     const tb=(j.content||[]).find(b=>b.type==='tool_use');
-    if(!tb?.input)throw new Error('Réponse Claude sans données (tool_use absent)');
+    if(!tb?.input)throw new Error(tr('Réponse Claude sans données (tool_use absent)','Claude returned no data (tool_use missing)'));
     return tb.input;
   }
-  if(!S.apiKey)throw new Error('Clé Gemini manquante (Paramètres).');
+  if(!S.apiKey)throw new Error(tr('Clé Gemini manquante (Paramètres).','Gemini key missing (Settings).'));
   const ac2=new AbortController();const tid2=setTimeout(()=>ac2.abort(),55000);
   let res;
   try{res=await fetch(geminiUrl('generateContent'),{
     method:'POST',headers:{'Content-Type':'application/json'},signal:ac2.signal,
     body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents:[{role:'user',parts:[{text:userMsg}]}],generationConfig:{responseMimeType:'application/json',responseSchema:OBS_SCHEMA,temperature:0.7}})
-  });}catch(e){clearTimeout(tid2);if(e.name==='AbortError')throw new Error('Délai dépassé — réessaie.');throw new TypeError(e.message);}
+  });}catch(e){clearTimeout(tid2);if(e.name==='AbortError')throw new Error(tr('Délai dépassé — réessaie.','Timed out — try again.'));throw new TypeError(e.message);}
   clearTimeout(tid2);
-  if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`Erreur ${res.status}`);}
+  if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`${tr('Erreur','Error')} ${res.status}`);}
   const j=await res.json();
   const txt=j.candidates?.[0]?.content?.parts?.[0]?.text;
-  if(!txt)throw new Error('Réponse vide du modèle');
+  if(!txt)throw new Error(tr('Réponse vide du modèle','Empty answer from the model'));
   return JSON.parse(txt);
 }
 // Journal d'observations (localStorage)
@@ -2558,11 +2608,11 @@ Réponds UNIQUEMENT via l'outil.`;
 // Réponse de deep-dive (texte + sources) selon le moteur, avec ou sans recherche web
 async function aiDeepDive(sys,q,grounded){
   if(S.provider==='anthropic'){
-    if(!S.anthropicKey)throw new Error('Clé Claude manquante (Paramètres).');
+    if(!S.anthropicKey)throw new Error(tr('Clé Claude manquante (Paramètres).','Claude key missing (Settings).'));
     const body={model:ANTHROPIC_MODEL,max_tokens:1500,system:sys,messages:[{role:'user',content:q}]};
     if(grounded)body.tools=[{type:'web_search_20250305',name:'web_search',max_uses:3}];
     const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:anthropicHeaders(),body:JSON.stringify(body)});
-    if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`Erreur ${res.status}`);}
+    if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`${tr('Erreur','Error')} ${res.status}`);}
     const j=await res.json();
     const text=(j.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n').trim();
     let sources=[];
@@ -2571,16 +2621,16 @@ async function aiDeepDive(sys,q,grounded){
       (j.content||[]).forEach(b=>{if(b.type==='web_search_tool_result'&&Array.isArray(b.content)){b.content.forEach(r=>{if(r.url&&!seen.has(r.url)){seen.add(r.url);sources.push({uri:r.url,title:r.title||r.url});}});}});
       sources=sources.slice(0,6);
     }
-    if(!text)throw new Error('Réponse vide du modèle');
+    if(!text)throw new Error(tr('Réponse vide du modèle','Empty answer from the model'));
     return{text,sources};
   }
   const body={systemInstruction:{parts:[{text:sys}]},contents:[{role:'user',parts:[{text:q}]}]};
   if(grounded)body.tools=[{google_search:{}}];
   const res=await fetch(geminiUrl('generateContent'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-  if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`Erreur ${res.status}`);}
+  if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`${tr('Erreur','Error')} ${res.status}`);}
   const j=await res.json();const cand=j.candidates?.[0];
   const text=(cand?.content?.parts||[]).map(p=>p.text||'').join('').trim();
-  if(!text)throw new Error('Réponse vide du modèle');
+  if(!text)throw new Error(tr('Réponse vide du modèle','Empty answer from the model'));
   let sources=[];
   if(grounded){const chunks=cand?.groundingMetadata?.groundingChunks||[];const seen=new Set();sources=chunks.filter(c=>c.web?.uri).map(c=>({uri:c.web.uri,title:c.web.title||c.web.uri})).filter(s=>{if(seen.has(s.uri))return false;seen.add(s.uri);return true;}).slice(0,6);}
   return{text,sources};
@@ -2697,7 +2747,7 @@ ${sibCtx}
 
 ## Règles de fond (NON négociables)
 - Choisis UNE controverse réelle, vivante, et pertinente pour CET âge précis.
-- Présente 2 ou 3 camps. CHAQUE camp DOIT avoir au moins un "pro" ET au moins un "con" honnête. Jamais un camp sans faille — c'est l'ADN de l'app.
+- Présente 2 camps. CHAQUE camp DOIT avoir au moins un "pro" ET au moins un "con" honnête. Jamais un camp sans faille — c'est l'ADN de l'app.
 - "known" : ce que les données établissent vraiment, sans exagérer.
 - "believed" : ce qui relève de la croyance/idéologie des deux bords, présenté comme tel — pas comme un fait.
 - "unknown" : ce que la science ne tranche honnêtement pas.
@@ -2780,7 +2830,7 @@ function getCoachSituations(ageInDays){
 
 // ── Creuser : parsing des registres + appel Gemini grounded ──
 function parseDiveAnswer(txt){
-  const re=/(◆\s*FAIT|◇\s*INTERPR[ÉE]TATION|○\s*POSITION|⚠\s*S[ÉE]CURIT[ÉE])\s*:?\s*/gi;
+  const re=/(◆\s*(?:FAIT|FACT)|◇\s*INTERPR[ÉE]TATION|○\s*POSITION|⚠\s*(?:S[ÉE]CURIT[ÉE]|SAFETY))\s*:?\s*/gi;
   const idxs=[];let m;
   while((m=re.exec(txt))){idxs.push({tag:m[1].toUpperCase(),start:m.index,end:re.lastIndex});}
   if(!idxs.length)return[{type:'plain',text:txt.trim()}];
@@ -2791,7 +2841,7 @@ function parseDiveAnswer(txt){
     const cur=idxs[i],next=idxs[i+1];
     const body=txt.slice(cur.end,next?next.start:undefined).trim();
     let type='position';
-    if(cur.tag.includes('FAIT'))type='fait';
+    if(cur.tag.includes('FAIT')||cur.tag.includes('FACT'))type='fait';
     else if(cur.tag.includes('INTERPR'))type='interp';
     else if(cur.tag.includes('POSITION'))type='position';
     else type='safety';
@@ -2884,7 +2934,7 @@ function renderDiveBlock(b){
     fait:{c:'#3A5E38',sym:'◆',label:_dben?'Established fact · sourced':'Fait établi · sourcé'},
     interp:{c:'#A06C2A',sym:'◇',label:_dben?'Interpretation':'Interprétation'},
     position:{c:'#C48A40',sym:'○',label:_dben?'Position / recommendation':'Position / recommandation'},
-    safety:{c:'#A03828',sym:'⚠',label:_dben?'Safety':'Sécurité'}
+    safety:{c:'#A03828',sym:_svgIco.warn.replace('<svg ','<svg style="vertical-align:-2px" '),label:_dben?'Safety':'Sécurité'}
   };
   if(b.type==='plain')return`<div style="font-size:0.8438rem;color:#5C5752;line-height:1.7;margin-bottom:12px">${mdFull(b.text)}</div>`;
   const k=cfg[b.type]||cfg.position;
@@ -2960,20 +3010,20 @@ function ctrvShareText(d){return `${d.why_now} — ${d.bridge}`;}
 function diveShareText(it){return (it.blocks||[]).map(b=>b.text).join(' ');}
 
 function ctrvFullText(d){
-  const L=['CONTROVERSE — '+d.topic,'',d.question,'',d.why_now,'','— LES CAMPS —'];
+  const L=[tr('CONTROVERSE — ','DEBATE — ')+d.topic,'',d.question,'',d.why_now,'',tr('— LES CAMPS —','— THE CAMPS —')];
   (d.camps||[]).forEach(c=>{
     L.push('','▸ '+c.name,c.logic);
     (c.pros||[]).forEach(p=>L.push('  + '+p));
     (c.cons||[]).forEach(p=>L.push('  − '+p));
   });
-  L.push('','— CE QU\'ON SAIT —',d.known,'','— CE QU\'ON CROIT (pas un fait) —',d.believed,'','— CE QU\'ON NE SAIT PAS —',d.unknown,'','— ET POUR BÉBÉ ? —',d.bridge,'','— BébéPilote');
+  L.push('',tr('— CE QU\'ON SAIT —','— WHAT WE KNOW —'),d.known,'',tr('— CE QU\'ON CROIT (pas un fait) —','— WHAT WE BELIEVE (not a fact) —'),d.believed,'',tr('— CE QU\'ON NE SAIT PAS —','— WHAT WE DON\'T KNOW —'),d.unknown,'',tr('— ET POUR BÉBÉ ? —','— AND FOR YOUR CHILD? —'),d.bridge,'','— BébéPilote');
   return L.join('\n');
 }
 function diveFullText(it){
-  const labels={fait:'FAIT ÉTABLI',interp:'INTERPRÉTATION',position:'POSITION',safety:'SÉCURITÉ',plain:''};
-  const L=['CREUSER — '+it.q,''];
+  const labels=S.lang==='en'?{fait:'ESTABLISHED FACT',interp:'INTERPRETATION',position:'POSITION',safety:'SAFETY',plain:''}:{fait:'FAIT ÉTABLI',interp:'INTERPRÉTATION',position:'POSITION',safety:'SÉCURITÉ',plain:''};
+  const L=[tr('CREUSER — ','DEEP DIVE — ')+it.q,''];
   (it.blocks||[]).forEach(b=>{const lb=labels[b.type];if(lb)L.push('['+lb+']');L.push(b.text,'');});
-  if(it.sources&&it.sources.length){L.push('Sources :');it.sources.forEach(s=>L.push('- '+s.title+' '+s.uri));L.push('');}
+  if(it.sources&&it.sources.length){L.push(tr('Sources :','Sources:'));it.sources.forEach(s=>L.push('- '+s.title+' '+s.uri));L.push('');}
   L.push('— BébéPilote');
   return L.join('\n');
 }
@@ -2986,8 +3036,8 @@ function toast(msg){
 }
 async function shareTextContent(title,text){
   if(navigator.share){try{await navigator.share({title,text});return;}catch(err){if(err&&err.name==='AbortError')return;}}
-  try{await navigator.clipboard.writeText(text);toast('Texte copié dans le presse-papier');}
-  catch{toast('Impossible de copier');}
+  try{await navigator.clipboard.writeText(text);toast(tr('Texte copié dans le presse-papier','Text copied to clipboard'));}
+  catch{toast(tr('Impossible de copier','Could not copy'));}
 }
 
 function renderCtrvFavBody(d){
@@ -3268,7 +3318,7 @@ function renderFavDetailModal(child){
   <div class="sheet-handle"></div>
   <div class="sheet-head">
     <div style="display:flex;align-items:center;gap:9px;flex:1;min-width:0">
-      <span class="fav-type-badge" style="background:${cat.bg};color:${cat.color};flex-shrink:0">${cat.label}</span>
+      <span class="fav-type-badge" style="background:${cat.bg};color:${cat.color};flex-shrink:0">${tr(cat.label,cat.label_en)}</span>
       <span style="font-size:0.75rem;color:var(--c-t4);font-weight:500">${dl}</span>
     </div>
     <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
@@ -3284,18 +3334,6 @@ function renderFavDetailModal(child){
 </div></div>`;
 }
 
-// ═══════════════════════ NAV ICONS ═══════════════════════
-function navIcon(id,on){
-  const sw='stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
-  const icons={
-    today:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
-    history:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
-    chat:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
-    profile:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ${sw}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
-  };
-  return icons[id]||'';
-}
-
 // ═══════════════════════ ONBOARDING ═══════════════════════
 function renderOnboarding(){
   const ob=S.ob,app=document.getElementById('app');
@@ -3304,28 +3342,28 @@ function renderOnboarding(){
 <div style="text-align:center;margin-bottom:32px">
   <div style="margin-bottom:16px;display:flex;justify-content:center"><svg viewBox="0 0 48 48" width="56" height="56" fill="none" stroke="#A06C2A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="20"/><path d="M16 28c0-4.4 3.6-8 8-8s8 3.6 8 8"/><circle cx="24" cy="20" r="2" fill="#A06C2A" stroke="none"/><path d="M20 34h8"/></svg></div>
   <h1 style="font-family:'Cormorant Garamond',serif;font-size:2.375rem;font-weight:500;letter-spacing:.02em;color:#1A1918">BébéPilote</h1>
-  <p class="t-body" style="margin-top:6px">Le suivi de développement de votre enfant</p>
+  <p class="t-body" style="margin-top:6px">${tr('Le suivi de développement de votre enfant',"Your child's development, day by day")}</p>
 </div>
 <div class="ob-card">
   <div style="margin-bottom:24px">
-    <p class="t-label" style="margin-bottom:4px">Prénom</p>
+    <p class="t-label" style="margin-bottom:4px">${tr('Prénom','First name')}</p>
     <input id="ob-name" class="field" type="text" placeholder="Emma, Lucas…" value="${e(ob.name)}"/>
     ${ob.errs.name?`<p style="color:#C45A5A;font-size:0.75rem;margin-top:4px">${ob.errs.name}</p>`:''}
   </div>
   <div style="margin-bottom:24px">
-    <p class="t-label" style="margin-bottom:4px">Date de naissance ou date prévue</p>
+    <p class="t-label" style="margin-bottom:4px">${tr('Date de naissance ou date prévue','Date of birth or due date')}</p>
     <input id="ob-date" class="field" type="date" value="${ob.date}"/>
     ${ob.errs.date?`<p style="color:#C45A5A;font-size:0.75rem;margin-top:4px">${ob.errs.date}</p>`:''}
   </div>
   <div style="margin-bottom:28px">
-    <p class="t-label" style="margin-bottom:8px">Genre</p>
+    <p class="t-label" style="margin-bottom:8px">${tr('Genre','Gender')}</p>
     <div style="display:flex;gap:8px">
-      <button class="gender-opt${ob.gender==='boy'?' sel':''}" id="ob-boy"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="14" r="5"/><line x1="14.5" y1="9.5" x2="21" y2="3"/><polyline points="16 3 21 3 21 8"/></svg> Garçon</button>
-      <button class="gender-opt${ob.gender==='girl'?' sel':''}" id="ob-girl"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="5"/><line x1="12" y1="14" x2="12" y2="21"/><line x1="9" y1="18" x2="15" y2="18"/></svg> Fille</button>
+      <button class="gender-opt${ob.gender==='boy'?' sel':''}" id="ob-boy"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="14" r="5"/><line x1="14.5" y1="9.5" x2="21" y2="3"/><polyline points="16 3 21 3 21 8"/></svg> ${tr('Garçon','Boy')}</button>
+      <button class="gender-opt${ob.gender==='girl'?' sel':''}" id="ob-girl"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="5"/><line x1="12" y1="14" x2="12" y2="21"/><line x1="9" y1="18" x2="15" y2="18"/></svg> ${tr('Fille','Girl')}</button>
     </div>
     ${ob.errs.gender?`<p style="color:#C45A5A;font-size:0.75rem;margin-top:4px">${ob.errs.gender}</p>`:''}
   </div>
-  <button class="btn btn-dark" id="ob-next">Continuer</button>
+  <button class="btn btn-dark" id="ob-next">${tr('Continuer','Continue')}</button>
 </div></div>`;
     document.getElementById('ob-name').addEventListener('input',ev=>{ob.name=ev.target.value;ob.errs={};});
     document.getElementById('ob-date').addEventListener('input',ev=>{ob.date=ev.target.value;ob.errs={};});
@@ -3334,10 +3372,10 @@ function renderOnboarding(){
     document.getElementById('ob-next').addEventListener('click',()=>{
       const n=document.getElementById('ob-name').value.trim(),d=document.getElementById('ob-date').value;
       ob.name=n;ob.date=d;const errs={};
-      if(!n)errs.name='Prénom requis';
-      if(!d)errs.date='Date requise (naissance ou terme prévu)';
-      else{const b=new Date(d),nw=new Date();if(nw-b>6*365.25*24*3600*1000)errs.date="L'app fonctionne jusqu'à 6 ans";}
-      if(!ob.gender)errs.gender='Sélectionnez le genre';
+      if(!n)errs.name=tr('Prénom requis','First name required');
+      if(!d)errs.date=tr('Date requise (naissance ou terme prévu)','Date required (birth or due date)');
+      else{const b=new Date(d),nw=new Date();if(nw-b>6*365.25*24*3600*1000)errs.date=tr("L'app fonctionne jusqu'à 6 ans",'The app covers children up to 6 years old');else if(b-nw>300*24*3600*1000)errs.date=tr('Le terme prévu doit être dans moins de 10 mois','The due date must be within the next 10 months');}
+      if(!ob.gender)errs.gender=tr('Sélectionnez le genre','Select a gender');
       if(Object.keys(errs).length){ob.errs=errs;renderOnboarding();return;}
       ob.step=2;renderOnboarding();
     });
@@ -3346,16 +3384,16 @@ function renderOnboarding(){
 <div class="ob-card">
   <div style="text-align:center;margin-bottom:28px">
     <div style="margin-bottom:14px;display:flex;justify-content:center"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="#8B7355" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div>
-    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.625rem;font-weight:500;letter-spacing:.01em">Clé API Gemini</h2>
-    <p class="t-body" style="margin-top:6px">Pour chatter avec Zoé — obtenez votre clé gratuite sur <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com</a></p>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.625rem;font-weight:500;letter-spacing:.01em">${tr('Clé API Gemini','Gemini API key')}</h2>
+    <p class="t-body" style="margin-top:6px">${tr('Pour chatter avec Zoé — obtenez votre clé gratuite sur','To chat with Zoé — get your free key at')} <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com</a></p>
   </div>
   <input id="ob-key" class="field" type="password" placeholder="AIza…" value="${e(ob.apiKey)}" style="margin-bottom:6px"/>
-  <p class="t-caption" style="margin-bottom:20px">Optionnel — vous pouvez l'ajouter plus tard dans Profil.</p>
+  <p class="t-caption" style="margin-bottom:20px">${tr('Optionnel — vous pouvez l\'ajouter plus tard dans les Paramètres.','Optional — you can add it later in Settings.')}</p>
   <div style="background:#F5F4F0;border-radius:10px;padding:12px;margin-bottom:24px;font-size:0.8125rem;color:#7A7570">
-    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Stockée uniquement sur votre appareil, jamais envoyée ailleurs.
+    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>${tr('Stockée uniquement sur votre appareil, jamais envoyée ailleurs.','Stored only on your device, never sent anywhere else.')}
   </div>
-  <button class="btn btn-dark" id="ob-go" style="margin-bottom:10px">C'est parti !</button>
-  <button id="ob-skip" style="width:100%;padding:10px;color:#9C9790;font-size:0.875rem">Passer pour l'instant</button>
+  <button class="btn btn-dark" id="ob-go" style="margin-bottom:10px">${tr('C\'est parti !','Let\'s go!')}</button>
+  <button id="ob-skip" style="width:100%;padding:10px;color:#9C9790;font-size:0.875rem">${tr('Passer pour l\'instant','Skip for now')}</button>
 </div></div>`;
     document.getElementById('ob-key').addEventListener('input',ev=>ob.apiKey=ev.target.value);
     const finish=()=>{const k=document.getElementById('ob-key').value.trim();if(k)saveKey(k);S.children.push({firstName:ob.name.trim(),birthDate:ob.date,gender:ob.gender});saveKids();render();};
@@ -3373,7 +3411,7 @@ function renderPrenatal(child,childIdx){
   const doy=getDayOfYear(new Date());
   const dailyTip=pd.tips[doy%pd.tips.length];
   const siblings=getSiblings(childIdx);
-  const dueDate=new Date(child.birthDate+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+  const dueDate=new Date(child.birthDate+'T12:00:00').toLocaleDateString(tr('fr-FR','en-GB'),{day:'numeric',month:'long',year:'numeric'});
   const weeksLeft=Math.max(0,40-gw);
 
   // Sibling prep rows (born siblings who need preparation)
@@ -3385,8 +3423,8 @@ function renderPrenatal(child,childIdx){
 <button class="s-row" data-fratrie-prep="${S.children.indexOf(sib)}" style="border-bottom:none">
   <div class="s-icon acc-coral"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
   <div style="flex:1;min-width:0">
-    <p style="font-size:0.875rem;font-weight:600;color:#1A1918">${e(sib.firstName)} — préparer l'arrivée</p>
-    <p style="font-size:0.75rem;color:#9C9790;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(fp.title)}</p>
+    <p style="font-size:0.875rem;font-weight:600;color:#1A1918">${e(sib.firstName)} — ${tr('préparer l\'arrivée','preparing for the arrival')}</p>
+    <p style="font-size:0.75rem;color:#9C9790;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(tr(fp.title,fp.title_en||fp.title))}</p>
   </div>
   ${chev()}
 </button>`;
@@ -3398,7 +3436,7 @@ function renderPrenatal(child,childIdx){
   <div class="neuron-head">
     <div style="display:flex;align-items:center;gap:8px">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-      <span style="color:#fff;font-size:0.8125rem;font-weight:600;letter-spacing:.03em">Suivi prénatal</span>
+      <span style="color:#fff;font-size:0.8125rem;font-weight:600;letter-spacing:.03em">${tr('Suivi prénatal','Pregnancy tracker')}</span>
     </div>
   </div>
   <div class="neuron-body">
@@ -3410,13 +3448,15 @@ function renderPrenatal(child,childIdx){
       </svg>
       <div style="flex:1">
         <p style="font-size:0.875rem;color:#3A3835;line-height:1.65">
-          <strong style="color:#1A1918">${e(child.firstName)}</strong> est attendu·e
+          ${tr(`<strong style="color:#1A1918">${e(child.firstName)}</strong> est attendu·e
           <strong style="color:#2D4A8A">le ${dueDate}</strong> —
-          dans <strong style="color:#2D4A8A">${dtu} jour${dtu>1?'s':''}</strong>.
+          dans <strong style="color:#2D4A8A">${dtu} jour${dtu>1?'s':''}</strong>.`,`<strong style="color:#1A1918">${e(child.firstName)}</strong> is due
+          <strong style="color:#2D4A8A">on ${dueDate}</strong> —
+          in <strong style="color:#2D4A8A">${dtu} day${dtu>1?'s':''}</strong>.`)}
         </p>
         <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-          <span class="stat-pill" style="background:#E6F4F1;color:#1B7060">SA ${Math.max(5,gw)} · ${e(pd.category)}</span>
-          <span class="stat-pill" style="background:#EBF0FA;color:#2D4A8A">${weeksLeft} sem. restantes</span>
+          <span class="stat-pill" style="background:#E6F4F1;color:#1B7060">${tr('SA','Week')} ${Math.max(5,gw)} · ${e(pd.category)}</span>
+          <span class="stat-pill" style="background:#EBF0FA;color:#2D4A8A">${weeksLeft} ${tr('sem. restantes','weeks to go')}</span>
         </div>
       </div>
     </div>
@@ -3427,7 +3467,7 @@ function renderPrenatal(child,childIdx){
 <button class="conseil-btn" data-prenatal-detail="true">
   <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#1B7060" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px"><path d="M12 2a5 5 0 0 1 5 5c0 1-.3 2-.8 2.7A4 4 0 0 1 20 13a4 4 0 0 1-4 4h-1v3H9v-3H8a4 4 0 0 1-4-4 4 4 0 0 1 3.8-3.3A5 5 0 0 1 7 7a5 5 0 0 1 5-5z"/><line x1="12" y1="9" x2="12" y2="12"/></svg>
   <div style="flex:1;min-width:0">
-    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#1B7060;margin-bottom:4px">Ce qui se passe à SA ${Math.max(5,gw)}</p>
+    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#1B7060;margin-bottom:4px">${tr('Ce qui se passe à SA','What happens at week')} ${Math.max(5,gw)}</p>
     <p style="font-size:0.875rem;color:#1B4A3A;line-height:1.6">${e(pd.fact)}</p>
   </div>
   ${chev()}
@@ -3437,7 +3477,7 @@ function renderPrenatal(child,childIdx){
 <button class="conseil-btn" data-prenatal-section="tip" style="background:#FFFBF2;border-color:#F0E8D4">
   <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#A06C2A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="21" x2="14" y2="21"/><path d="M15.1 14.2c.2-1 .7-1.8 1.5-2.6A6 6 0 1 0 7.4 11.6c.8.8 1.3 1.6 1.5 2.6"/></svg>
   <div style="flex:1;min-width:0">
-    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#A06C2A;margin-bottom:4px">Préparer la venue · aujourd'hui</p>
+    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#A06C2A;margin-bottom:4px">${tr('Préparer la venue · aujourd\'hui','Preparing for baby · today')}</p>
     <p style="font-size:0.875rem;color:#5C4A2A;line-height:1.6">${e(dailyTip)}</p>
   </div>
   ${chev()}
@@ -3445,8 +3485,8 @@ function renderPrenatal(child,childIdx){
 
 <!-- Sections heading -->
 <div style="padding:0 16px;margin:4px 0 10px">
-  <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500;color:#1A1918">Grossesse semaine ${Math.max(5,gw)}</h2>
-  <p style="font-size:0.75rem;color:#9C9790;margin-top:2px">Développement fœtal · conseils pratiques</p>
+  <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500;color:#1A1918">${tr('Grossesse semaine','Pregnancy week')} ${Math.max(5,gw)}</h2>
+  <p style="font-size:0.75rem;color:#9C9790;margin-top:2px">${tr('Développement fœtal · conseils pratiques','Foetal development · practical tips')}</p>
 </div>
 
 <!-- Fetal sections -->
@@ -3454,16 +3494,16 @@ function renderPrenatal(child,childIdx){
 <button class="s-row" data-prenatal-section="sens">
   <div class="s-icon acc-teal"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
   <div style="flex:1;min-width:0">
-    <p style="font-size:0.875rem;font-weight:600;color:#1A1918">Sens en développement</p>
-    <p style="font-size:0.75rem;color:#9C9790;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(pd.sens||'Audition, toucher, goût…')}</p>
+    <p style="font-size:0.875rem;font-weight:600;color:#1A1918">${tr('Sens en développement','Developing senses')}</p>
+    <p style="font-size:0.75rem;color:#9C9790;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(pd.sens||tr('Audition, toucher, goût…','Hearing, touch, taste…'))}</p>
   </div>
   ${chev()}
 </button>
 <button class="s-row" data-prenatal-section="details">
   <div class="s-icon acc-blue"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 1 5 5c0 1-.3 2-.8 2.7A4 4 0 0 1 20 13a4 4 0 0 1-4 4h-1v3H9v-3H8a4 4 0 0 1-4-4 4 4 0 0 1 3.8-3.3A5 5 0 0 1 7 7a5 5 0 0 1 5-5z"/></svg></div>
   <div style="flex:1;min-width:0">
-    <p style="font-size:0.875rem;font-weight:600;color:#1A1918">Anatomie & taille</p>
-    <p style="font-size:0.75rem;color:#9C9790;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(pd.details||'Organes, poids, taille')}</p>
+    <p style="font-size:0.875rem;font-weight:600;color:#1A1918">${tr('Anatomie & taille','Anatomy & size')}</p>
+    <p style="font-size:0.75rem;color:#9C9790;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(pd.details||tr('Organes, poids, taille','Organs, weight, size'))}</p>
   </div>
   ${chev()}
 </button>
@@ -3488,7 +3528,7 @@ ${bornSiblings.length?`</div>
 
 function renderToday(child,data,childIdx){
   if(data.unborn)return renderPrenatal(child,childIdx??S.childIdx);
-  const {milestone,neuron,ageLabel,ageInDays,sections}=data;
+  const {ageInDays,sections}=data;
   return`<div style="padding-top:16px">
 ${S.flags.controverse?renderControverseCard(child,data):''}
 <!-- Section heading -->
@@ -3603,42 +3643,6 @@ ${(()=>{
 </div>`;
 }
 
-// ═══════════════════════ NEURON CHART ═══════════════════════
-function renderNeuronChart(c,ageInDays){
-  const pts=getNeuronHistory(c,ageInDays);
-  const vals=pts.map(p=>p.v);
-  const mn=Math.min(...vals),mx=Math.max(...vals),range=mx-mn||1;
-  const W=300,H=80,pL=2,pR=2,pT=6,pB=22;
-  const cW=W-pL-pR,cH=H-pT-pB;
-  const px=i=>pL+(i/(pts.length-1))*cW;
-  const py=v=>pT+cH-((v-mn)/range)*cH;
-  const lp=pts.map((p,i)=>`${i===0?'M':'L'}${px(i).toFixed(1)},${py(p.v).toFixed(1)}`).join(' ');
-  const ap=lp+` L${px(pts.length-1).toFixed(1)},${(pT+cH).toFixed(1)} L${pL},${(pT+cH).toFixed(1)} Z`;
-  const avg=Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
-  const fd=pts[0].ds.slice(5).replace('-','/');
-  return`<div class="neuron-chart">
-  <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#9C9790;margin-bottom:10px">${t('neuron_14')}</p>
-  <svg viewBox="0 0 ${W} ${H}" width="100%" style="overflow:visible;display:block">
-    <defs>
-      <linearGradient id="ng${c.birthDate.replace(/-/g,'')}" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#3D5570" stop-opacity=".22"/>
-        <stop offset="100%" stop-color="#3D5570" stop-opacity="0"/>
-      </linearGradient>
-    </defs>
-    <line x1="${pL}" y1="${py(mn+(range*.5)).toFixed(1)}" x2="${W-pR}" y2="${py(mn+(range*.5)).toFixed(1)}" stroke="#F2F0EB" stroke-width="1"/>
-    <path d="${ap}" fill="url(#ng${c.birthDate.replace(/-/g,'')})"/>
-    <path d="${lp}" fill="none" stroke="#3D5570" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-    ${pts.map((p,i)=>i===pts.length-1?`<circle cx="${px(i).toFixed(1)}" cy="${py(p.v).toFixed(1)}" r="4" fill="#3D5570"/><circle cx="${px(i).toFixed(1)}" cy="${py(p.v).toFixed(1)}" r="6.5" fill="#3D5570" opacity=".15"/>`:`<circle cx="${px(i).toFixed(1)}" cy="${py(p.v).toFixed(1)}" r="2" fill="#fff" stroke="#3D5570" stroke-width="1.2"/>`).join('')}
-    <text x="${pL}" y="${H-1}" font-size="9" fill="#C4BFB8" font-family="DM Sans,sans-serif">${fd}</text>
-    <text x="${W-pR}" y="${H-1}" font-size="9" fill="#9C9790" text-anchor="end" font-family="DM Sans,sans-serif">${t('neuron_today')}</text>
-  </svg>
-  <div style="display:flex;gap:16px;margin-top:10px">
-    <span style="font-size:0.75rem;color:#9C9790">${t('neuron_peak')} <strong style="color:#3D5570">+${fmt(mx)}</strong></span>
-    <span style="font-size:0.75rem;color:#9C9790">${t('neuron_avg')} <strong style="color:#5C5752">+${fmt(avg)}</strong></span>
-  </div>
-</div>`;
-}
-
 // ═══════════════════════ HISTORY ═══════════════════════
 function renderHistory(child){
   return`<div style="padding:20px 16px 12px">
@@ -3665,8 +3669,8 @@ function renderChat(child,data){
     const fe=f.e;
     const sLabel=en?(sec.label_en||sec.label):sec.label;
     const title=en?(fe.title_en||fe.title):fe.title;
-    const summary=en?(fe.summary_en||fe.summary):fe.summary;
-    const obs=en?fe.q_en:fe.q;
+    const summary=en?(fe.summary_en||fe.summary):gFr(fe.summary,child);
+    const obs=en?fe.q_en:gFr(fe.q,child);
     const isAct=sid==='activite';
     const label=en
       ?`${sLabel}: "${title}" — how to make the most of it?`
@@ -3692,7 +3696,7 @@ function renderChat(child,data){
       label:S.lang==='en'
         ?`I'm having a tough moment right now with ${child.firstName}: ${s.label}. Help me concretely — what can I do in the next 30 seconds?`
         :`Moment difficile avec ${child.firstName} là maintenant : ${s.label}. Aide-moi concrètement — qu'est-ce que je peux faire dans les 30 prochaines secondes ?`,
-      cat:S.lang==='en'?'⚡ Right now':'⚡ Maintenant',
+      cat:S.lang==='en'?'Right now':'Maintenant',
       sos:true,
       sosLabel:s.label,
     })),
@@ -3743,11 +3747,11 @@ function renderChat(child,data){
             icon:icoCtrv,
             label:S.lang==='en'?'Controversy of the day':'Controverse du jour',
             chips:S.controverse.data?(S.lang==='en'?[
-              {txt:`Summary of positions: "${e(S.controverse.data.question).substring(0,55)}…"`,q:`Summarise the different positions on the following debate: "${S.controverse.data.question}"`},
+              {txt:`Summary of positions: "${S.controverse.data.question.substring(0,55)}…"`,q:`Summarise the different positions on the following debate: "${S.controverse.data.question}"`},
               ...( S.controverse.data.camps||[]).slice(0,2).map(c=>({txt:`Defend the camp: "${c.name}"`,q:`Defend the camp "${c.name}" on the question: "${S.controverse.data.question}". Explain its logic and strongest arguments.`})),
               {txt:`What we really know about: ${S.controverse.data.topic}`,q:`What do we really know, with certainty and scientific backing, about: ${S.controverse.data.topic}? Separate established facts from beliefs.`},
             ]:[
-              {txt:`Résume-moi les camps : « ${e(S.controverse.data.question).substring(0,55)}… »`,q:`Résume-moi les différentes positions sur la controverse suivante : « ${S.controverse.data.question} »`},
+              {txt:`Résume-moi les camps : « ${S.controverse.data.question.substring(0,55)}… »`,q:`Résume-moi les différentes positions sur la controverse suivante : « ${S.controverse.data.question} »`},
               ...( S.controverse.data.camps||[]).slice(0,2).map(c=>({txt:`Défends le camp : "${c.name}"`,q:`Défends le camp "${c.name}" sur la question : « ${S.controverse.data.question} ». Explique sa logique et ses arguments les plus solides.`})),
               {txt:`Ce qu'on sait vraiment sur : ${S.controverse.data.topic}`,q:`Qu'est-ce qu'on sait vraiment, de façon certaine et scientifiquement établie, sur : ${S.controverse.data.topic} ? Sépare les faits établis des croyances.`},
             ]):[{txt:S.lang==='en'?'Generate today\'s controversy first →':'Génère d\'abord la controverse du jour →',q:'',disabled:true}]
@@ -3784,7 +3788,7 @@ function renderChat(child,data){
   <div class="chat-pill-wrap">
     <div class="chat-pill">
       <textarea id="chat-in" class="chat-pill-in" rows="1"
-        placeholder="${S.apiKey?t('chat_placeholder_key'):t('chat_placeholder_nokey')}"
+        placeholder="${ctrvProviderKey()?t('chat_placeholder_key'):t('chat_placeholder_nokey')}"
         ${loading?'disabled':''}></textarea>
       <button class="chat-pill-send" id="chat-send" ${loading?'disabled':''}>
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
@@ -3815,8 +3819,8 @@ function renderProfileSettings(){
     </div>
     <p style="font-size:0.6875rem;font-weight:600;color:var(--c-t3);margin-bottom:8px;letter-spacing:.03em">${t('profile_language')}</p>
     <div style="display:flex;gap:8px">
-      <button class="lang-opt${S.lang==='fr'?' active':''}" data-lang-val="fr">🇫🇷 ${t('profile_lang_fr')}</button>
-      <button class="lang-opt${S.lang==='en'?' active':''}" data-lang-val="en">🇬🇧 ${t('profile_lang_en')}</button>
+      <button class="lang-opt${S.lang==='fr'?' active':''}" data-lang-val="fr">${t('profile_lang_fr')}</button>
+      <button class="lang-opt${S.lang==='en'?' active':''}" data-lang-val="en">${t('profile_lang_en')}</button>
     </div>
     <p style="font-size:0.6875rem;font-weight:600;color:var(--c-t3);margin-bottom:8px;letter-spacing:.03em;margin-top:16px">${S.lang==='en'?'Text size':'Taille du texte'}</p>
     <div style="display:flex;gap:8px">${(()=>{
@@ -3830,29 +3834,29 @@ function renderProfileSettings(){
 <div style="margin-bottom:8px">
   <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t5);margin-bottom:10px">${t('profile_ai')}</p>
   <div style="background:var(--c-card);border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.08)">
-    <p style="font-size:0.6875rem;font-weight:600;color:var(--c-t3);margin-bottom:8px;letter-spacing:.03em">Moteur IA</p>
+    <p style="font-size:0.6875rem;font-weight:600;color:var(--c-t3);margin-bottom:8px;letter-spacing:.03em">${tr('Moteur IA','AI engine')}</p>
     <div style="display:flex;gap:8px;margin-bottom:18px">
       <button class="lang-opt${S.provider==='gemini'?' active':''}" data-prov="gemini">Gemini Flash</button>
       <button class="lang-opt${S.provider==='anthropic'?' active':''}" data-prov="anthropic">Claude Sonnet</button>
     </div>
-    <p style="font-size:0.6875rem;font-weight:600;color:var(--c-t3);margin-bottom:6px;letter-spacing:.03em">Clé API Gemini</p>
+    <p style="font-size:0.6875rem;font-weight:600;color:var(--c-t3);margin-bottom:6px;letter-spacing:.03em">${tr('Clé API Gemini','Gemini API key')}</p>
     <input id="gemini-key-in" class="field" type="password" placeholder="AIza…" value="${e(S.apiKey)}" style="margin-bottom:14px"/>
-    <p style="font-size:0.6875rem;font-weight:600;color:var(--c-t3);margin-bottom:6px;letter-spacing:.03em">Clé API Claude (Anthropic)</p>
+    <p style="font-size:0.6875rem;font-weight:600;color:var(--c-t3);margin-bottom:6px;letter-spacing:.03em">${tr('Clé API Claude (Anthropic)','Claude API key (Anthropic)')}</p>
     <input id="anthropic-key-in" class="field" type="password" placeholder="sk-ant-…" value="${e(S.anthropicKey)}" style="margin-bottom:8px"/>
-    <button id="btn-test-claude" style="width:100%;margin-bottom:14px;padding:9px;border-radius:10px;border:1.5px solid var(--c-bd2);background:var(--c-bg2);font-size:0.75rem;cursor:pointer;font-family:inherit;font-weight:500;display:flex;align-items:center;justify-content:center;gap:6px;${S._claudeTest==='ok'?'color:#3A5E38':S._claudeTest==='err'?'color:#A03828':'color:var(--c-t2)'}">${S._claudeTest==='ok'?`${_svgIco.check}Connexion Claude OK`:S._claudeTest==='err'?`${_svgIco.x}${S._claudeTestMsg||'Erreur'}`:S._claudeTest==='loading'?`${_svgIco.loader}Test en cours…`:`${_svgIco.search}Tester la connexion Claude`}</button>
+    <button id="btn-test-claude" style="width:100%;margin-bottom:14px;padding:9px;border-radius:10px;border:1.5px solid var(--c-bd2);background:var(--c-bg2);font-size:0.75rem;cursor:pointer;font-family:inherit;font-weight:500;display:flex;align-items:center;justify-content:center;gap:6px;${S._claudeTest==='ok'?'color:#3A5E38':S._claudeTest==='err'?'color:#A03828':'color:var(--c-t2)'}">${S._claudeTest==='ok'?`${_svgIco.check}${tr('Connexion Claude OK','Claude connection OK')}`:S._claudeTest==='err'?`${_svgIco.x}${S._claudeTestMsg||tr('Erreur','Error')}`:S._claudeTest==='loading'?`${_svgIco.loader}${tr('Test en cours…','Testing…')}`:`${_svgIco.search}${tr('Tester la connexion Claude','Test Claude connection')}`}</button>
     <div style="background:var(--c-bg2);border-radius:10px;padding:10px 12px;font-size:0.75rem;color:var(--c-t4);display:flex;align-items:center;gap:7px">
       <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      Clés stockées uniquement sur votre appareil
+      ${tr('Clés stockées uniquement sur votre appareil','Keys stored only on your device')}
     </div>
   </div>
 </div>
 <div style="margin-bottom:20px">
-  <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t5);margin-bottom:10px">Développeur</p>
+  <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t5);margin-bottom:10px">${tr('Développeur','Developer')}</p>
   <div style="background:var(--c-card);border-radius:14px;padding:0 16px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.08)">
     <div class="toggle-row">
       <div>
         <p style="font-size:0.875rem;font-weight:500;color:var(--c-ink);margin-bottom:1px">API Log</p>
-        <p style="font-size:0.6875rem;color:var(--c-t4)">Affiche les requêtes dans le menu</p>
+        <p style="font-size:0.6875rem;color:var(--c-t4)">${tr('Affiche les requêtes dans le menu','Show requests in the menu')}</p>
       </div>
       <label class="toggle-knob">
         <input type="checkbox" id="toggle-apilog"${S.showApiLog?' checked':''}>
@@ -3888,7 +3892,7 @@ function renderAllConvsModal(child){
   const convs=getConversations().filter(c=>c.childName===child.firstName);
   const groups={};
   convs.forEach(c=>{const g=convDateGroup(c.updatedAt);if(!groups[g])groups[g]=[];groups[g].push(c);});
-  const order=["Aujourd'hui","Hier","7 derniers jours","Ce mois","Plus ancien"];
+  const order=[tr("Aujourd'hui",'Today'),tr('Hier','Yesterday'),tr('7 derniers jours','Last 7 days'),tr('Ce mois','This month'),tr('Plus ancien','Older')];
   const rows=order.filter(g=>groups[g]?.length).map(g=>`
     <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-t4);padding:12px 16px 4px">${g}</p>
     ${groups[g].map(c=>`<button class="drawer-conv-item${S.chat.currentConvId===c.id?' active':''}" data-conv-id="${c.id}" style="border-radius:0;padding:10px 16px;border-bottom:1px solid var(--c-bg3)">
@@ -3914,7 +3918,7 @@ function renderAllCtrvModal(child){
   const favIds=getFavorites().filter(f=>f.childName===child.firstName&&f.type==='controverse').map(f=>f.id);
   const groups={};
   hist.forEach(c=>{const g=convDateGroup(c.date);if(!groups[g])groups[g]=[];groups[g].push(c);});
-  const order=["Aujourd'hui","Hier","7 derniers jours","Ce mois","Plus ancien"];
+  const order=[tr("Aujourd'hui",'Today'),tr('Hier','Yesterday'),tr('7 derniers jours','Last 7 days'),tr('Ce mois','This month'),tr('Plus ancien','Older')];
   const learnedBadge=`<span class="ctrv-learned-badge"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.5.4.8 1 .9 1.6h5.4c.1-.6.4-1.2.9-1.6A6 6 0 0 0 12 3z"/></svg>${S.lang==='en'?'Learned':'Appris'}</span>`;
   const starBadge=`<span class="ctrv-learned-badge" style="color:#A06C2A;background:#FBF3E5"><svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor" stroke="none"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.6 6.8L12 17.3 5.8 20.9l1.6-6.8L2.2 8.9l6.9-.6z"/></svg>${S.lang==='en'?'Saved':'Favori'}</span>`;
   const rows=order.filter(g=>groups[g]?.length).map(g=>`
@@ -3951,7 +3955,7 @@ function renderCtrvViewModal(child){
   <div class="sheet-head">
     <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
       <div class="s-icon acc-plum" style="width:34px;height:34px;flex-shrink:0"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="20" x2="6" y2="14"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="18" y1="20" x2="18" y2="10"/></svg></div>
-      <span style="font-weight:600;font-size:0.875rem">Controverse · ${e(d.topic||'')}</span>
+      <span style="font-weight:600;font-size:0.875rem">${tr('Controverse','Debate')} · ${e(d.topic||'')}</span>
     </div>
     <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
       ${modalActBtns('data-fav-ctrvview','1','data-share-ctrvview','1',faved)}
@@ -3961,24 +3965,11 @@ function renderCtrvViewModal(child){
   <div class="sheet-body">${renderCtrvFavBody(d)}</div>
 </div></div>`;
 }
-function providerBadge(center=false){
-  const isAnt=S.provider==='anthropic';
-  const label=isAnt?'Claude Sonnet':'Gemini Flash';
-  const col=isAnt?'#3D5570':'#A06C2A';
-  const bg=isAnt?'rgba(61,85,112,.09)':'rgba(160,108,42,.09)';
-  const icoAnt=`<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="${col}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg>`;
-  const icoGem=`<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="${col}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
-  const logDot=S.showApiLog?`<svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="${col}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.6"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>`:'';
-  const clickable=S.showApiLog;
-  return`<div style="${center?'text-align:center;':''}padding:4px 0 2px">
-    <button data-goto-apilog="1" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;background:${bg};border:1px solid ${col}22;font-size:0.625rem;font-weight:600;color:${col};letter-spacing:.04em;opacity:.85;${clickable?'cursor:pointer':'cursor:default'}">${isAnt?icoAnt:icoGem}${label}${logDot}</button>
-  </div>`;
-}
 function renderApiLog(){
   const sw='stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"';
-  const endpointLabels={chat:'Zoé chat',controverse:'Controverse',deepdive:'Deep dive',camps:'Camps'};
+  const endpointLabels={chat:'Zoé chat',controverse:tr('Controverse','Debate'),deepdive:tr('Creuser','Deep dive'),camps:tr('Positions','Positions'),observation:'Observation'};
   const provLabel={anthropic:'Claude',gemini:'Gemini'};
-  function relTime(iso){const d=Date.now()-new Date(iso).getTime();if(d<60000)return'À l\'instant';if(d<3600000)return`Il y a ${Math.floor(d/60000)} min`;if(d<86400000)return`Il y a ${Math.floor(d/3600000)} h`;return`Il y a ${Math.floor(d/86400000)} j`;}
+  function relTime(iso){const d=Date.now()-new Date(iso).getTime();if(d<60000)return tr('À l\'instant','Just now');if(d<3600000)return tr(`Il y a ${Math.floor(d/60000)} min`,`${Math.floor(d/60000)} min ago`);if(d<86400000)return tr(`Il y a ${Math.floor(d/3600000)} h`,`${Math.floor(d/3600000)} h ago`);return tr(`Il y a ${Math.floor(d/86400000)} j`,`${Math.floor(d/86400000)} d ago`);}
   const icoTerminal=`<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" ${sw}><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>`;
   const icoCopy=`<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" ${sw}><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
   const icoTrash=`<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" ${sw}><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>`;
@@ -3989,32 +3980,32 @@ function renderApiLog(){
       <div style="width:36px;height:36px;border-radius:10px;background:rgba(61,85,112,.12);display:flex;align-items:center;justify-content:center;color:#3D5570">${icoTerminal}</div>
       <div>
         <p style="font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:500;color:var(--c-ink);line-height:1.1">API Log</p>
-        <p style="font-size:0.6875rem;color:var(--c-t4)">${S.apiLog.length} entrée${S.apiLog.length!==1?'s':''}</p>
+        <p style="font-size:0.6875rem;color:var(--c-t4)">${S.apiLog.length} ${tr('entrée','entr')}${S.apiLog.length!==1?tr('s','ies'):tr('','y')}</p>
       </div>
     </div>
-    ${S.apiLog.length?`<button id="btn-clear-apilog" style="display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:9px;background:rgba(160,56,40,.1);border:none;font-size:0.75rem;font-weight:600;color:#A03828;cursor:pointer">${icoTrash}Tout effacer</button>`:''}
+    ${S.apiLog.length?`<button id="btn-clear-apilog" style="display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:9px;background:rgba(160,56,40,.1);border:none;font-size:0.75rem;font-weight:600;color:#A03828;cursor:pointer">${icoTrash}${tr('Tout effacer','Clear all')}</button>`:''}
   </div>
   ${S.apiLog.length===0?`<div style="text-align:center;padding:48px 20px">
     <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="var(--c-bd2)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:12px"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
-    <p style="font-size:0.875rem;color:var(--c-t4)">Aucune requête enregistrée</p>
-    <p style="font-size:0.75rem;color:var(--c-t5);margin-top:4px">Les appels API apparaîtront ici</p>
+    <p style="font-size:0.875rem;color:var(--c-t4)">${tr('Aucune requête enregistrée','No requests logged')}</p>
+    <p style="font-size:0.75rem;color:var(--c-t5);margin-top:4px">${tr('Les appels API apparaîtront ici','API calls will appear here')}</p>
   </div>`:S.apiLog.map((entry,i)=>`
   <div class="api-log-card">
     <div class="api-log-meta">
       <span style="font-size:0.6875rem;color:var(--c-t4);flex-shrink:0">${relTime(entry.ts)}</span>
       <span class="api-log-badge ${entry.provider==='anthropic'?'ant':'gem'}">${provLabel[entry.provider]||entry.provider}</span>
       <span class="api-log-badge" style="background:var(--c-bg3);color:var(--c-t3)">${endpointLabels[entry.endpoint]||entry.endpoint}</span>
-      <span class="api-log-badge ${entry.status==='ok'?'ok':'err'}">${entry.status==='ok'?'OK':'Erreur'}</span>
+      <span class="api-log-badge ${entry.status==='ok'?'ok':'err'}">${entry.status==='ok'?'OK':tr('Erreur','Error')}</span>
       <span style="font-size:0.625rem;color:var(--c-t5);margin-left:auto">${entry.duration}ms</span>
     </div>
     <p style="font-size:0.6875rem;color:var(--c-t4);margin-bottom:6px">${e(entry.model||'')}${entry.reqMsgs?' · '+entry.reqMsgs+' msg':''}</p>
-    ${entry.reqUserMsg?`<div style="margin-bottom:5px"><span style="font-size:0.5625rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--c-t5)">Message</span><div class="api-log-resp" style="margin-top:3px;max-height:60px">${e((entry.reqUserMsg||'').substring(0,300))}${(entry.reqUserMsg||'').length>300?'…':''}</div></div>`:''}
+    ${entry.reqUserMsg?`<div style="margin-bottom:5px"><span style="font-size:0.5625rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--c-t5)">${tr('Message','Message')}</span><div class="api-log-resp" style="margin-top:3px;max-height:60px">${e((entry.reqUserMsg||'').substring(0,300))}${(entry.reqUserMsg||'').length>300?'…':''}</div></div>`:''}
     ${entry.reqSystem?`<div style="margin-bottom:5px"><span style="font-size:0.5625rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--c-t5)">System prompt</span><div class="api-log-resp" style="margin-top:3px;color:var(--c-t4)">${e((entry.reqSystem||'').substring(0,200))}…</div></div>`:''}
-    <div style="margin-bottom:2px"><span style="font-size:0.5625rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--c-t5)">${entry.status==='error'?'Erreur':'Réponse'}</span></div>
-    ${entry.status==='error'?`<div class="api-log-resp" style="color:#A03828;background:rgba(160,56,40,.07)">${e(entry.error||'Erreur inconnue')}</div>`:`<div class="api-log-resp" id="log-resp-${i}">${e((entry.respText||'').substring(0,300))}${(entry.respText||'').length>300?'…':''}</div>`}
+    <div style="margin-bottom:2px"><span style="font-size:0.5625rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--c-t5)">${entry.status==='error'?tr('Erreur','Error'):tr('Réponse','Response')}</span></div>
+    ${entry.status==='error'?`<div class="api-log-resp" style="color:#A03828;background:rgba(160,56,40,.07)">${e(entry.error||tr('Erreur inconnue','Unknown error'))}</div>`:`<div class="api-log-resp" id="log-resp-${i}">${e((entry.respText||'').substring(0,300))}${(entry.respText||'').length>300?'…':''}</div>`}
     <div class="api-log-actions">
-      <button class="api-log-act" data-copy-log="${i}">${icoCopy}Tout copier</button>
-      ${entry.status==='ok'&&(entry.respText||'').length>300?`<button class="api-log-act" data-expand-log="${i}">${icoExpand}<span id="log-expand-lbl-${i}">Voir tout</span></button>`:''}
+      <button class="api-log-act" data-copy-log="${i}">${icoCopy}${tr('Tout copier','Copy all')}</button>
+      ${entry.status==='ok'&&(entry.respText||'').length>300?`<button class="api-log-act" data-expand-log="${i}">${icoExpand}<span id="log-expand-lbl-${i}">${tr('Voir tout','Show all')}</span></button>`:''}
     </div>
   </div>`).join('')}
 </div>`;
@@ -4076,7 +4067,6 @@ ${S.children.map((c,i)=>{
     const d=Math.floor((new Date()-new Date(c.birthDate+'T12:00:00'))/86400000);
     if(d<0)return'';
     const ageLbl=getAgeLabel(d,c.birthDate);
-    const ns=getNeuronStats(d,c.birthDate);
     // ── Timeline milestones ────────────────────────────────────────
     const _ageMo=d/30.44;const _MAX=72;
     const _agePct=Math.min(98,Math.round(_ageMo/_MAX*100));
@@ -4121,11 +4111,7 @@ ${S.children.map((c,i)=>{
       <span style="font-size:0.75rem;color:var(--c-t4)">·</span>
       <span style="font-size:0.75rem;color:var(--c-t3);font-weight:500">${t('today_day')} ${d}</span>
     </div>
-    <div style="display:flex;align-items:center;gap:7px;background:rgba(61,85,112,.07);border-radius:10px;padding:8px 11px">
-      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#3D5570" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="17" r="2"/><circle cx="19" cy="17" r="2"/><line x1="12" y1="7" x2="5" y2="15"/><line x1="12" y1="7" x2="19" y2="15"/><line x1="5" y1="17" x2="19" y2="17"/></svg>
-      <span style="font-size:0.6875rem;color:#3D5570;font-weight:500">${_en?'Today':'Aujourd\'hui'} <strong>+${fmt(ns.daily)}</strong> &nbsp;·&nbsp; Total <strong>${fmt(ns.total)}</strong></span>
-    </div>
-    ${_tl}`;
+        ${_tl}`;
   })();
   // ── avatar ─────────────────────────────────────────────────────
   const avatarBg=unb?'rgba(27,112,96,.1)':'var(--c-fbd)';
@@ -4142,7 +4128,7 @@ ${S.children.map((c,i)=>{
           <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="var(--c-t4)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M2 21h20"/><line x1="12" y1="6" x2="12" y2="11"/><path d="M10 6c0-1 1-2.5 2-3 1 .5 2 2 2 3"/></svg>
           <span style="font-size:0.75rem;color:var(--c-t3)">${dateLabel}</span>
         </div>
-        ${S.children.length>1?`<span class="badge-sibling">${i===0?t('badge_eldest'):t('badge_youngest')}</span>`:''}
+        ${S.children.length>1?(()=>{const ts=S.children.map(k=>new Date(k.birthDate+'T12:00:00').getTime());const me=ts[i];const lbl=me===Math.min(...ts)?t('badge_eldest'):me===Math.max(...ts)?t('badge_youngest'):t('badge_middle');return`<span class="badge-sibling">${lbl}</span>`;})():''}
       </div>
     </div>
     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--c-t4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M9 18l6-6-6-6"/></svg>
@@ -4179,7 +4165,7 @@ function renderFratriePrepModal(sibIdx,currentChild){
     ${xBtn()}
   </div>
   <div class="sheet-body">
-    ${sibUnborn?`<div class="prenatal-alert" style="margin:0 0 16px"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg><span>${e(sib.firstName)} arrive dans <strong>${dtu} jour${dtu>1?'s':''}</strong>.</span></div>`:''}
+    ${sibUnborn?`<div class="prenatal-alert" style="margin:0 0 16px"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg><span>${tr(`${e(sib.firstName)} arrive dans <strong>${dtu} jour${dtu>1?'s':''}</strong>.`,`${e(sib.firstName)} arrives in <strong>${dtu} day${dtu>1?'s':''}</strong>.`)}</span></div>`:''}
     <span class="acc-coral" style="display:inline-block;padding:3px 10px;border-radius:99px;font-size:0.6875rem;font-weight:600;margin-bottom:14px">${e(S.lang==='en'?(fp.category_en||fp.category):fp.category)}</span>
     <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.75rem;font-weight:500;margin-bottom:12px;line-height:1.25">${e(S.lang==='en'?(fp.title_en||fp.title):fp.title)}</h2>
     <p style="font-size:0.875rem;color:#5C5752;line-height:1.75;margin-bottom:20px">${e(S.lang==='en'?(fp.body_en||fp.body):fp.body)}</p>
@@ -4259,16 +4245,16 @@ function renderPrenatalSectionModal(sectionKey,child){
   <div class="sheet-head">
     <div style="display:flex;align-items:center;gap:10px">
       <div class="s-icon acc-honey" style="width:34px;height:34px"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="21" x2="14" y2="21"/><path d="M15.1 14.2c.2-1 .7-1.8 1.5-2.6A6 6 0 1 0 7.4 11.6c.8.8 1.3 1.6 1.5 2.6"/></svg></div>
-      <span style="font-weight:600;font-size:0.875rem">Préparer la venue · SA ${gw}</span>
+      <span style="font-weight:600;font-size:0.875rem">${tr('Préparer la venue · SA','Preparing for baby · week')} ${gw}</span>
     </div>
     ${xBtn()}
   </div>
   <div class="sheet-body">
-    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#A06C2A;margin-bottom:10px">Conseil du jour</p>
+    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#A06C2A;margin-bottom:10px">${tr('Conseil du jour','Tip of the day')}</p>
     <div style="background:#FFFBF2;border-radius:12px;padding:14px 16px;margin-bottom:20px;border:1px solid #F0E0B0">
       <p style="font-size:0.9375rem;color:#3A2A0A;line-height:1.7;font-weight:500">${e(dailyTip)}</p>
     </div>
-    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#9C9790;margin-bottom:12px">Tous les conseils de ce stade</p>
+    <p style="font-size:0.6875rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#9C9790;margin-bottom:12px">${tr('Tous les conseils de ce stade','All tips for this stage')}</p>
     <div style="display:flex;flex-direction:column;gap:10px">
       ${pd.tips.map((t,i)=>`<div style="display:flex;gap:10px;align-items:flex-start;${i===tipIdx?'opacity:1':'opacity:.55'}">
         <div style="width:7px;height:7px;border-radius:50%;background:${i===tipIdx?'#A06C2A':'#C4BFB8'};flex-shrink:0;margin-top:6px"></div>
@@ -4280,8 +4266,8 @@ function renderPrenatalSectionModal(sectionKey,child){
 </div></div>`;
   }
   const map={
-    sens:{label:'Sens en développement',color:'acc-teal',content:pd.sens||''},
-    details:{label:'Anatomie & taille',color:'acc-blue',content:pd.details||''},
+    sens:{label:tr('Sens en développement','Developing senses'),color:'acc-teal',content:pd.sens||''},
+    details:{label:tr('Anatomie & taille','Anatomy & size'),color:'acc-blue',content:pd.details||''},
   };
   const sec=map[sectionKey]||map.details;
   return`<div class="overlay" id="modal-overlay">
@@ -4290,7 +4276,7 @@ function renderPrenatalSectionModal(sectionKey,child){
   <div class="sheet-head">
     <div style="display:flex;align-items:center;gap:10px">
       <div class="s-icon ${sec.color}" style="width:34px;height:34px"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg></div>
-      <span style="font-weight:600;font-size:0.875rem">${e(sec.label)} · SA ${gw}</span>
+      <span style="font-weight:600;font-size:0.875rem">${e(sec.label)} · ${tr('SA','week')} ${gw}</span>
     </div>
     ${xBtn()}
   </div>
@@ -4310,14 +4296,14 @@ function renderSavedChatsModal(child){
   <div class="sheet-head">
     <div style="display:flex;align-items:center;gap:10px">
       <div class="s-icon acc-blue" style="width:34px;height:34px"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
-      <span style="font-weight:600;font-size:0.875rem">Réponses sauvegardées · ${e(child.firstName)}</span>
+      <span style="font-weight:600;font-size:0.875rem">${t('saved_chats_modal_title')} · ${e(child.firstName)}</span>
     </div>
     ${xBtn()}
   </div>
   <div class="sheet-body">
     ${empty?`<div style="text-align:center;padding:40px 0;color:#B0A89E">
       <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#D4D0CA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:12px"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-      <p style="font-size:0.875rem">Aucune réponse sauvegardée.<br>Utilisez <svg viewBox="0 0 24 24" width="12" height="12" fill="#3D5570" stroke="#3D5570" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> sous une réponse de Zoé.</p>
+      <p style="font-size:0.875rem">${t('saved_no_responses')}<br>${tr('Utilisez','Use')} <svg viewBox="0 0 24 24" width="12" height="12" fill="#3D5570" stroke="#3D5570" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> ${tr('sous une réponse de Zoé.','under a Zoé answer.')}</p>
     </div>`:`<div style="display:flex;flex-direction:column;gap:10px">
       ${saves.map(s=>`<div class="saved-card">
         <div class="saved-q">
@@ -4326,15 +4312,15 @@ function renderSavedChatsModal(child){
         <p class="saved-a">${e(s.answer)}</p>
         ${s.refs&&s.refs.length?`<div style="display:flex;flex-direction:column;gap:4px;margin-top:8px">${s.refs.map(r=>`<a href="https://www.google.com/search?q=${encodeURIComponent(r)}" target="_blank" rel="noopener" class="msg-ref-link"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>${e(r)}</a>`).join('')}</div>`:''}
         <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:8px;border-top:1px solid #F2F0EB">
-          <span style="font-size:0.6875rem;color:#B0A89E">${new Date(s.date).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}</span>
+          <span style="font-size:0.6875rem;color:#B0A89E">${new Date(s.date).toLocaleDateString(tr('fr-FR','en-GB'),{day:'numeric',month:'short',year:'numeric'})}</span>
           <div style="display:flex;gap:6px">
-            <button class="msg-act" data-share-saved="${s.id}" title="Partager" style="width:auto;padding:0 8px;font-size:0.75rem;color:#3D5570;gap:4px">
+            <button class="msg-act" data-share-saved="${s.id}" title="${tr('Partager','Share')}" style="width:auto;padding:0 8px;font-size:0.75rem;color:#3D5570;gap:4px">
               <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-              Partager
+              ${tr('Partager','Share')}
             </button>
-            <button class="msg-act" data-del-saved="${s.id}" title="Supprimer" style="width:auto;padding:0 6px;font-size:0.75rem;color:#C45A5A;gap:4px">
+            <button class="msg-act" data-del-saved="${s.id}" title="${tr('Supprimer','Delete')}" style="width:auto;padding:0 6px;font-size:0.75rem;color:#C45A5A;gap:4px">
               <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-              Supprimer
+              ${tr('Supprimer','Delete')}
             </button>
           </div>
         </div>
@@ -4348,7 +4334,7 @@ function renderSavedChatsModal(child){
 function renderCarolineModal(data,child){
   const entry=getCarolineEntry(data.ageInMonths,data.doy);
   if(!entry)return'';
-  const fid=child?favId(child.firstName,'caroline','caroline'):'';
+  const fid=child?favId(child.firstName,'caroline',entry.topic):'';
   const faved=child&&isFavorited(fid);
   return`<div class="overlay" id="modal-overlay">
 <div class="sheet">
@@ -4397,7 +4383,7 @@ function renderMilestoneModal(s,data,child){
   const tracks=getTracks(sid);
   const ageHint=entry.m<24?entry.m+(en?' mo':' mois'):(entry.m/12%1?(entry.m/12).toFixed(1):entry.m/12)+(en?' yr':' ans');
   const acquired=ladder.filter(x=>ms[x.mid]?.status==='done');
-  const fid=child?favId(child.firstName,'section',s.id):'';
+  const fid=child?favId(child.firstName,'section',sid+':'+mid):'';
   const faved=child&&isFavorited(fid);
   const dateFmt=ts=>new Date(ts).toLocaleDateString(en?'en-GB':'fr-FR',{day:'numeric',month:'short'});
   // Boutons de la boucle
@@ -4496,14 +4482,14 @@ function renderMilestoneModal(s,data,child){
       <div class="s-icon ${s.colorBg}" style="width:46px;height:46px;flex-shrink:0">${s.icon}</div>
       <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.625rem;font-weight:500;line-height:1.25">${e(en?(entry.title_en||entry.title):entry.title)}</h2>
     </div>
-    <p style="font-size:0.9375rem;font-weight:500;color:#3D5A8A;margin-bottom:10px;line-height:1.6">${e(en?(entry.summary_en||entry.summary):entry.summary)}</p>
+    <p style="font-size:0.9375rem;font-weight:500;color:#3D5A8A;margin-bottom:10px;line-height:1.6">${e(en?(entry.summary_en||entry.summary):gFr(entry.summary,child))}</p>
     <p style="font-size:0.875rem;color:#5C5752;line-height:1.7;margin-bottom:20px">${e(en?(entry.detail_en||entry.detail):entry.detail)}</p>
     <!-- Boucle d'observation -->
     <div style="background:#F4F7FB;border:1px solid #E2EAF3;border-radius:14px;padding:16px;margin-bottom:18px">
       <p style="font-size:0.6875rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#3D5A8A;margin-bottom:8px;display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>${en?cfg.checkPfx_en:cfg.checkPfx} ${e(child.firstName)} ?</p>
-      <p style="font-size:0.9375rem;color:#2A2926;line-height:1.55;margin-bottom:14px">${e(en?entry.q_en:entry.q)}</p>
+      <p style="font-size:0.9375rem;color:#2A2926;line-height:1.55;margin-bottom:14px">${e(en?entry.q_en:gFr(entry.q,child))}</p>
       ${reached||status?`<div style="display:flex;gap:8px">
-        ${opt('done',cfg.btnDone,cfg.btnDone_en,"#E4F0E9","#2F6043")}
+        ${opt('done',gFr(cfg.btnDone,child),cfg.btnDone_en,"#E4F0E9","#2F6043")}
         ${opt('pending',cfg.btnPending,cfg.btnPending_en,"#E7EDF6","#2E4D78")}
         ${opt('unsure',cfg.btnUnsure,cfg.btnUnsure_en,"#F4EADA","#8A5A1E")}
       </div>`:`<p style="font-size:0.8125rem;color:#9C9790;font-style:italic">${en?'This usually comes a bit later — observe gently, no rush.':'Ça vient en général un peu plus tard — observe tranquillement, sans presser.'}</p>`}
@@ -4557,7 +4543,7 @@ function renderSectionModal(id,data,child){
 
 function renderConseilModal(milestone,data,child){
   if(!milestone)return'';
-  const fid=child?favId(child.firstName,'conseil','conseil'):'';
+  const fid=child?favId(child.firstName,'conseil',milestone.tip):'';
   const faved=child&&isFavorited(fid);
   return`<div class="overlay" id="modal-overlay">
 <div class="sheet">
@@ -4596,7 +4582,7 @@ function renderConseilModal(milestone,data,child){
 
 function renderApiKeyModal(){
   const isAnt=S.provider==='anthropic';
-  const title=isAnt?'Clé Claude manquante':'Clé Gemini manquante';
+  const title=isAnt?tr('Clé Claude manquante','Claude key missing'):tr('Clé Gemini manquante','Gemini key missing');
   const link=isAnt?'https://console.anthropic.com/':'https://aistudio.google.com/apikey';
   const linkLabel=isAnt?'console.anthropic.com':'aistudio.google.com';
   const placeholder=isAnt?'sk-ant-…':'AIza…';
@@ -4608,7 +4594,7 @@ function renderApiKeyModal(){
   <div style="text-align:center;margin-bottom:20px">
     <div style="margin-bottom:12px;display:flex;justify-content:center"><svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="#8B7355" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div>
     <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500">${title}</h3>
-    <p class="t-body" style="margin-top:6px;font-size:0.8125rem">Obtenez votre clé sur <a href="${link}" target="_blank">${linkLabel}</a></p>
+    <p class="t-body" style="margin-top:6px;font-size:0.8125rem">${tr('Obtenez votre clé sur','Get your key at')} <a href="${link}" target="_blank">${linkLabel}</a></p>
   </div>
   <input id="${inputId}" class="field" type="password" placeholder="${placeholder}" value="${val}" style="margin-bottom:6px"/>
   <div style="background:#F5F4F0;border-radius:10px;padding:11px 13px;margin-bottom:18px;font-size:0.8125rem;color:#7A7570;display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>${t('modal_api_stored')}</div>
@@ -4909,33 +4895,23 @@ function bind(child,data){
   // Garder / Partager — controverse
   document.querySelector('[data-fav-ctrv]')?.addEventListener('click',()=>{
     const d=S.controverse.data;if(!d)return;
-    toggleFavorite({id:favId(child.firstName,'controverse',d.topic),childName:child.firstName,childAge:data.ageLabel,type:'controverse',typeLabel:'Controverse',title:d.question,summary:d.why_now,ctrv:d,refsColorBg:'acc-plum',date:new Date().toISOString(),canShare:true,shareData:{headerBg:'#A06C2A',accentColor:'#A06C2A',categoryLabel:'Controverse · '+d.topic,title:d.question,body:ctrvShareText(d),ageLabel:data.ageLabel}});
+    toggleFavorite({id:favId(child.firstName,'controverse',d.topic),childName:child.firstName,childAge:data.ageLabel,type:'controverse',typeLabel:'Controverse',title:d.question,summary:d.why_now,ctrv:d,refsColorBg:'acc-plum',date:new Date().toISOString(),canShare:true,shareData:{headerBg:'#A06C2A',accentColor:'#A06C2A',categoryLabel:tr('Controverse · ','Debate · ')+d.topic,title:d.question,body:ctrvShareText(d),ageLabel:data.ageLabel}});
     render();
   });
   document.querySelector('[data-share-ctrv]')?.addEventListener('click',()=>{
     const d=S.controverse.data;if(!d)return;
-    shareTextContent('Controverse — '+d.topic,ctrvFullText(d));
+    shareTextContent(tr('Controverse — ','Debate — ')+d.topic,ctrvFullText(d));
   });
   // Garder / Partager — creuser (par réponse)
   document.querySelectorAll('[data-fav-dive]').forEach(b=>b.addEventListener('click',()=>{
     const it=S.controverse.dive.items[+b.dataset.favDive];if(!it)return;const d=S.controverse.data;
-    toggleFavorite({id:favId(child.firstName,'creuser',it.q),childName:child.firstName,childAge:data.ageLabel,type:'creuser',typeLabel:'Creuser',title:it.q,summary:'',blocks:it.blocks,diveSources:it.sources,refsColorBg:'acc-plum',date:new Date().toISOString(),canShare:true,shareData:{headerBg:'#A06C2A',accentColor:'#A06C2A',categoryLabel:'Creuser'+(d?.topic?' · '+d.topic:''),title:it.q,body:diveShareText(it),ageLabel:data.ageLabel}});
+    toggleFavorite({id:favId(child.firstName,'creuser',it.q),childName:child.firstName,childAge:data.ageLabel,type:'creuser',typeLabel:'Creuser',title:it.q,summary:'',blocks:it.blocks,diveSources:it.sources,refsColorBg:'acc-plum',date:new Date().toISOString(),canShare:true,shareData:{headerBg:'#A06C2A',accentColor:'#A06C2A',categoryLabel:tr('Creuser','Deep dive')+(d?.topic?' · '+d.topic:''),title:it.q,body:diveShareText(it),ageLabel:data.ageLabel}});
     render();
   }));
   document.querySelectorAll('[data-share-dive]').forEach(b=>b.addEventListener('click',()=>{
     const it=S.controverse.dive.items[+b.dataset.shareDive];if(!it)return;
-    shareTextContent('Creuser — '+it.q,diveFullText(it));
+    shareTextContent(tr('Creuser — ','Deep dive — ')+it.q,diveFullText(it));
   }));
-  document.getElementById('btn-zoe')?.addEventListener('click',()=>{S.tab='chat';render();});
-  document.getElementById('chat-suggestions')?.addEventListener('change',ev=>{
-    const val=ev.target.value;if(!val)return;
-    const opt=ev.target.selectedOptions[0];
-    const inp=document.getElementById('chat-in');
-    if(opt?.dataset?.tpl){if(inp){inp.value=val;inp.focus();}}
-    else{sendMsg(val,child,data);}
-    ev.target.value='';
-  });
-  document.getElementById('btn-share')?.addEventListener('click',()=>shareHighlight(child,data));
   document.querySelectorAll('[data-section]').forEach(b=>b.addEventListener('click',()=>{S.modal='section';S.modalSection=b.dataset.section;S.modalMid=SECTION_MS[b.dataset.section]?getSectionFocus(child,data.ageInMonths,b.dataset.section,data.doy).mid:null;render();}));
   // Boucle de suivi : enregistrer l'état d'un milestone (Il le fait / Pas encore / Pas sûr)
   document.querySelectorAll('[data-ms-set]').forEach(b=>b.addEventListener('click',()=>{
@@ -4959,52 +4935,62 @@ function bind(child,data){
     const body=document.querySelector('.sheet-body');if(body)body.scrollTop=0;
   }));
   // Section like (dans le modal)
+  // Contenu réellement affiché dans le modal de section (étape du parcours en cours)
+  const shownSection=sid=>{
+    const s=ALL_SECTIONS.find(x=>x.id===sid);const en=S.lang==='en';
+    if(SECTION_MS[sid]){
+      const mid=S.modalMid||getSectionFocus(child,data.ageInMonths,sid,data.doy).mid;
+      const it=getLadder(sid).find(x=>x.mid===mid);const ev=it?.e||{};
+      return{s,key:sid+':'+mid,label:en?(s?.label_en||s?.label):s?.label,title:en?(ev.title_en||ev.title):ev.title,
+        summary:en?(ev.summary_en||ev.summary):ev.summary,detail:en?(ev.detail_en||ev.detail):ev.detail,refs:ev.refs||[]};
+    }
+    const entry=data.sections?.find(x=>x.s.id===sid)?.entry;
+    return{s,key:sid,label:s?.label,title:entry?.title,summary:entry?.summary,detail:entry?.detail,refs:entry?.references||[]};
+  };
+  // Section like (dans le modal)
   document.querySelectorAll('[data-fav-section]').forEach(b=>b.addEventListener('click',()=>{
-    const sid=b.dataset.favSection;
-    const sec=data.sections?.find(({s})=>s.id===sid);
-    const entry=sec?.entry;
-    const id=favId(child.firstName,'section',sid);
-    const refsHtml=(entry?.references||[]).map(r=>refLink(r)).join('');
-    toggleFavorite({id,childName:child.firstName,childAge:data.ageLabel,type:'section',typeLabel:sec?.s?.label||sid,title:entry?.title||sec?.s?.label||'',summary:entry?.detail||'',refsHtml,refsColorBg:sec?.s?.colorBg||'acc-blue',date:new Date().toISOString(),canShare:true,shareData:{headerBg:'#3D5570',accentColor:'#2D4A8A',categoryLabel:sec?.s?.label||'',title:entry?.title||'',body:entry?.detail||'',ageLabel:data.ageLabel}});
+    const x=shownSection(b.dataset.favSection);
+    const id=favId(child.firstName,'section',x.key);
+    const refsHtml=x.refs.map(r=>refLink(r)).join('');
+    const body=[x.summary,x.detail].filter(Boolean).join('\n\n');
+    toggleFavorite({id,childName:child.firstName,childAge:data.ageLabel,type:'section',typeLabel:x.label||'',title:x.title||x.label||'',summary:body,refsHtml,refsColorBg:x.s?.colorBg||'acc-blue',date:new Date().toISOString(),canShare:true,shareData:{headerBg:'#3D5570',accentColor:'#2D4A8A',categoryLabel:x.label||'',title:x.title||'',body:x.summary||x.detail||'',ageLabel:data.ageLabel}});
     render();
   }));
   // Section share (dans le modal)
   document.querySelectorAll('[data-share-section]').forEach(b=>b.addEventListener('click',()=>{
-    const sid=b.dataset.shareSection;
-    const sec=data.sections?.find(({s})=>s.id===sid);
-    const entry=sec?.entry;
-    shareCardCanvas(child,{headerBg:'#3D5570',accentColor:'#2D4A8A',categoryLabel:sec?.s?.label||'',title:entry?.title||'',body:entry?.detail||'',ageLabel:data.ageLabel});
+    const x=shownSection(b.dataset.shareSection);
+    shareCardCanvas(child,{headerBg:'#3D5570',accentColor:'#2D4A8A',categoryLabel:x.label||'',title:x.title||'',body:x.summary||x.detail||'',ageLabel:data.ageLabel});
   }));
   // Conseil du jour like/share (dans le modal)
   document.querySelector('[data-fav-conseil]')?.addEventListener('click',()=>{
     const ms=data.milestone;
-    const id=favId(child.firstName,'conseil','conseil');
+    const id=favId(child.firstName,'conseil',ms?.tip);
     const refsHtml=[
       refLink('Brazelton, T. B. & Greenspan, S. I. (2000). The Irreducible Needs of Children.'),
       refLink('Gopnik, A., Meltzoff, A. N. & Kuhl, P. K. (1999). The Scientist in the Crib.'),
       refLink('AAP (2023). Caring for Your Baby and Young Child.')
     ].join('');
-    toggleFavorite({id,childName:child.firstName,childAge:data.ageLabel,type:'conseil',typeLabel:'Conseil du jour',title:ms?.tip||'',summary:ms?.details||ms?.tip||'',refsHtml,refsColorBg:'acc-amber',date:new Date().toISOString(),canShare:true,shareData:{headerBg:'#A06C2A',accentColor:'#A06C2A',categoryLabel:'Conseil du jour',title:ms?.tip||'',body:ms?.details||ms?.tip||'',ageLabel:data.ageLabel}});
+    toggleFavorite({id,childName:child.firstName,childAge:data.ageLabel,type:'conseil',typeLabel:'Conseil du jour',title:ms?.tip||'',summary:ms?.details||ms?.tip||'',refsHtml,refsColorBg:'acc-amber',date:new Date().toISOString(),canShare:true,shareData:{headerBg:'#A06C2A',accentColor:'#A06C2A',categoryLabel:tr('Conseil du jour','Tip of the day'),title:ms?.tip||'',body:ms?.details||ms?.tip||'',ageLabel:data.ageLabel}});
     render();
   });
   document.querySelector('[data-share-conseil]')?.addEventListener('click',()=>{
     const ms=data.milestone;
-    shareCardCanvas(child,{headerBg:'#A06C2A',accentColor:'#A06C2A',categoryLabel:'Conseil du jour',title:ms?.tip||'',body:ms?.details||ms?.tip||'',ageLabel:data.ageLabel});
+    shareCardCanvas(child,{headerBg:'#A06C2A',accentColor:'#A06C2A',categoryLabel:tr('Conseil du jour','Tip of the day'),title:ms?.tip||'',body:ms?.details||ms?.tip||'',ageLabel:data.ageLabel});
   });
   // Caroline like/share (dans le modal)
   document.querySelector('[data-fav-caroline]')?.addEventListener('click',()=>{
     const ce=getCarolineEntry(data.ageInMonths,data.doy);
-    const id=favId(child.firstName,'caroline','caroline');
+    const id=favId(child.firstName,'caroline',ce?.topic);
     const refLabel=ce?.ref?.label||'';
     const refSearch='Caroline Goldman '+refLabel;
     const refText=refLabel.includes('Comprendre et accompagner')?'Caroline Goldman — Comprendre et accompagner les enfants difficiles (Odile Jacob)':refLabel;
     const refsHtml=refLink(refText,refSearch)+(ce?.ref?.detail?`<p style="font-size:0.75rem;color:#5C5752;line-height:1.65;margin-top:6px;padding:0 4px">${e(ce.ref.detail)}</p>`:'');
-    toggleFavorite({id,childName:child.firstName,childAge:data.ageLabel,type:'caroline',typeLabel:'Caroline Goldman',title:ce?.topic||'',summary:ce?.advice||ce?.tip||'',refsHtml,refsColorBg:'acc-sage',date:new Date().toISOString(),canShare:true,shareData:{headerBg:'#3A5E38',accentColor:'#3A5E38',categoryLabel:'Conseil de Caroline Goldman',title:ce?.topic||'',body:ce?.advice||ce?.tip||'',ageLabel:data.ageLabel}});
+    toggleFavorite({id,childName:child.firstName,childAge:data.ageLabel,type:'caroline',typeLabel:'Caroline Goldman',title:ce?.topic||'',summary:ce?.advice||ce?.tip||'',refsHtml,refsColorBg:'acc-sage',date:new Date().toISOString(),canShare:true,shareData:{headerBg:'#3A5E38',accentColor:'#3A5E38',categoryLabel:tr('Conseil de Caroline Goldman','Caroline Goldman\'s advice'),title:ce?.topic||'',body:ce?.advice||ce?.tip||'',ageLabel:data.ageLabel}});
     render();
   });
   document.querySelector('[data-share-caroline]')?.addEventListener('click',()=>{
     const ce=getCarolineEntry(data.ageInMonths,data.doy);
-    shareCardCanvas(child,{headerBg:'#3A5E38',accentColor:'#3A5E38',categoryLabel:'Conseil de Caroline Goldman',title:ce?.topic||'',body:ce?.advice||ce?.tip||'',ageLabel:data.ageLabel});
+    shareCardCanvas(child,{headerBg:'#3A5E38',accentColor:'#3A5E38',categoryLabel:tr('Conseil de Caroline Goldman','Caroline Goldman\'s advice'),title:ce?.topic||'',body:ce?.advice||ce?.tip||'',ageLabel:data.ageLabel});
   });
   // Unfav depuis la section favoris
   document.querySelectorAll('[data-unfav]').forEach(b=>b.addEventListener('click',()=>{
@@ -5016,9 +5002,9 @@ function bind(child,data){
   document.querySelectorAll('[data-share-fav]').forEach(b=>b.addEventListener('click',()=>{
     const fav=getFavorites().find(f=>String(f.id)===b.dataset.shareFav);
     if(!fav)return;
-    if(fav.type==='controverse'&&fav.ctrv){shareTextContent('Controverse — '+fav.ctrv.topic,ctrvFullText(fav.ctrv));return;}
-    if(fav.type==='creuser'&&fav.blocks){shareTextContent('Creuser — '+fav.title,diveFullText({q:fav.title,blocks:fav.blocks,sources:fav.diveSources}));return;}
-    if(fav.type==='zoecamps'&&fav.campsData){shareTextContent('Les écoles divergent — '+fav.title,zoeCampsFullText({creuserLabel:fav.title,camps:fav.campsData}));return;}
+    if(fav.type==='controverse'&&fav.ctrv){shareTextContent(tr('Controverse — ','Debate — ')+fav.ctrv.topic,ctrvFullText(fav.ctrv));return;}
+    if(fav.type==='creuser'&&fav.blocks){shareTextContent(tr('Creuser — ','Deep dive — ')+fav.title,diveFullText({q:fav.title,blocks:fav.blocks,sources:fav.diveSources}));return;}
+    if(fav.type==='zoecamps'&&fav.campsData){shareTextContent(tr('Les écoles divergent — ','Schools of thought diverge — ')+fav.title,zoeCampsFullText({creuserLabel:fav.title,camps:fav.campsData}));return;}
     if(fav.type==='observe'&&fav.obsData){shareTextContent('Observation — '+fav.title,obsShareText(fav.obsData));return;}
     if(fav.shareData)shareCardCanvas(child,{...fav.shareData});
   }));
@@ -5052,9 +5038,9 @@ function bind(child,data){
   document.querySelector('[data-share-fav-detail]')?.addEventListener('click',()=>{
     const it=S.favDetailItem;if(!it)return;
     if(it.type==='observe'&&it.obsData){shareTextContent('Observation — '+it.title,obsShareText(it.obsData));return;}
-    if(it.type==='controverse'&&it.ctrv){shareTextContent('Controverse — '+it.ctrv.topic,ctrvFullText(it.ctrv));return;}
-    if(it.type==='creuser'&&it.blocks){shareTextContent('Creuser — '+it.title,diveFullText({q:it.title,blocks:it.blocks,sources:it.diveSources}));return;}
-    if(it._kind==='saved'){const text=it.question+'\n\n'+it.answer+'\n\n— Zoé via BébéPilote';shareTextContent('Zoé — BébéPilote',text);return;}
+    if(it.type==='controverse'&&it.ctrv){shareTextContent(tr('Controverse — ','Debate — ')+it.ctrv.topic,ctrvFullText(it.ctrv));return;}
+    if(it.type==='creuser'&&it.blocks){shareTextContent(tr('Creuser — ','Deep dive — ')+it.title,diveFullText({q:it.title,blocks:it.blocks,sources:it.diveSources}));return;}
+    if(it._kind==='saved'){const text=it.question+'\n\n'+it.answer+'\n\n— Zoé via BébéPilote';shareTextContent(tr('Zoé — BébéPilote','Zoé — BébéPilote'),text);return;}
     if(it.shareData)shareCardCanvas(child,{...it.shareData});
   });
   document.querySelectorAll('[data-hist]').forEach(b=>b.addEventListener('click',()=>{const d=b.dataset.hist;S.histExp[d]=!S.histExp[d];render();}));
@@ -5082,11 +5068,11 @@ function bind(child,data){
   document.querySelector('[data-fav-ctrvview]')?.addEventListener('click',()=>{
     const d=S.viewCtrv;if(!d)return;
     const isoDate=S.viewCtrvDate?new Date(S.viewCtrvDate+'T12:00:00').toISOString():new Date().toISOString();
-    toggleFavorite({id:favId(child.firstName,'controverse',d.topic),childName:child.firstName,childAge:data.ageLabel,type:'controverse',typeLabel:'Controverse',title:d.question,summary:d.why_now,ctrv:d,refsColorBg:'acc-plum',date:isoDate,canShare:true,shareData:{headerBg:'#A06C2A',accentColor:'#A06C2A',categoryLabel:'Controverse · '+d.topic,title:d.question,body:ctrvShareText(d),ageLabel:data.ageLabel}});
+    toggleFavorite({id:favId(child.firstName,'controverse',d.topic),childName:child.firstName,childAge:data.ageLabel,type:'controverse',typeLabel:'Controverse',title:d.question,summary:d.why_now,ctrv:d,refsColorBg:'acc-plum',date:isoDate,canShare:true,shareData:{headerBg:'#A06C2A',accentColor:'#A06C2A',categoryLabel:tr('Controverse · ','Debate · ')+d.topic,title:d.question,body:ctrvShareText(d),ageLabel:data.ageLabel}});
     render();
   });
   document.querySelector('[data-share-ctrvview]')?.addEventListener('click',()=>{
-    const d=S.viewCtrv;if(!d)return;shareTextContent('Controverse — '+d.topic,ctrvFullText(d));
+    const d=S.viewCtrv;if(!d)return;shareTextContent(tr('Controverse — ','Debate — ')+d.topic,ctrvFullText(d));
   });
   // Charger une conversation (drawer + modal)
   let longPressTimer=null;
@@ -5126,12 +5112,12 @@ function bind(child,data){
   document.getElementById('toggle-apilog')?.addEventListener('change',ev=>{S.showApiLog=ev.target.checked;localStorage.setItem('bebeShowApiLog',S.showApiLog?'true':'false');if(!S.showApiLog&&S.tab==='apilog')S.tab='today';render();});
   document.querySelectorAll('[data-goto-apilog]').forEach(b=>b.addEventListener('click',()=>{if(!S.showApiLog)return;S.modal=null;S.tab='apilog';S.drawer=false;render();}));
   document.getElementById('btn-clear-apilog')?.addEventListener('click',()=>{S.apiLog=[];render();});
-  document.querySelectorAll('[data-copy-log]').forEach(b=>b.addEventListener('click',()=>{const idx=+b.dataset.copyLog;const entry=S.apiLog[idx];if(!entry)return;const txt=[`=== API LOG ===`,`Date: ${entry.ts}`,`Provider: ${entry.provider}`,`Model: ${entry.model||''}`,`Endpoint: ${entry.endpoint}`,`Status: ${entry.status}`,`Duration: ${entry.duration}ms`,``,`--- REQUEST ---`,entry.reqSystem?`System:\n${entry.reqSystem}`:'(no system)',``,entry.reqUserMsg?`User:\n${entry.reqUserMsg}`:'',``,`--- RESPONSE ---`,entry.respText||entry.error||'(empty)'].join('\n');navigator.clipboard?.writeText(txt).then(()=>toast('Copié !'),()=>toast('Impossible de copier'));}));
-  document.querySelectorAll('[data-expand-log]').forEach(b=>b.addEventListener('click',()=>{const idx=+b.dataset.expandLog;const entry=S.apiLog[idx];if(!entry)return;const el=document.getElementById('log-resp-'+idx);const lbl=document.getElementById('log-expand-lbl-'+idx);if(!el)return;if(el.classList.contains('expanded')){el.textContent=entry.respText.substring(0,300)+'…';el.classList.remove('expanded');if(lbl)lbl.textContent='Voir tout';}else{el.textContent=entry.respText;el.classList.add('expanded');if(lbl)lbl.textContent='Réduire';}}));
+  document.querySelectorAll('[data-copy-log]').forEach(b=>b.addEventListener('click',()=>{const idx=+b.dataset.copyLog;const entry=S.apiLog[idx];if(!entry)return;const txt=[`=== API LOG ===`,`Date: ${entry.ts}`,`Provider: ${entry.provider}`,`Model: ${entry.model||''}`,`Endpoint: ${entry.endpoint}`,`Status: ${entry.status}`,`Duration: ${entry.duration}ms`,``,`--- REQUEST ---`,entry.reqSystem?`System:\n${entry.reqSystem}`:'(no system)',``,entry.reqUserMsg?`User:\n${entry.reqUserMsg}`:'',``,`--- RESPONSE ---`,entry.respText||entry.error||'(empty)'].join('\n');navigator.clipboard?.writeText(txt).then(()=>toast(tr('Copié !','Copied!')),()=>toast(tr('Impossible de copier','Could not copy')));}));
+  document.querySelectorAll('[data-expand-log]').forEach(b=>b.addEventListener('click',()=>{const idx=+b.dataset.expandLog;const entry=S.apiLog[idx];if(!entry)return;const el=document.getElementById('log-resp-'+idx);const lbl=document.getElementById('log-expand-lbl-'+idx);if(!el)return;if(el.classList.contains('expanded')){el.textContent=entry.respText.substring(0,300)+'…';el.classList.remove('expanded');if(lbl)lbl.textContent=tr('Voir tout','Show all');}else{el.textContent=entry.respText;el.classList.add('expanded');if(lbl)lbl.textContent=tr('Réduire','Collapse');}}));
   document.getElementById('anthropic-key-in')?.addEventListener('change',ev=>{saveAnthropicKey(ev.target.value.trim());S._claudeTest=null;S._claudeTestMsg=null;});
   document.getElementById('btn-test-claude')?.addEventListener('click',async()=>{
     const key=document.getElementById('anthropic-key-in')?.value.trim()||S.anthropicKey;
-    if(!key){S._claudeTest='err';S._claudeTestMsg='Entre une clé d\'abord';render();return;}
+    if(!key){S._claudeTest='err';S._claudeTestMsg=tr('Entre une clé d\'abord','Enter a key first');render();return;}
     saveAnthropicKey(key);
     S._claudeTest='loading';render();
     try{
@@ -5145,7 +5131,7 @@ function bind(child,data){
     }catch(e){
       console.error('[testClaude]',e);
       S._claudeTest='err';
-      S._claudeTestMsg=e instanceof TypeError?`Erreur réseau (${e.message}) — teste depuis GitHub Pages plutôt que localement`:e.message;
+      S._claudeTestMsg=e instanceof TypeError?tr(`Erreur réseau (${e.message}) — teste depuis GitHub Pages plutôt que localement`,`Network error (${e.message}) — test from GitHub Pages rather than locally`):e.message;
     }
     render();
   });
@@ -5161,6 +5147,32 @@ function bind(child,data){
   document.getElementById('chat-end')?.scrollIntoView({behavior:'instant'});
 }
 
+// Réattribue les données stockées quand le prénom ou la date de naissance d'un enfant change
+function migrateChildData(oldC,newC){
+  const on=oldC.firstName,nn=newC.firstName;
+  const jget=(k,def)=>{try{return JSON.parse(localStorage.getItem(k)||def);}catch{return JSON.parse(def);}};
+  if(on!==nn){
+    const favs=jget('bebeFavorites','[]').map(f=>f.childName!==on?f:{...f,childName:nn,id:String(f.id).startsWith(on+'|')?nn+String(f.id).slice(on.length):f.id});
+    lsSet('bebeFavorites',JSON.stringify(favs));
+    ['bebeSavedChats','bebeConversations','bebeCtrvHistory'].forEach(k=>{
+      const arr=jget(k,'[]');if(!arr.some(x=>x.childName===on))return;
+      lsSet(k,JSON.stringify(arr.map(x=>x.childName===on?{...x,childName:nn}:x)));
+    });
+    for(let i=localStorage.length-1;i>=0;i--){
+      const k=localStorage.key(i);if(!k||!k.startsWith('bebeCtrv_v2_'))continue;
+      for(const p of ['gemini','anthropic']){
+        const pre='bebeCtrv_v2_'+p+'_'+on+'_';
+        if(k.startsWith(pre)&&/^\d{4}-\d{2}-\d{2}_[a-z]+$/.test(k.slice(pre.length))){
+          lsSet('bebeCtrv_v2_'+p+'_'+nn+'_'+k.slice(pre.length),localStorage.getItem(k));localStorage.removeItem(k);
+        }
+      }
+    }
+  }
+  const ok=milestoneKey(oldC),nk=milestoneKey(newC);
+  if(ok!==nk)['bebeMilestones','bebeObservations'].forEach(k=>{
+    const all=jget(k,'{}');if(!all[ok])return;all[nk]=all[ok];delete all[ok];lsSet(k,JSON.stringify(all));
+  });
+}
 function bindChildForm(){
   const cfSave=document.getElementById('cf-save');if(!cfSave)return;
   const isEdit=S.modal==='editChild';
@@ -5170,7 +5182,7 @@ function bindChildForm(){
   cfSave.addEventListener('click',()=>{
     const n=document.getElementById('cf-name').value.trim(),d=document.getElementById('cf-date').value;
     if(!n||!d||!g)return;
-    if(isEdit){S.children[S.modalChildIdx]={firstName:n,birthDate:d,gender:g};}
+    if(isEdit){const old=S.children[S.modalChildIdx];S.children[S.modalChildIdx]={firstName:n,birthDate:d,gender:g};if(old)migrateChildData(old,S.children[S.modalChildIdx]);}
     else{S.children.push({firstName:n,birthDate:d,gender:g});S.childIdx=S.children.length-1;}
     saveKids();S.modal=null;render();
   });
@@ -5193,11 +5205,14 @@ function bindMsgActions(child){
   document.querySelectorAll('[data-msg-like]').forEach(b=>b.addEventListener('click',()=>{
     const idx=+b.dataset.msgLike,m=S.chat.msgs[idx];if(!m)return;
     m.liked=!m.liked;
+    const q=(S.chat.msgs[idx-1]||{}).content||'';
     if(m.liked){
       // Store as liked example for future AI improvement
-      const q=(S.chat.msgs[idx-1]||{}).content||'';
       const existing=getSavedChats().filter(x=>x.childName===child.firstName&&x.question===q&&x.liked);
       if(!existing.length)addSavedChat({id:Date.now(),childName:child.firstName,question:q,answer:m.content,refs:m.refs||[],liked:true,date:new Date().toISOString()});
+    }else{
+      const ex=getSavedChats().find(x=>x.childName===child.firstName&&x.question===q&&x.answer===m.content&&x.liked);
+      if(ex)deleteSavedChat(ex.id);
     }
     patchChatMsgs();
   }));
@@ -5234,14 +5249,14 @@ function bindMsgActions(child){
     if(isFavorited(fid)){
       const favs=getFavorites();const i=favs.findIndex(f=>f.id===fid);if(i>=0)favs.splice(i,1);localStorage.setItem('bebeFavorites',JSON.stringify(favs));
     }else{
-      toggleFavorite({id:fid,childName:child.firstName,childAge:data?.ageLabel||'',type:'zoecamps',typeLabel:'Débat Zoé',title:m.creuserLabel,summary:question,campsData:m.camps,refsColorBg:'acc-honey',date:new Date().toISOString(),canShare:true});
+      toggleFavorite({id:fid,childName:child.firstName,childAge:childData(child).ageLabel||'',type:'zoecamps',typeLabel:'Débat Zoé',title:m.creuserLabel,summary:question,campsData:m.camps,refsColorBg:'acc-honey',date:new Date().toISOString(),canShare:true});
     }
     patchChatMsgs();
   }));
   // Zoé camps — share
   document.querySelectorAll('[data-zoe-camps-share]').forEach(b=>b.addEventListener('click',()=>{
     const idx=+b.dataset.zoeCampsShare,m=S.chat.msgs[idx];if(!m||!m.camps)return;
-    shareTextContent('Les écoles divergent — '+m.creuserLabel,zoeCampsFullText(m));
+    shareTextContent(tr('Les écoles divergent — ','Schools of thought diverge — ')+m.creuserLabel,zoeCampsFullText(m));
   }));
   // Share saved (in modal)
   document.querySelectorAll('[data-share-saved]').forEach(b=>b.addEventListener('click',()=>{
@@ -5281,6 +5296,17 @@ function bindChat(child,data){
   bindMsgActions(child);
 }
 
+// Historique envoyé au modèle : sans les bulles d'erreur ni les messages vides, en alternance user/assistant stricte
+function chatHistoryForApi(){
+  const out=[];
+  for(const m of S.chat.msgs){
+    if(m.error||!m.content||!m.content.trim())continue;
+    if(out.length&&out[out.length-1].role===m.role){out[out.length-1].content+='\n\n'+m.content;continue;}
+    out.push({role:m.role,content:m.content});
+  }
+  while(out.length&&out[0].role!=='user')out.shift();
+  return out;
+}
 async function sendMsg(txt,child,data){
   if(!txt.trim()||S.chat.loading)return;
   const useAnthropic=S.provider==='anthropic';
@@ -5423,30 +5449,31 @@ Ne mets ce marker QUE si le sujet est réellement débattu entre spécialistes. 
   try{
     let res;
     if(useAnthropic){
-      const messages=S.chat.msgs.map(m=>({role:m.role,content:m.content}));
+      const messages=chatHistoryForApi();
       res=await fetch('https://api.anthropic.com/v1/messages',{
         method:'POST',headers:anthropicHeaders(),
         body:JSON.stringify({model:ANTHROPIC_MODEL,max_tokens:1500,stream:true,system:sys,messages})
       });
-      if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`Erreur ${res.status}`);}
+      if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`${tr('Erreur','Error')} ${res.status}`);}
       const reader=res.body.getReader();
       let eventType='';
       while(true){
         const{done,value}=await reader.read();if(done)break;
         for(const l of parseStream(reader_dec.decode(value,{stream:true}))){
           if(l.startsWith('event: ')){eventType=l.slice(7).trim();continue;}
+          if(l.startsWith('data: ')&&eventType==='error'){let msg=tr('Erreur du serveur','Server error');try{msg=JSON.parse(l.slice(6)).error?.message||msg;}catch{}throw new Error(msg);}
           if(l.startsWith('data: ')&&eventType==='content_block_delta'){
             try{const p=JSON.parse(l.slice(6).trim());if(p.delta?.type==='text_delta'&&p.delta.text)flushStream(p.delta.text);}catch{}
           }
         }
       }
     }else{
-      const contents=S.chat.msgs.map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]}));
+      const contents=chatHistoryForApi().map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]}));
       res=await fetch(geminiUrl('streamGenerateContent')+'&alt=sse',{
         method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents})
       });
-      if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`Erreur ${res.status}`);}
+      if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`${tr('Erreur','Error')} ${res.status}`);}
       const reader=res.body.getReader();
       while(true){
         const{done,value}=await reader.read();if(done)break;
@@ -5462,12 +5489,13 @@ Ne mets ce marker QUE si le sujet est réellement débattu entre spécialistes. 
     const creuserMatch=full.match(/---CREUSER---\s*\n?(.+)/);
     const creuserLabel=creuserMatch?creuserMatch[1].trim():null;
     const content=full.split('---REFS---')[0].split('---CREUSER---')[0].trim();
+    if(!content)throw new Error(S.lang==='en'?'Empty answer from the model — try rephrasing.':'Réponse vide du modèle — reformule ta question.');
     S.chat.msgs.push({role:'assistant',content,refs,liked:false,saved:false,creuserLabel,camps:null,campLoading:false});
     addApiLog({ts:new Date().toISOString(),provider:useAnthropic?'anthropic':'gemini',endpoint:'chat',status:'ok',model:useAnthropic?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_logT0,reqMsgs:S.chat.msgs.filter(m=>m.role==='user').length,reqSystem:sys,reqUserMsg:txt.trim(),respText:content,error:null});
     S.chat.stream='';S.chat.loading=false;autoSaveConv(child);render();
   }catch(err){
     addApiLog({ts:new Date().toISOString(),provider:useAnthropic?'anthropic':'gemini',endpoint:'chat',status:'error',model:useAnthropic?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-_logT0,reqMsgs:S.chat.msgs.filter(m=>m.role==='user').length,reqSystem:sys,reqUserMsg:txt.trim(),respText:'',error:netErrMsg(err)});
-    S.chat.msgs.push({role:'assistant',content:`Oups, une erreur s'est produite : ${netErrMsg(err)}`,refs:[],liked:false,saved:false});
+    S.chat.msgs.push({role:'assistant',content:tr(`Oups, une erreur s'est produite : ${netErrMsg(err)}`,`Oops, something went wrong: ${netErrMsg(err)}`),refs:[],liked:false,saved:false,error:true});
     S.chat.stream='';S.chat.loading=false;render();
   }
 }
@@ -5483,101 +5511,12 @@ function patchChatMsgs(){
   bindMsgActions(S.children[S.childIdx]);
 }
 
-// ═══════════════════════ SHARE ═══════════════════════
-function wrapText(ctx,text,x,y,maxW,lineH){
-  const words=text.split(' ');let line='',lines=[];
-  for(const w of words){const t=line?line+' '+w:w;if(ctx.measureText(t).width>maxW&&line){lines.push(line);line=w;}else line=t;}
-  lines.push(line);
-  lines.forEach((l,i)=>ctx.fillText(l,x,y+i*lineH));
-  return lines.length;
-}
-
-async function shareHighlight(child,data){
-  const{neuron,ageLabel,milestone}=data;
-  const cv=document.createElement('canvas');
-  const W=600,H=820,dpr=Math.min(window.devicePixelRatio||1,2);
-  cv.width=W*dpr;cv.height=H*dpr;
-  const ctx=cv.getContext('2d');ctx.scale(dpr,dpr);
-  await document.fonts.ready;
-
-  // Background
-  ctx.fillStyle='#F2F0EB';ctx.fillRect(0,0,W,H);
-
-  // Blue header
-  ctx.fillStyle='#3D5570';ctx.fillRect(0,0,W,220);
-
-  // Subtle circles deco
-  ctx.save();ctx.globalAlpha=.07;ctx.fillStyle='#fff';
-  ctx.beginPath();ctx.arc(560,0,170,0,Math.PI*2);ctx.fill();
-  ctx.beginPath();ctx.arc(-20,220,110,0,Math.PI*2);ctx.fill();
-  ctx.restore();
-
-  // Header label
-  ctx.fillStyle='rgba(255,255,255,.65)';ctx.font='600 12px "DM Sans",sans-serif';
-  ctx.textAlign='center';ctx.fillText('HIGHLIGHT DU JOUR',W/2,58);
-
-  // Child name
-  ctx.fillStyle='#fff';ctx.font='500 56px "Cormorant Garamond",serif';
-  ctx.fillText(child.firstName,W/2,128);
-
-  // Age
-  ctx.fillStyle='rgba(255,255,255,.7)';ctx.font='400 16px "DM Sans",sans-serif';
-  ctx.fillText(ageLabel,W/2,164);
-
-  // White card
-  ctx.fillStyle='#fff';
-  const cr=16;const cx=32,cy=240,cw=W-64,ch=320;
-  ctx.beginPath();ctx.moveTo(cx+cr,cy);ctx.arcTo(cx+cw,cy,cx+cw,cy+ch,cr);ctx.arcTo(cx+cw,cy+ch,cx,cy+ch,cr);ctx.arcTo(cx,cy+ch,cx,cy,cr);ctx.arcTo(cx,cy,cx+cw,cy,cr);ctx.closePath();
-  ctx.shadowColor='rgba(0,0,0,.07)';ctx.shadowBlur=20;ctx.fill();ctx.shadowBlur=0;
-
-  // Neuron count
-  ctx.fillStyle='#2D4A8A';ctx.font='700 44px "DM Sans",sans-serif';ctx.textAlign='center';
-  ctx.fillText('+'+fmt(neuron.daily),W/2,310);
-  ctx.fillStyle='#9C9790';ctx.font='400 14px "DM Sans",sans-serif';
-  ctx.fillText('connexions neuronales aujourd\'hui',W/2,338);
-
-  // Separator
-  ctx.strokeStyle='#F2F0EB';ctx.lineWidth=1;
-  ctx.beginPath();ctx.moveTo(cx+24,365);ctx.lineTo(cx+cw-24,365);ctx.stroke();
-
-  // Milestone
-  if(milestone){
-    ctx.fillStyle='#1A1918';ctx.font='400 20px "Cormorant Garamond",serif';ctx.textAlign='center';
-    wrapText(ctx,milestone.fact,W/2,400,cw-64,30);
-  }
-
-  // Total
-  ctx.fillStyle='#B0A89E';ctx.font='400 13px "DM Sans",sans-serif';ctx.textAlign='center';
-  ctx.fillText('Total : '+fmt(neuron.total)+' connexions',W/2,540);
-
-  // Bottom branding
-  ctx.fillStyle='#E2DFD9';ctx.lineWidth=1;
-  ctx.beginPath();ctx.moveTo(80,640);ctx.lineTo(520,640);ctx.stroke();
-  ctx.fillStyle='#3D5570';ctx.font='500 22px "Cormorant Garamond",serif';
-  ctx.fillText('BébéPilote',W/2,680);
-  ctx.fillStyle='#C4BFB8';ctx.font='400 12px "DM Sans",sans-serif';
-  ctx.fillText(new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'}),W/2,704);
-
-  cv.toBlob(async blob=>{
-    const file=new File([blob],`bebepilote-${child.firstName}.png`,{type:'image/png'});
-    try{
-      if(navigator.share&&navigator.canShare?.({files:[file]})){
-        await navigator.share({files:[file],title:`${child.firstName} — BébéPilote`});
-      }else{
-        const url=URL.createObjectURL(blob),a=document.createElement('a');
-        a.href=url;a.download=`bebepilote-${child.firstName}.png`;
-        document.body.appendChild(a);a.click();
-        setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},200);
-      }
-    }catch(err){if(err.name!=='AbortError')console.warn(err);}
-  },'image/png');
-}
-
 initTheme();
 initLang();
 initFontSize();
 initKeyboardAwareness();
 migrateFavIds();
+for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k&&k.startsWith('bebeNH_'))localStorage.removeItem(k);}
 render();
 
 function initKeyboardAwareness(){
