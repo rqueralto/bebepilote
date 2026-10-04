@@ -440,6 +440,33 @@ a{color:#2D4A8A}
 .truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .italic{font-style:italic}
 em{font-style:italic}
+/* ── Il pleure, là ── */
+.cry-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.cry-chip{font-size:0.75rem;color:var(--c-t2);background:var(--c-bg2);border:1px solid var(--c-bd2);border-radius:14px;padding:6px 11px;text-align:left;cursor:pointer;transition:background .12s,border-color .12s}
+.cry-chip.on{background:#F7ECEF;border-color:#D9A9B7;color:#A04060;font-weight:600}
+[data-theme="dark"] .cry-chip.on{background:#2A1820;border-color:#6A3A4A;color:#E0A0B8}
+.cry-h{font-size:0.6875rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--c-t4);margin-bottom:8px}
+.cry-rec-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:100%;padding:26px 16px;border-radius:16px;background:#F7ECEF;color:#A04060;font-weight:600;font-size:0.9375rem;border:1px dashed #D9A9B7;cursor:pointer}
+.cry-rec-btn svg{width:30px;height:30px}
+[data-theme="dark"] .cry-rec-btn{background:#2A1820;color:#E0A0B8;border-color:#6A3A4A}
+.cry-rec-box{text-align:center;padding:10px 0}
+.cry-level-track{height:10px;border-radius:99px;background:var(--c-bg3);overflow:hidden}
+.cry-level{height:100%;width:0;background:#A04060;border-radius:99px;transition:width .1s}
+.cry-alert{display:flex;gap:10px;align-items:flex-start;background:rgba(160,56,40,.09);color:#A03828;border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:0.8125rem;line-height:1.55;font-weight:600}
+.cry-alert svg{flex-shrink:0;margin-top:2px}
+.cry-alert p+p{margin-top:6px}
+[data-theme="dark"] .cry-alert{background:rgba(224,138,120,.12);color:#E08A78}
+.cry-hyp{border:1px solid var(--c-bd);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.cry-lk{height:4px;background:var(--c-bg3);border-radius:99px;overflow:hidden}
+.cry-lk>div{height:100%;border-radius:99px}
+.cry-head-btn{font-size:0.75rem;font-weight:600;color:var(--c-t3);background:var(--c-bg3);border-radius:8px;padding:6px 10px}
+.cry-bars{display:flex;align-items:flex-end;gap:8px;height:90px;padding:4px 2px 0}
+.cry-bar-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:4px}
+.cry-bar{width:100%;min-height:2px;background:#C88AA0;border-radius:5px 5px 2px 2px}
+.cry-bar-col span{font-size:0.625rem;color:var(--c-t4)}
+.cry-log-row{display:flex;align-items:center;gap:8px;padding:9px 0;border-top:1px solid var(--c-bd);font-size:0.75rem;color:var(--c-t2)}
+.cry-log-row>span:first-child{color:var(--c-t4);white-space:nowrap}
+.cry-log-row>span:nth-child(2){flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -719,7 +746,7 @@ activite:[
 
 const _sw='stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
 const _ico=(path,extra='')=>`<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" ${_sw} ${extra}>${path}</svg>`;
-const VERSION='1.4.2';
+const VERSION='1.5.0';
 const ALL_SECTIONS=[
   {id:'langage',  label:'Langage & Communication',  label_en:'Language & Communication', icon:_ico('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/>'),colorBg:'acc-blue',  colorText:'acc-blue'},
   {id:'motricite',label:'La Motricité',              label_en:'Motor Skills',              icon:_ico('<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>'),colorBg:'acc-green', colorText:'acc-green'},
@@ -2345,6 +2372,7 @@ const S={
   flags:{controverse:true},
   controverse:{loading:false,error:null,data:null,childKey:null,dive:{open:false,items:[],loading:false,error:null}},
   observe:{loading:false,error:null,result:null,text:''},
+  cry:null,
   apiLog:[],
   showApiLog:localStorage.getItem('bebeShowApiLog')==='true',
 };
@@ -3263,6 +3291,332 @@ function renderObserveResult(child,data,r){
   `;
 }
 
+// ═══════════════════════ "IL PLEURE, LÀ" ═══════════════════════
+// Le son est analysé sur l'appareil (Web Audio) ; seules des mesures sont envoyées à l'IA, jamais l'audio.
+const CRY_MAX_SEC=20;
+const CRY_SINCE_MIN={lt5:3,'5to20':12,'20to60':40,gt60:75};
+function cryOpts(en,child){
+  const g=child?.gender==='girl';
+  return{
+    fed:[['lt1',en?'< 1 h':'< 1 h'],['1to2',en?'1–2 h':'1 à 2 h'],['2to3',en?'2–3 h':'2 à 3 h'],['gt3',en?'> 3 h':'> 3 h']],
+    since:[['lt5',en?'< 5 min':'< 5 min'],['5to20',en?'5–20 min':'5 à 20 min'],['20to60',en?'20–60 min':'20 à 60 min'],['gt60',en?'> 1 h':'> 1 h']],
+    signs:[['rooting',en?'Roots / sucks hands':'Cherche le sein, tète ses mains'],['fists',en?'Clenched fists':'Poings serrés'],
+      ['legs',en?'Pulls legs up, hard belly':'Ramène les jambes, ventre dur'],['arch',en?'Arches back':(g?'Se cambre':'Se cambre')],
+      ['tired',en?'Yawns, rubs eyes':'Bâille, se frotte les yeux'],['gas',en?'Burps / gas':'Rots, gaz'],['diaper',en?'Wet or dirty nappy':'Couche mouillée ou sale'],
+      ['fever',en?'Feels hot / fever':(g?'Semble chaude, fièvre':'Semble chaud, fièvre')],['unusual',en?'Unusual cry (very high or weak)':'Pleur inhabituel (très aigu ou faible)'],
+      ['refuse',en?'Refuses to feed':'Refuse de boire'],['vomit',en?'Projectile vomiting':'Vomit en jet']],
+    tried:[['feed',en?'Feed':'Tétée / biberon'],['change',en?'Nappy change':'Change'],['rock',en?'Rocking':'Bercer'],['skin',en?'Skin-to-skin':'Peau à peau'],
+      ['burp',en?'Burping':'Faire le rot'],['dummy',en?'Dummy':'Tétine'],['noise',en?'Walk / white noise':'Promenade, bruit blanc']],
+    outcome:[['hunger',en?'Hunger':'Faim'],['gas',en?'Gas / burp':'Gaz, rot'],['sleep',en?'Tiredness':'Sommeil'],['diaper',en?'Nappy':'Change'],
+      ['contact',en?'Being held':'Les bras, le contact'],['unknown',en?'Nothing / don\'t know':'Rien, je ne sais pas']],
+  };
+}
+function cryState(){return{step:'record',recording:false,elapsed:0,level:0,features:null,micError:null,answers:{fed:null,since:null,signs:[],tried:[]},loading:false,error:null,result:null,entryTs:null};}
+// ── Journal ──
+function getCries(child){try{return(JSON.parse(localStorage.getItem('bebeCries')||'{}'))[milestoneKey(child)]||[];}catch{return[];}}
+function saveCries(child,arr){let all;try{all=JSON.parse(localStorage.getItem('bebeCries')||'{}');}catch{all={};}all[milestoneKey(child)]=arr.slice(0,300);lsSet('bebeCries',JSON.stringify(all));}
+function addCry(child,entry){const a=getCries(child);a.unshift(entry);saveCries(child,a);}
+function updateCry(child,ts,patch){const a=getCries(child);const it=a.find(x=>x.ts===ts);if(it){Object.assign(it,patch);saveCries(child,a);}}
+function cryFlags(answers,ageDays){
+  const s=answers.signs||[];const flags=[];
+  if(s.includes('fever'))flags.push(ageDays<90?'fever_infant':'fever');
+  if(s.includes('unusual'))flags.push('unusual');
+  if(s.includes('refuse'))flags.push('refuse');
+  if(s.includes('vomit'))flags.push('vomit');
+  if(answers.since==='gt60'&&s.includes('unusual'))flags.push('long_unusual');
+  return flags;
+}
+function cryFlagText(f,en){
+  return({
+    fever_infant:en?'Fever before 3 months: take the temperature now. At 38 °C or above, call your doctor or emergency services (15 / 112 in France) without waiting.':'Fièvre avant 3 mois : prends sa température maintenant. À 38 °C ou plus, appelle ton médecin ou le 15 (ou le 112) sans attendre.',
+    fever:en?'Possible fever: take the temperature. If it is high, or if the child seems unwell, call your doctor.':'Fièvre possible : prends sa température. Si elle est élevée ou si l\'enfant semble mal, appelle ton médecin.',
+    unusual:en?'An unusual cry (very high-pitched, weak or moaning) is a reason to call your doctor, especially if it persists.':'Un pleur inhabituel (très aigu, faible ou geignard) justifie d\'appeler ton médecin, surtout s\'il persiste.',
+    refuse:en?'Refusing several feeds in a row at this age needs a medical opinion today.':'Refuser plusieurs tétées de suite à cet âge nécessite un avis médical dans la journée.',
+    vomit:en?'Projectile vomiting needs a medical opinion today.':'Des vomissements en jet nécessitent un avis médical dans la journée.',
+    long_unusual:en?'An unusual cry lasting over an hour: call your doctor.':'Un pleur inhabituel depuis plus d\'une heure : appelle ton médecin.',
+  })[f]||'';
+}
+// ── Analyse audio locale ──
+function cryPitch(buf,sr,rms){
+  const n=buf.length,minLag=Math.floor(sr/1500),maxLag=Math.min(Math.floor(sr/200),n-1);
+  let best=0,bestLag=0;
+  for(let lag=minLag;lag<=maxLag;lag++){let c=0;for(let i=0;i<n-lag;i++)c+=buf[i]*buf[i+lag];c/=(n-lag);if(c>best){best=c;bestLag=lag;}}
+  if(!bestLag||best/(rms*rms)<0.3)return 0;
+  return sr/bestLag;
+}
+function cryFeatures(frames,frameSec){
+  if(!frames.length)return null;
+  const maxRms=Math.max(...frames.map(f=>f.rms));
+  const thr=Math.max(0.015,maxRms*0.25);
+  const voiced=frames.map(f=>f.rms>=thr);
+  let bursts=0,cur=0;const lens=[];
+  voiced.forEach((v,i)=>{if(v){if(!voiced[i-1])bursts++;cur++;}else if(cur){lens.push(cur);cur=0;}});if(cur)lens.push(cur);
+  const vf=frames.filter((_,i)=>voiced[i]);
+  const f0=vf.map(f=>f.f0).filter(x=>x>0).sort((a,b)=>a-b);
+  const q=p=>f0.length?Math.round(f0[Math.min(f0.length-1,Math.floor(p*f0.length))]):null;
+  const db=x=>Math.round(20*Math.log10(Math.max(x,1e-6)));
+  const sec=frames.length*frameSec;
+  return{
+    recordedSec:Math.round(sec*10)/10,
+    cryRatio:Math.round(voiced.filter(Boolean).length/frames.length*100)/100,
+    bursts,burstsPerMin:sec?Math.round(bursts/sec*60):0,
+    avgBurstSec:lens.length?Math.round(lens.reduce((a,b)=>a+b,0)/lens.length*frameSec*10)/10:0,
+    meanDb:vf.length?db(vf.reduce((a,f)=>a+f.rms,0)/vf.length):null,peakDb:db(maxRms),
+    medianF0:q(0.5),p90F0:q(0.9),
+    highPitchShare:f0.length?Math.round(f0.filter(x=>x>1000).length/f0.length*100)/100:0,
+  };
+}
+let _cryRec=null;
+async function startCryRecording(){
+  const en=S.lang==='en';
+  if(!navigator.mediaDevices?.getUserMedia){S.cry.micError=tr('Micro indisponible sur cet appareil — réponds simplement aux questions.','Microphone unavailable on this device — just answer the questions.');S.cry.step='questions';render();return;}
+  let stream;
+  try{stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});}
+  catch{S.cry.micError=tr('Accès au micro refusé — tu peux répondre aux questions sans enregistrement.','Microphone access denied — you can answer the questions without a recording.');S.cry.step='questions';render();return;}
+  const ctx=new (window.AudioContext||window.webkitAudioContext)();
+  const src=ctx.createMediaStreamSource(stream);const an=ctx.createAnalyser();an.fftSize=2048;src.connect(an);
+  const buf=new Float32Array(an.fftSize);const frames=[];const frameSec=0.1;const t0=Date.now();
+  S.cry.recording=true;S.cry.elapsed=0;render();
+  const tick=()=>{
+    an.getFloatTimeDomainData(buf);
+    let s=0;for(let i=0;i<buf.length;i++)s+=buf[i]*buf[i];const rms=Math.sqrt(s/buf.length);
+    frames.push({rms,f0:rms>0.01?cryPitch(buf,ctx.sampleRate,rms):0});
+    const el=(Date.now()-t0)/1000;S.cry.elapsed=el;
+    const lv=document.getElementById('cry-level');if(lv)lv.style.width=Math.min(100,Math.round(rms*400))+'%';
+    const tm=document.getElementById('cry-timer');if(tm)tm.textContent=Math.floor(el)+' s / '+CRY_MAX_SEC+' s';
+    if(el>=CRY_MAX_SEC)stopCryRecording();
+  };
+  _cryRec={stream,ctx,frames,frameSec,timer:setInterval(tick,frameSec*1000)};
+}
+function stopCryRecording(){
+  if(!_cryRec)return;
+  const {stream,ctx,frames,frameSec,timer}=_cryRec;_cryRec=null;
+  clearInterval(timer);stream.getTracks().forEach(t=>t.stop());ctx.close().catch(()=>{});
+  S.cry.recording=false;S.cry.features=cryFeatures(frames,frameSec);S.cry.step='questions';render();
+}
+function cancelCryRecording(){if(_cryRec){const {stream,ctx,timer}=_cryRec;_cryRec=null;clearInterval(timer);stream.getTracks().forEach(t=>t.stop());ctx.close().catch(()=>{});}}
+// ── IA ──
+const CRY_TOOL_SCHEMA={type:'object',properties:{
+  headline:{type:'string'},
+  hypotheses:{type:'array',items:{type:'object',properties:{label:{type:'string'},likelihood:{type:'string',enum:['high','medium','low']},why:{type:'string'},kind:{type:'string',enum:['fact','interpretation','position']}},required:['label','likelihood','why','kind']}},
+  try_first:{type:'array',items:{type:'string'}},
+  see_doctor_if:{type:'string'},
+  reassurance:{type:'string'}
+},required:['headline','hypotheses','try_first','see_doctor_if','reassurance']};
+const CRY_SCHEMA={type:'OBJECT',properties:{
+  headline:{type:'STRING'},
+  hypotheses:{type:'ARRAY',items:{type:'OBJECT',properties:{label:{type:'STRING'},likelihood:{type:'STRING',enum:['high','medium','low']},why:{type:'STRING'},kind:{type:'STRING',enum:['fact','interpretation','position']}},required:['label','likelihood','why','kind']}},
+  try_first:{type:'ARRAY',items:{type:'STRING'}},
+  see_doctor_if:{type:'STRING'},
+  reassurance:{type:'STRING'}
+},required:['headline','hypotheses','try_first','see_doctor_if','reassurance']};
+async function aiCry(sys,userMsg){
+  if(S.provider==='anthropic'){
+    if(!S.anthropicKey)throw new Error(tr('Clé Claude manquante (Paramètres).','Claude key missing (Settings).'));
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:anthropicHeaders(),body:JSON.stringify({
+      model:ANTHROPIC_MODEL,max_tokens:2000,stream:false,system:anthropicToolSystem(sys,'cry'),
+      messages:[{role:'user',content:userMsg}],...anthropicToolRequest('cry','Analyse probabiliste du pleur.',CRY_TOOL_SCHEMA)})});
+    if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`${tr('Erreur','Error')} ${res.status}`);}
+    const input=anthropicToolInput(await res.json(),'cry');
+    if(!input)throw new Error(tr('Réponse Claude sans données','Claude returned no data'));
+    return input;
+  }
+  if(!S.apiKey)throw new Error(tr('Clé Gemini manquante (Paramètres).','Gemini key missing (Settings).'));
+  const res=await fetch(geminiUrl('generateContent'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    systemInstruction:{parts:[{text:sys}]},contents:[{role:'user',parts:[{text:userMsg}]}],
+    generationConfig:{responseMimeType:'application/json',responseSchema:CRY_SCHEMA,temperature:0.4}})});
+  if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`${tr('Erreur','Error')} ${res.status}`);}
+  const txt=(await res.json()).candidates?.[0]?.content?.parts?.[0]?.text;
+  if(!txt)throw new Error(tr('Réponse vide du modèle','Empty answer from the model'));
+  return JSON.parse(txt);
+}
+function cryHistorySummary(child,en){
+  const since=Date.now()-14*86400000;
+  const recent=getCries(child).filter(c=>c.ts>=since&&c.outcome);
+  if(!recent.length)return'';
+  const o=cryOpts(en,child).outcome;const cnt={};
+  recent.forEach(c=>{cnt[c.outcome]=(cnt[c.outcome]||0)+1;});
+  return Object.entries(cnt).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`${(o.find(x=>x[0]===k)||[k,k])[1]} ×${v}`).join(', ');
+}
+async function analyzeCry(child,data){
+  if(S.cry.loading)return;
+  const en=S.lang==='en';
+  if(S.provider==='anthropic'?!S.anthropicKey:!S.apiKey){S.modal='apikey';render();return;}
+  S.cry.loading=true;S.cry.error=null;S.cry.step='loading';render();
+  const a=S.cry.answers,f=S.cry.features,O=cryOpts(en,child);
+  const lbl=(list,k)=>(list.find(x=>x[0]===k)||[k,k])[1];
+  const flags=cryFlags(a,data.ageInDays);
+  const hour=new Date().getHours();
+  const hist=cryHistorySummary(child,en);
+  const weeks=Math.floor(data.ageInDays/7);
+  const feat=f?(en
+    ?`Recorded ${f.recordedSec} s; crying ${Math.round(f.cryRatio*100)}% of the time; ${f.burstsPerMin} cry bursts/min (avg ${f.avgBurstSec} s); level ${f.meanDb} dBFS (peak ${f.peakDb}); median pitch ${f.medianF0??'n/a'} Hz (90th pct ${f.p90F0??'n/a'} Hz); share above 1000 Hz: ${Math.round(f.highPitchShare*100)}%.`
+    :`Enregistré ${f.recordedSec} s ; pleure ${Math.round(f.cryRatio*100)} % du temps ; ${f.burstsPerMin} salves/min (moy. ${f.avgBurstSec} s) ; niveau ${f.meanDb} dBFS (pic ${f.peakDb}) ; hauteur médiane ${f.medianF0??'n/d'} Hz (90e centile ${f.p90F0??'n/d'} Hz) ; part au-dessus de 1000 Hz : ${Math.round(f.highPitchShare*100)} %.`)
+    :(en?'No recording (questions only).':'Pas d\'enregistrement (questions seulement).');
+  const sys=en?`You help a parent understand why their baby is crying RIGHT NOW, in the BébéPilote app. The parent is demanding and university-educated: they want honest reasoning, not a verdict.
+
+## Child
+${child.firstName}, ${child.gender==='girl'?'girl':'boy'}, ${data.ageLabel} (${data.ageInDays} days, week ${weeks}).
+${S.children.length>1?familyBrief(child,true):''}
+
+## Scientific honesty (non-negotiable)
+- Acoustic analysis cannot reliably tell hunger from colic, tiredness or discomfort. The sound measures are weak clues: only use them as secondary context (e.g. a very high-pitched cry is a reason for caution). NEVER present them as a diagnosis.
+- The strongest clues are the context: time since the last feed, signs observed, time of day, what has already been tried.
+- Give 2 to 4 hypotheses ranked by likelihood (high / medium / low), each with a short "why" grounded in the parent's answers. Tag each one: fact (established knowledge), interpretation (plausible reading), position (a school of thought — name it).
+- Crying peaks around 6-8 weeks of age and is often concentrated in the evening: this is normal development. Infant colic (Rome IV): recurrent, prolonged crying periods without obvious cause in an infant under 5 months, in a thriving baby — it is a description, not a disease.
+- Never invent a study or a figure.
+
+## Output (via the tool)
+- headline: one short sentence giving the most plausible lead, phrased as a hypothesis.
+- hypotheses: 2-4 items.
+- try_first: 2-4 concrete, ordered steps the parent can do now (skip what they already tried unless worth repeating).
+- see_doctor_if: the warning signs that should make them call a doctor, adapted to this age.
+- reassurance: one honest, non-patronising sentence.
+English, dense, warm but factual. No filler.`
+  :`Tu aides un parent à comprendre pourquoi son bébé pleure LÀ, MAINTENANT, dans l'app BébéPilote. Le parent est exigeant et universitaire : il veut un raisonnement honnête, pas un verdict.
+
+## Enfant
+${child.firstName}, ${child.gender==='girl'?'fille':'garçon'}, ${data.ageLabel} (${data.ageInDays} jours, ${weeks}e semaine).
+${S.children.length>1?familyBrief(child,false):''}
+
+## Honnêteté scientifique (non négociable)
+- L'analyse acoustique ne permet pas de distinguer de façon fiable la faim, les coliques, la fatigue ou l'inconfort. Les mesures sonores sont des indices faibles : utilise-les seulement comme contexte secondaire (ex. un pleur très aigu invite à la prudence). Ne les présente JAMAIS comme un diagnostic.
+- Les indices les plus solides sont le contexte : temps depuis le dernier repas, signes observés, moment de la journée, ce qui a déjà été essayé.
+- Donne 2 à 4 hypothèses classées par probabilité (high / medium / low), chacune avec un « pourquoi » court ancré dans les réponses du parent. Étiquette chacune : fact (connaissance établie), interpretation (lecture plausible), position (école de pensée — nomme-la).
+- Les pleurs culminent vers 6-8 semaines et se concentrent souvent en fin de journée : c'est le développement normal. Coliques du nourrisson (Rome IV) : épisodes de pleurs prolongés et récurrents sans cause apparente chez un nourrisson de moins de 5 mois qui grandit bien — c'est une description, pas une maladie.
+- N'invente jamais d'étude ni de chiffre.
+
+## Ce que tu produis (via l'outil)
+- headline : une phrase courte donnant la piste la plus plausible, formulée comme une hypothèse.
+- hypotheses : 2 à 4 éléments (likelihood : high, medium ou low ; kind : fact, interpretation ou position).
+- try_first : 2 à 4 gestes concrets et ordonnés à faire maintenant (évite ce qui a déjà été essayé, sauf si ça vaut la peine de recommencer).
+- see_doctor_if : les signes d'alerte qui doivent faire appeler un médecin, adaptés à cet âge.
+- reassurance : une phrase honnête, pas condescendante.
+Français, dense, chaleureux mais factuel. Pas de remplissage.`;
+  const user=en
+    ?`Last feed: ${a.fed?lbl(O.fed,a.fed)+' ago':'not specified'}.\nCrying for: ${a.since?lbl(O.since,a.since):'not specified'}.\nSigns observed: ${a.signs.length?a.signs.map(k=>lbl(O.signs,k)).join(', '):'none ticked'}.\nAlready tried: ${a.tried.length?a.tried.map(k=>lbl(O.tried,k)).join(', '):'nothing yet'}.\nTime of day: ${hour}h.\nSound measures (weak clues): ${feat}\n${hist?`What soothed ${child.firstName} recently: ${hist}.\n`:''}${flags.length?`Warning signs ticked: ${flags.join(', ')} — put the medical advice first.`:''}`
+    :`Dernier repas : ${a.fed?'il y a '+lbl(O.fed,a.fed):'non précisé'}.\nPleure depuis : ${a.since?lbl(O.since,a.since):'non précisé'}.\nSignes observés : ${a.signs.length?a.signs.map(k=>lbl(O.signs,k)).join(', '):'aucun coché'}.\nDéjà essayé : ${a.tried.length?a.tried.map(k=>lbl(O.tried,k)).join(', '):'rien encore'}.\nHeure : ${hour} h.\nMesures sonores (indices faibles) : ${feat}\n${hist?`Ce qui a calmé ${child.firstName} ces derniers jours : ${hist}.\n`:''}${flags.length?`Signes d'alerte cochés : ${flags.join(', ')} — mets l'avis médical en premier.`:''}`;
+  const t0=Date.now();
+  try{
+    const r=await aiCry(sys,user);
+    addApiLog({ts:new Date().toISOString(),provider:S.provider,endpoint:'cry',status:'ok',model:S.provider==='anthropic'?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-t0,reqMsgs:1,reqSystem:sys,reqUserMsg:user,respText:JSON.stringify(r,null,2),error:null});
+    const ts=Date.now();
+    addCry(child,{ts,features:f,answers:JSON.parse(JSON.stringify(a)),flags,result:r,outcome:null});
+    S.cry.result=r;S.cry.entryTs=ts;S.cry.loading=false;S.cry.step='result';render();
+  }catch(err){
+    addApiLog({ts:new Date().toISOString(),provider:S.provider,endpoint:'cry',status:'error',model:S.provider==='anthropic'?ANTHROPIC_MODEL:GEMINI_MODEL,duration:Date.now()-t0,reqMsgs:1,reqSystem:sys,reqUserMsg:user,respText:'',error:netErrMsg(err)});
+    S.cry.loading=false;S.cry.error=netErrMsg(err);S.cry.step='questions';render();
+  }
+}
+// ── Rendu ──
+const _cryMic=`<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>`;
+const _cryWave=`<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h2M6 8v8M10 5v14M14 8v8M18 10v4M22 12h0"/></svg>`;
+function cryChip(group,key,label,on,multi){return`<button class="cry-chip${on?' on':''}" data-cry-${multi?'toggle':'set'}="${group}|${key}">${e(label)}</button>`;}
+function cryFlagBanner(flags,en){
+  if(!flags.length)return'';
+  return`<div class="cry-alert">${_svgIco.warn}<div>${flags.map(f=>`<p>${e(cryFlagText(f,en))}</p>`).join('')}</div></div>`;
+}
+function renderCryJournal(child,en){
+  const all=getCries(child);
+  const days=[...Array(7)].map((_,i)=>{const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-6+i);return d;});
+  const perDay=days.map(d=>{const end=d.getTime()+86400000;const items=all.filter(c=>c.ts>=d.getTime()&&c.ts<end);
+    return{d,n:items.length,min:items.reduce((s,c)=>s+(CRY_SINCE_MIN[c.answers?.since]||0),0),eve:items.filter(c=>new Date(c.ts).getHours()>=16).length};});
+  const maxMin=Math.max(30,...perDay.map(p=>p.min));
+  const week=all.filter(c=>c.ts>=days[0].getTime());
+  const eveShare=week.length?Math.round(week.filter(c=>new Date(c.ts).getHours()>=16).length/week.length*100):0;
+  const O=cryOpts(en,child).outcome;const cnt={};week.forEach(c=>{if(c.outcome)cnt[c.outcome]=(cnt[c.outcome]||0)+1;});
+  const loc=en?'en-GB':'fr-FR';
+  const bars=perDay.map(p=>`<div class="cry-bar-col"><div class="cry-bar" style="height:${Math.round(p.min/maxMin*100)}%" title="${p.min} min"></div><span>${p.d.toLocaleDateString(loc,{weekday:'narrow'})}</span></div>`).join('');
+  return`<p class="cry-h">${tr('7 derniers jours','Last 7 days')}</p>
+  <div class="cry-bars">${bars}</div>
+  <p style="font-size:0.75rem;color:var(--c-t3);margin:8px 0 14px;line-height:1.5">${tr(`${week.length} épisode${week.length>1?'s':''} noté${week.length>1?'s':''} · environ ${perDay.reduce((s,p)=>s+p.min,0)} min de pleurs au total · ${eveShare} % en fin de journée`,`${week.length} episode${week.length>1?'s':''} logged · about ${perDay.reduce((s,p)=>s+p.min,0)} min of crying in total · ${eveShare}% in the evening`)}</p>
+  ${Object.keys(cnt).length?`<p class="cry-h">${tr('Ce qui l\'a calmé','What soothed them')}</p><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">${Object.entries(cnt).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<span class="cry-chip on" style="cursor:default">${e((O.find(x=>x[0]===k)||[k,k])[1])} · ${v}</span>`).join('')}</div>`:''}
+  <div class="refs-block acc-sage" style="margin-bottom:14px"><p style="font-size:0.8125rem;line-height:1.6;color:var(--c-t2)">${tr('Les pleurs culminent vers 6 à 8 semaines, souvent le soir, puis diminuent vers 3 à 4 mois. Si les épisodes sont longs et fréquents, ou si quelque chose t\'inquiète, montre ce résumé à ton pédiatre.','Crying peaks around 6 to 8 weeks, often in the evening, then eases around 3 to 4 months. If episodes are long and frequent, or if anything worries you, show this summary to your paediatrician.')}</p></div>
+  <button class="btn btn-ghost" id="cry-share-summary" style="margin-bottom:10px">${tr('Partager le résumé (pédiatre)','Share the summary (paediatrician)')}</button>
+  ${all.slice(0,8).map(c=>`<div class="cry-log-row"><span>${new Date(c.ts).toLocaleString(loc,{weekday:'short',hour:'2-digit',minute:'2-digit'})}</span><span>${e(c.result?.headline||'')}</span>${c.outcome?`<span class="cry-chip on" style="cursor:default">${e((O.find(x=>x[0]===c.outcome)||[c.outcome,c.outcome])[1])}</span>`:''}</div>`).join('')}`;
+}
+function crySummaryText(child,en){
+  const all=getCries(child).filter(c=>c.ts>=Date.now()-7*86400000);
+  const O=cryOpts(en,child);const lbl=(l,k)=>(l.find(x=>x[0]===k)||[k,k])[1];
+  const loc=en?'en-GB':'fr-FR';
+  const L=[tr(`Pleurs de ${child.firstName} — 7 derniers jours`,`${child.firstName}'s crying — last 7 days`),`${childData(child).ageLabel}`,''];
+  all.slice().reverse().forEach(c=>L.push(`${new Date(c.ts).toLocaleString(loc,{weekday:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})} — ${tr('depuis','for')} ${c.answers?.since?lbl(O.since,c.answers.since):'?'}${c.answers?.signs?.length?' — '+c.answers.signs.map(k=>lbl(O.signs,k)).join(', '):''}${c.outcome?' — '+tr('calmé par','soothed by')+' : '+lbl(O.outcome,c.outcome):''}`));
+  L.push('','— BébéPilote');
+  return L.join('\n');
+}
+function renderCryModal(child,data){
+  const en=S.lang==='en';const c=S.cry;const O=cryOpts(en,child);
+  const pron=child.gender==='girl'?tr('Elle','She'):tr('Il','He');
+  const head=`<div class="sheet-head">
+    <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+      <div class="s-icon acc-rose" style="width:34px;height:34px;flex-shrink:0">${_cryWave}</div>
+      <span style="font-weight:600;font-size:0.875rem">${tr(`${pron} pleure, là`,`${pron}'s crying right now`)}</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+      ${c.step!=='journal'?`<button id="cry-journal" class="cry-head-btn">${tr('Journal','Log')}</button>`:''}
+      ${xBtn()}
+    </div>
+  </div>`;
+  let body='';
+  if(c.step==='record'){
+    body=`<p style="font-size:0.9375rem;color:var(--c-t2);line-height:1.6;margin-bottom:6px">${tr(`Enregistre ${CRY_MAX_SEC} secondes de pleur, puis réponds à 4 questions rapides.`,`Record ${CRY_MAX_SEC} seconds of crying, then answer 4 quick questions.`)}</p>
+    <p style="font-size:0.75rem;color:var(--c-t4);line-height:1.5;margin-bottom:18px">${tr('Le son est analysé sur ton téléphone : seules quelques mesures (durée, rythme, hauteur) sont envoyées à l\'IA, jamais l\'enregistrement. Le contexte compte plus que le son.','The sound is analysed on your phone: only a few measures (duration, rhythm, pitch) are sent to the AI, never the recording. Context matters more than sound.')}</p>
+    ${c.recording?`<div class="cry-rec-box"><div class="cry-level-track"><div id="cry-level" class="cry-level"></div></div><p id="cry-timer" style="font-size:0.8125rem;color:var(--c-t3);margin:8px 0 14px">${Math.floor(c.elapsed)} s / ${CRY_MAX_SEC} s</p>
+      <button id="cry-stop" class="btn btn-dark">${tr('Arrêter et continuer','Stop and continue')}</button></div>`
+    :`<button id="cry-start" class="cry-rec-btn">${_cryMic}<span>${tr('Enregistrer le pleur','Record the cry')}</span></button>
+      <button id="cry-skip" style="display:block;width:100%;padding:12px;margin-top:8px;color:var(--c-t4);font-size:0.8125rem">${tr('Répondre aux questions sans enregistrer','Answer the questions without recording')}</button>`}`;
+  }else if(c.step==='questions'){
+    const a=c.answers;const flags=cryFlags(a,data.ageInDays);
+    body=`${c.micError?`<p style="font-size:0.8125rem;color:var(--c-t3);margin-bottom:12px">${e(c.micError)}</p>`:''}
+    ${c.features?`<p style="font-size:0.75rem;color:var(--c-t4);margin-bottom:14px;display:flex;align-items:center;gap:6px">${_svgIco.check}${tr(`Enregistrement analysé (${c.features.recordedSec} s)`,`Recording analysed (${c.features.recordedSec} s)`)}</p>`:''}
+    ${cryFlagBanner(flags,en)}
+    <p class="cry-h">${tr('Dernier repas il y a','Last feed')}</p><div class="cry-chips">${O.fed.map(([k,l])=>cryChip('fed',k,l,a.fed===k)).join('')}</div>
+    <p class="cry-h">${tr('Pleure depuis','Crying for')}</p><div class="cry-chips">${O.since.map(([k,l])=>cryChip('since',k,l,a.since===k)).join('')}</div>
+    <p class="cry-h">${tr('Ce que tu observes','What you notice')}</p><div class="cry-chips">${O.signs.map(([k,l])=>cryChip('signs',k,l,a.signs.includes(k),true)).join('')}</div>
+    <p class="cry-h">${tr('Déjà essayé','Already tried')}</p><div class="cry-chips">${O.tried.map(([k,l])=>cryChip('tried',k,l,a.tried.includes(k),true)).join('')}</div>
+    <button id="cry-analyze" class="btn btn-dark" style="margin-top:8px;display:flex;align-items:center;justify-content:center;gap:7px">${_cryWave}${tr('Analyser','Analyse')}</button>
+    ${c.error?`<p style="font-size:0.8125rem;color:#A03828;margin-top:10px;text-align:center">${e(c.error)}</p>`:''}`;
+  }else if(c.step==='loading'){
+    body=`<div style="padding:40px 8px;text-align:center;color:#A04060;font-size:0.875rem;display:flex;align-items:center;justify-content:center;gap:9px">${_svgIco.loader}${tr('Je croise le son et le contexte…','Weighing the sound and the context…')}</div>`;
+  }else if(c.step==='result'&&c.result){
+    const r=c.result;const flags=cryFlags(c.answers,data.ageInDays);
+    const lk={high:[tr('Probable','Likely'),'#A04060',100],medium:[tr('Possible','Possible'),'#C48A40',62],low:[tr('Moins probable','Less likely'),'#9C9790',30]};
+    const kd={fact:tr('Fait établi','Established fact'),interpretation:tr('Interprétation','Interpretation'),position:tr('Position','Position')};
+    const entry=getCries(child).find(x=>x.ts===c.entryTs);
+    body=`${cryFlagBanner(flags,en)}
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500;line-height:1.25;margin-bottom:16px">${e(r.headline||'')}</h2>
+    ${(r.hypotheses||[]).map(h=>{const L=lk[h.likelihood]||lk.medium;return`<div class="cry-hyp">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px"><p style="font-size:0.875rem;font-weight:700;color:var(--c-ink)">${e(h.label)}</p><span style="font-size:0.6875rem;font-weight:700;color:${L[1]};white-space:nowrap">${L[0]}</span></div>
+      <div class="cry-lk"><div style="width:${L[2]}%;background:${L[1]}"></div></div>
+      <p style="font-size:0.8125rem;color:var(--c-t2);line-height:1.55;margin-top:7px">${md(h.why)}</p>
+      <p style="font-size:0.625rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--c-t4);margin-top:5px">${kd[h.kind]||''}</p>
+    </div>`;}).join('')}
+    ${(r.try_first||[]).length?`<p class="cry-h" style="margin-top:6px">${tr('À essayer maintenant','Try now')}</p><ol style="margin:0 0 16px 18px;padding:0">${r.try_first.map(s=>`<li style="font-size:0.875rem;color:var(--c-t2);line-height:1.6;margin-bottom:4px">${md(s)}</li>`).join('')}</ol>`:''}
+    ${r.see_doctor_if?`<div class="refs-block acc-coral" style="margin-bottom:14px"><p style="font-size:0.625rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px">${tr('Appeler un médecin si','Call a doctor if')}</p><p style="font-size:0.8125rem;line-height:1.6;color:var(--c-t2)">${md(r.see_doctor_if)}</p></div>`:''}
+    ${r.reassurance?`<p style="font-size:0.8125rem;color:var(--c-t3);font-style:italic;line-height:1.55;margin-bottom:18px">${e(r.reassurance)}</p>`:''}
+    <p class="cry-h">${tr(`Une fois calmé${child.gender==='girl'?'e':''} : qu'est-ce qui a marché ?`,'Once settled: what worked?')}</p>
+    <div class="cry-chips">${O.outcome.map(([k,l])=>`<button class="cry-chip${entry?.outcome===k?' on':''}" data-cry-outcome="${k}">${e(l)}</button>`).join('')}</div>
+    <p style="font-size:0.6875rem;color:var(--c-t4);margin:-4px 0 16px">${tr('BébéPilote s\'en servira pour les prochaines fois.','BébéPilote will use this next time.')}</p>
+    <button id="cry-new" class="btn" style="background:var(--c-bg2);color:var(--c-t2)">${tr('Nouvel enregistrement','New recording')}</button>`;
+  }else if(c.step==='journal'){
+    body=`${renderCryJournal(child,en)}<button id="cry-back" class="btn" style="background:var(--c-bg2);color:var(--c-t2);margin-top:14px">${tr('Retour','Back')}</button>`;
+  }
+  return`<div class="overlay" id="modal-overlay"><div class="sheet"><div class="sheet-handle"></div>${head}<div class="sheet-body">${body}<div style="height:8px"></div></div></div></div>`;
+}
+function bindCry(child,data){
+  if(S.modal!=='cry'){if(_cryRec)cancelCryRecording();return;}
+  document.getElementById('cry-start')?.addEventListener('click',()=>startCryRecording());
+  document.getElementById('cry-stop')?.addEventListener('click',()=>stopCryRecording());
+  document.getElementById('cry-skip')?.addEventListener('click',()=>{S.cry.step='questions';render();});
+  document.querySelectorAll('[data-cry-set]').forEach(b=>b.addEventListener('click',()=>{const[g,k]=b.dataset.crySet.split('|');S.cry.answers[g]=S.cry.answers[g]===k?null:k;render();}));
+  document.querySelectorAll('[data-cry-toggle]').forEach(b=>b.addEventListener('click',()=>{const[g,k]=b.dataset.cryToggle.split('|');const arr=S.cry.answers[g];const i=arr.indexOf(k);if(i>=0)arr.splice(i,1);else arr.push(k);render();}));
+  document.getElementById('cry-analyze')?.addEventListener('click',()=>analyzeCry(child,data));
+  document.querySelectorAll('[data-cry-outcome]').forEach(b=>b.addEventListener('click',()=>{if(S.cry.entryTs)updateCry(child,S.cry.entryTs,{outcome:b.dataset.cryOutcome});toast(tr('Noté','Noted'));render();}));
+  document.getElementById('cry-new')?.addEventListener('click',()=>{S.cry=cryState();render();});
+  document.getElementById('cry-journal')?.addEventListener('click',()=>{if(_cryRec)cancelCryRecording();S.cry.prevStep=S.cry.recording?'record':S.cry.step;S.cry.recording=false;S.cry.step='journal';render();});
+  document.getElementById('cry-back')?.addEventListener('click',()=>{S.cry.step=S.cry.prevStep==='loading'?'questions':(S.cry.prevStep||'record');render();});
+  document.getElementById('cry-share-summary')?.addEventListener('click',()=>shareTextContent(tr(`Pleurs de ${child.firstName}`,`${child.firstName}'s crying`),crySummaryText(child,S.lang==='en')));
+}
 // ═══════════════════════ FAV DETAIL MODAL ═══════════════════════
 function renderFavDetailModal(child){
   const it=S.favDetailItem;if(!it)return'';
@@ -3558,6 +3912,20 @@ ${sections.map(({s,entry},i)=>{
   ${chev()}
 </button>
 </div>
+
+<!-- Il pleure, là -->
+${ageInDays<365?(()=>{
+  const n=getCries(child).filter(c=>c.ts>=new Date().setHours(0,0,0,0)).length;
+  const pron=child.gender==='girl'?tr('Elle','She'):tr('Il','He');
+  return `<button class="observe-card" id="btn-cry-open" style="border-color:#D9A9B7">
+    <div class="s-icon acc-rose" style="flex-shrink:0">${_cryWave}</div>
+    <div style="flex:1;min-width:0;text-align:left">
+      <p style="font-size:0.875rem;font-weight:600;color:#1A1918">${tr(`${pron} pleure, là ?`,`${pron}'s crying right now?`)}</p>
+      <p style="font-size:0.75rem;color:#9C9790;margin-top:1px;line-height:1.4">${tr('Enregistre le pleur — je t\'aide à y voir clair : faim, coliques, fatigue…','Record the cry — I\'ll help you make sense of it: hunger, colic, tiredness…')}${n?` · ${n} ${tr('aujourd\'hui','today')}`:''}</p>
+    </div>
+    ${chev()}
+  </button>`;
+})():''}
 
 <!-- J'ai observé… -->
 ${(()=>{
@@ -3940,7 +4308,7 @@ function renderCtrvViewModal(child){
 }
 function renderApiLog(){
   const sw='stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"';
-  const endpointLabels={chat:'Zoé chat',controverse:tr('Controverse','Debate'),deepdive:tr('Creuser','Deep dive'),camps:tr('Positions','Positions'),observation:'Observation'};
+  const endpointLabels={cry:tr('Pleurs','Crying'),chat:'Zoé chat',controverse:tr('Controverse','Debate'),deepdive:tr('Creuser','Deep dive'),camps:tr('Positions','Positions'),observation:'Observation'};
   const provLabel={anthropic:'Claude',gemini:'Gemini'};
   function relTime(iso){const d=Date.now()-new Date(iso).getTime();if(d<60000)return tr('À l\'instant','Just now');if(d<3600000)return tr(`Il y a ${Math.floor(d/60000)} min`,`${Math.floor(d/60000)} min ago`);if(d<86400000)return tr(`Il y a ${Math.floor(d/3600000)} h`,`${Math.floor(d/3600000)} h ago`);return tr(`Il y a ${Math.floor(d/86400000)} j`,`${Math.floor(d/86400000)} d ago`);}
   const icoTerminal=`<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" ${sw}><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>`;
@@ -4645,6 +5013,7 @@ function render(){
   else if(S.modal==='prenatalSection')modalHTML=renderPrenatalSectionModal(S.modalSection,child);
   else if(S.modal==='controverse')modalHTML=renderControverseModal(child,data);
   else if(S.modal==='observe')modalHTML=renderObserveModal(child,data);
+  else if(S.modal==='cry'&&S.cry)modalHTML=renderCryModal(child,data);
   else if(S.modal==='favDetail')modalHTML=renderFavDetailModal(child);
 
   else if(S.modal==='settings')modalHTML=renderSettingsModal();
@@ -5115,6 +5484,8 @@ function bind(child,data){
     else{const v=document.getElementById('apikey-modal-gem')?.value.trim();if(v)saveKey(v);}
     S.modal=null;render();
   });
+  document.getElementById('btn-cry-open')?.addEventListener('click',()=>{S.cry=cryState();S.modal='cry';render();});
+  bindCry(child,data);
   bindChildForm();
   bindChat(child,data);
   document.getElementById('chat-end')?.scrollIntoView({behavior:'instant'});
@@ -5328,7 +5699,9 @@ function familyContext(child,en,{tracking=true}={}){
     }).filter(Boolean);
     const obs=getObservations(k).slice(0,3).map(o=>`« ${o.title||''} » (${obsRelTime(o.ts,en)})`);
     const ctrv=getCtrvHistory().find(x=>x.childName===k.firstName&&x.date===ctrvDateStr());
+    const cries=getCries(k).filter(c=>c.ts>=Date.now()-7*86400000);const soothe=cryHistorySummary(k,en);
     return `- ${k.firstName} :\n${parts.join('\n')}`
+      +(cries.length?(en?`\n  · Crying log (7 days): ${cries.length} episode${cries.length>1?'s':''}${soothe?`, soothed by: ${soothe}`:''}`:`\n  · Journal des pleurs (7 jours) : ${cries.length} épisode${cries.length>1?'s':''}${soothe?`, calmé par : ${soothe}`:''}`):'')
       +(obs.length?(en?`\n  · Recent observations noted by the parent: ${obs.join(' ; ')}`:`\n  · Observations récentes notées par le parent : ${obs.join(' ; ')}`):'')
       +(ctrv?(en?`\n  · Today's debate shown: "${ctrv.question}"`:`\n  · Controverse du jour affichée : « ${ctrv.question} »`):'');
   });
