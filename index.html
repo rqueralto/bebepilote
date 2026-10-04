@@ -719,7 +719,7 @@ activite:[
 
 const _sw='stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
 const _ico=(path,extra='')=>`<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" ${_sw} ${extra}>${path}</svg>`;
-const VERSION='1.4.0';
+const VERSION='1.4.2';
 const ALL_SECTIONS=[
   {id:'langage',  label:'Langage & Communication',  label_en:'Language & Communication', icon:_ico('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/>'),colorBg:'acc-blue',  colorText:'acc-blue'},
   {id:'motricite',label:'La Motricité',              label_en:'Motor Skills',              icon:_ico('<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>'),colorBg:'acc-green', colorText:'acc-green'},
@@ -5337,6 +5337,23 @@ function familyContext(child,en,{tracking=true}={}){
     :`\n\n## Ce que le parent a renseigné dans l'app\n${trackLines.join('\n')}\nSers-t'en pour personnaliser ta réponse (appuie-toi sur ce que l'enfant fait déjà), sans le réciter.`;
   return out;
 }
+// Résumé famille en une ligne (rappel ajouté au dernier message envoyé au modèle)
+function familyBrief(child,en){
+  const kids=[...S.children].sort((a,b)=>new Date(a.birthDate)-new Date(b.birthDate));
+  const born=kids.filter(k=>!isUnborn(k));
+  const one=k=>{
+    if(isUnborn(k))return en?`${k.firstName} (not born yet, due in ~${getDaysUntilDue(k)} days)`:`${k.firstName} (à naître, dans ~${getDaysUntilDue(k)} jours)`;
+    const d=Math.floor((Date.now()-new Date(k.birthDate+'T12:00:00'))/86400000);
+    const tags=[];
+    if(born.length>1){const i=born.indexOf(k);tags.push(i===0?(en?'eldest':'aîné·e'):i===born.length-1?(en?'youngest':'cadet·te'):(en?'middle':'du milieu'));}
+    if(k===child)tags.push(en?'the child concerned':'enfant concerné');
+    else{const older=new Date(k.birthDate)<new Date(child.birthDate),g=k.gender==='girl';
+      tags.push(en?`${g?(older?'older sister':'younger sister'):(older?'older brother':'younger brother')} of ${child.firstName}`
+                  :`${g?(older?'grande sœur':'petite sœur'):(older?'grand frère':'petit frère')} de ${child.firstName}`);}
+    return `${k.firstName}, ${getAgeLabel(d,k.birthDate)}${tags.length?' ('+tags.join(', ')+')':''}`;
+  };
+  return (en?'Family: ':'Famille : ')+kids.map(one).join(' ; ')+'.';
+}
 // Historique envoyé au modèle : sans les bulles d'erreur ni les messages vides, en alternance user/assistant stricte
 function chatHistoryForApi(){
   const out=[];
@@ -5348,6 +5365,13 @@ function chatHistoryForApi(){
   while(out.length&&out[0].role!=='user')out.shift();
   return out;
 }
+function withFamilyReminder(msgs,child){
+  if(!msgs.length||S.children.length<2)return msgs;
+  const en=S.lang==='en';const last=msgs[msgs.length-1];
+  const note=en?`[Profile reminder — already known, do not ask: ${familyBrief(child,true)}]`
+               :`[Rappel du profil — déjà connu, ne pas le demander : ${familyBrief(child,false)}]`;
+  return [...msgs.slice(0,-1),{...last,content:last.content+'\n\n'+note}];
+}
 async function sendMsg(txt,child,data){
   if(!txt.trim()||S.chat.loading)return;
   const useAnthropic=S.provider==='anthropic';
@@ -5358,6 +5382,8 @@ async function sendMsg(txt,child,data){
   const mFact=data.milestone?(S.lang==='en'?(data.milestone.en?.fact||data.milestone.fact):data.milestone.fact):'general development';
   const carolineTopic=S.lang==='en'?(carolineCtx.topic_en||carolineCtx.topic):carolineCtx.topic;
   const sysEn=`You are Zoé, a parenting assistant. You respond EXACTLY like Caroline Goldman, a clinical psychologist specialized in child development — not like a generic caring assistant. Parents using this app know and appreciate Caroline Goldman. They expect her positions, not generalities.
+
+${familyContext(child,true)}
 
 ## Who Caroline Goldman is and how she responds
 
@@ -5394,12 +5420,13 @@ NIGHT FEARS: Validate the emotion without validating the threat. Staying in the 
 ## Child context
 ${child.firstName}, ${child.gender==='girl'?"girl":"boy"}, ${data.ageLabel}. Today's date: ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}.
 
-${familyContext(child,true)}
 
 Today's development: "${mFact}" — ${data.milestone?.details||''}
 Today's Caroline Goldman tip: "${carolineTopic}" — ${carolineCtx.tip}
 
 ## Format rules
+- The Family section above gives the first name, age, birth order and relationship of EVERY child. NEVER ask the parent for a child's age, rank or first name. When the parent says "his brother", "her sister", "the baby", "the little one", identify the child in the profile and use their exact age in your answer.
+- Only ask a follow-up question about what the profile cannot know (context, frequency, triggers) — and only if it is genuinely needed; otherwise give your best answer directly.
 - Use markdown freely: **bold** for key terms, bullet lists (- item) for steps or options, numbered lists for sequences. Use line breaks between paragraphs. Do NOT write a single wall of text.
 - Length: 3–8 sentences or equivalent structured content — no filler, no padding
 - Never start with "Of course!", "Absolutely!", "That's a great question!" or any equivalent
@@ -5419,6 +5446,8 @@ No URLs. Only author + title + year if known.
 Only add this marker if the topic is genuinely debated among specialists. Do not add it for factual or normal development questions.${(()=>{const ex=getLikedExamples();return ex.length?`\n\n## Examples of responses appreciated by this parent (few-shot)\n${ex.map(x=>`Q: ${x.question}\nA: ${x.answer}`).join('\n\n')}`:''})()}`;
 
   const sys=S.lang==='en'?sysEn:`Tu es Zoé, assistante de parentalité. Tu réponds EXACTEMENT comme Caroline Goldman, psychologue clinicienne spécialisée dans le développement de l'enfant — pas comme une assistante générique bienveillante. Les parents qui t'utilisent connaissent et apprécient Caroline Goldman. Ils attendent ses positions, pas des généralités.
+
+${familyContext(child,false)}
 
 ## Qui est Caroline Goldman et comment elle répond
 
@@ -5456,13 +5485,14 @@ PEURS NOCTURNES : Valider l'émotion sans valider la menace. Rester dans la cham
 
 ${child.firstName}, ${child.gender==='girl'?"fille":"garçon"}, ${data.ageLabel}. Date du jour : ${new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}.
 
-${familyContext(child,false)}
 
 Développement du jour : "${data.milestone?.fact||'développement général'}" — ${data.milestone?.details||''}
 Conseil Caroline Goldman affiché aujourd'hui : "${carolineCtx.topic}" — ${carolineCtx.tip}
 
 ## Règles de format
 
+- La section Famille ci-dessus donne le prénom, l'âge, le rang et le lien de CHAQUE enfant. Ne demande JAMAIS au parent l'âge, le rang ou le prénom d'un enfant. Quand le parent dit « son frère », « sa sœur », « le bébé », « le petit », identifie l'enfant dans le profil et utilise son âge exact dans ta réponse.
+- Ne pose une question de suivi que sur ce que le profil ne peut pas savoir (contexte, fréquence, déclencheurs) — et seulement si c'est vraiment nécessaire ; sinon donne directement ta meilleure réponse.
 - Utilise le markdown librement : **gras** pour les termes clés, listes à puces (- item) pour les étapes ou options, listes numérotées pour les séquences. Sauts de ligne entre les paragraphes. N'écris PAS un bloc de texte monolithique.
 - Longueur : 3 à 8 phrases ou contenu structuré équivalent — pas de remplissage
 - Ne commence jamais par "Bien sûr !", "Absolument !", "C'est une excellente question" ou tout équivalent
@@ -5496,7 +5526,7 @@ Ne mets ce marker QUE si le sujet est réellement débattu entre spécialistes. 
   try{
     let res;
     if(useAnthropic){
-      const messages=chatHistoryForApi();
+      const messages=withFamilyReminder(chatHistoryForApi(),child);
       res=await fetch('https://api.anthropic.com/v1/messages',{
         method:'POST',headers:anthropicHeaders(),
         body:JSON.stringify({model:ANTHROPIC_MODEL,max_tokens:1500,stream:true,system:sys,messages})
@@ -5515,7 +5545,7 @@ Ne mets ce marker QUE si le sujet est réellement débattu entre spécialistes. 
         }
       }
     }else{
-      const contents=chatHistoryForApi().map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]}));
+      const contents=withFamilyReminder(chatHistoryForApi(),child).map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]}));
       res=await fetch(geminiUrl('streamGenerateContent')+'&alt=sse',{
         method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents})
@@ -5563,6 +5593,20 @@ initLang();
 initFontSize();
 initKeyboardAwareness();
 migrateFavIds();
+// Mise à jour automatique : si une version plus récente est en ligne, recharger une fois (contourne le cache)
+async function checkForUpdate(){
+  if(!/^https?:/.test(location.protocol)||location.hostname==='localhost')return;
+  try{
+    const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});
+    const m=(await r.text()).match(/const VERSION='([^']+)'/);
+    if(!m||m[1]===VERSION)return;
+    if(sessionStorage.getItem('bebeUpdatedTo')===m[1])return; // déjà tenté pour cette version
+    sessionStorage.setItem('bebeUpdatedTo',m[1]);
+    location.replace(location.pathname+'?v='+encodeURIComponent(m[1]));
+  }catch{}
+}
+checkForUpdate();
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkForUpdate();});
 for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k&&k.startsWith('bebeNH_'))localStorage.removeItem(k);}
 render();
 
