@@ -719,7 +719,7 @@ activite:[
 
 const _sw='stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
 const _ico=(path,extra='')=>`<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" ${_sw} ${extra}>${path}</svg>`;
-const VERSION='1.3.1';
+const VERSION='1.4.0';
 const ALL_SECTIONS=[
   {id:'langage',  label:'Langage & Communication',  label_en:'Language & Communication', icon:_ico('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/>'),colorBg:'acc-blue',  colorText:'acc-blue'},
   {id:'motricite',label:'La Motricité',              label_en:'Motor Skills',              icon:_ico('<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>'),colorBg:'acc-green', colorText:'acc-green'},
@@ -2566,7 +2566,7 @@ async function analyzeObservation(child,data,text){
 
 ## Child
 ${child.firstName}, ${child.gender==='girl'?'girl':'boy'}, ${data.ageLabel} (${months} months).
-
+${S.children.length>1?'\n'+familyContext(child,true,{tracking:false})+'\n':''}
 ## Milestone catalogue near their age (for matching)
 Each line: <mid> | <title> | <section> | <typical age band>
 ${catLines}
@@ -2587,7 +2587,7 @@ Reply ONLY via the tool.`
 
 ## Enfant
 ${child.firstName}, ${child.gender==='girl'?'fille':'garçon'}, ${data.ageLabel} (${months} mois).
-
+${S.children.length>1?'\n'+familyContext(child,false,{tracking:false})+'\n':''}
 ## Catalogue de jalons proches de son âge (pour le matching)
 Chaque ligne : <mid> | <titre> | <section> | <tranche d'âge typique>
 ${catLines}
@@ -2663,48 +2663,7 @@ async function generateControverse(child,data,force){
   const liked=[...new Set(hist.filter(x=>x.signal==='learned').map(x=>x.topic))];
   const disliked=[...new Set(hist.filter(x=>x.signal==='skip').map(x=>x.topic))];
   const _cen=S.lang==='en';
-  const sibs=getSiblings(S.children.indexOf(child));
-  let sibCtx='';
-  if(sibs.length){
-    const childDate=new Date(child.birthDate+'T12:00:00');
-    const lines=sibs.map(sib=>{
-      const unborn=isUnborn(sib);
-      const sibDate=new Date(sib.birthDate+'T12:00:00');
-      const older=sibDate<childDate;
-      if(_cen){
-        const rel=sib.gender==='girl'?(older?'older sister':'younger sister'):(older?'older brother':'younger brother');
-        if(unborn){
-          const dtu=getDaysUntilDue(sib);
-          const term=sibDate.toLocaleDateString('en-US',{day:'numeric',month:'long',year:'numeric'});
-          return `- ${sib.firstName} (future ${rel} of ${child.firstName}) is yet to be born — due ${term}, in ~${dtu} days. ${child.firstName} will therefore BECOME a ${child.gender==='girl'?'big sister':'big brother'} (not yet).`;
-        }
-        const gap=Math.abs(Math.round(getGapMonths(child,sib)));
-        return `- ${sib.firstName} (${rel} of ${child.firstName}) — ${gap} months apart, already born.`;
-      } else {
-        const rel=sib.gender==='girl'?(older?'grande sœur':'petite sœur'):(older?'grand frère':'petit frère');
-        if(unborn){
-          const dtu=getDaysUntilDue(sib);
-          const term=sibDate.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
-          return `- ${sib.firstName} (futur·e ${rel} de ${child.firstName}) est à naître — terme le ${term}, dans ~${dtu} jours. ${child.firstName} va donc DEVENIR ${child.gender==='girl'?'grande sœur':'grand frère'} (ne l'est pas encore).`;
-        }
-        const gap=Math.abs(Math.round(getGapMonths(child,sib)));
-        return `- ${sib.firstName} (${rel} de ${child.firstName}) — ${gap} mois d'écart, déjà né·e.`;
-      }
-    });
-    const olderCount=sibs.filter(s=>new Date(s.birthDate+'T12:00:00')<childDate).length;
-    let position;
-    if(_cen){
-      if(olderCount===0)position=`${child.firstName} is the eldest (no older siblings).`;
-      else if(olderCount===sibs.length)position=`${child.firstName} is the youngest.`;
-      else position=`${child.firstName} is a middle child.`;
-      sibCtx=`## Siblings (STRICTLY respect this birth order)\n${position}\n${lines.join('\n')}\nNEVER invent a sibling or a different birth order. If a younger sibling is yet to be born, ${child.firstName} is not yet a big sibling — that transition is coming.`;
-    } else {
-      if(olderCount===0)position=`${child.firstName} est l'aîné·e de la fratrie (aucun grand frère ni grande sœur).`;
-      else if(olderCount===sibs.length)position=`${child.firstName} est le·la cadet·te de la fratrie.`;
-      else position=`${child.firstName} est au milieu de la fratrie.`;
-      sibCtx=`## Fratrie (RESPECTE SCRUPULEUSEMENT cet ordre de naissance)\n${position}\n${lines.join('\n')}\nN'invente JAMAIS un frère ou une sœur, ni un ordre de naissance différent de ces faits. Si un cadet est à naître, ${child.firstName} n'a pas encore ce statut de "petit" à gérer — c'est l'arrivée à venir qui compte.`;
-    }
-  }
+  const sibCtx=S.children.length>1?familyContext(child,_cen,{tracking:false}):'';
   const sys=_cen?`You are the intellectual editor of "BébéPilote", an app that replaces doomscrolling with ONE useful idea per day about child development. Your reader is a demanding, university-educated parent who hates reassuring generalities and loves argued debate, nuance, and epistemic honesty.
 
 You produce "Debate of the day": a real parenting question that divides opinion, presented in a balanced and stimulating way.
@@ -2883,7 +2842,7 @@ Camps: ${campsTxt}
 
 ## Child
 ${child.firstName}, ${child.gender==='girl'?'girl':'boy'}, ${data.ageLabel}.
-
+${S.children.length>1?'\n'+familyContext(child,true,{tracking:false})+'\n':''}
 ## Your mission
 Answer the parent's follow-up question rigorously, with nuance and HONESTY about the epistemic status of each claim.
 
@@ -2907,7 +2866,7 @@ Camps : ${campsTxt}
 
 ## Enfant
 ${child.firstName}, ${child.gender==='girl'?'fille':'garçon'}, ${data.ageLabel}.
-
+${S.children.length>1?'\n'+familyContext(child,false,{tracking:false})+'\n':''}
 ## Ta mission
 Réponds à la question de suivi du parent de façon rigoureuse, nuancée et HONNÊTE sur le statut épistémique de chaque affirmation.
 
@@ -5310,6 +5269,74 @@ function bindChat(child,data){
   bindMsgActions(child);
 }
 
+// ── Contexte famille pour l'IA : tous les enfants du profil, âges, ordre de naissance, suivi ──
+function fmtGapMonths(mo,en){
+  mo=Math.max(0,Math.round(mo));const y=Math.floor(mo/12),m=mo%12;
+  if(en)return [y?`${y} year${y>1?'s':''}`:'',m?`${m} month${m>1?'s':''}`:''].filter(Boolean).join(' ')||'less than a month';
+  return [y?`${y} an${y>1?'s':''}`:'',m?`${m} mois`:''].filter(Boolean).join(' et ')||'moins d\'un mois';
+}
+function familyContext(child,en,{tracking=true}={}){
+  const kids=[...S.children].sort((a,b)=>new Date(a.birthDate)-new Date(b.birthDate));
+  const loc=en?'en-GB':'fr-FR';
+  const fdate=c=>new Date(c.birthDate+'T12:00:00').toLocaleDateString(loc,{day:'numeric',month:'long',year:'numeric'});
+  const born=kids.filter(k=>!isUnborn(k));
+  const rank=k=>{
+    if(isUnborn(k)||born.length<2)return'';
+    const i=born.indexOf(k);
+    if(i===0)return en?'eldest':(k.gender==='girl'?'aînée':'aîné');
+    if(i===born.length-1)return en?'youngest':(k.gender==='girl'?'cadette':'cadet');
+    return en?'middle child':'enfant du milieu';
+  };
+  const rel=k=>{
+    if(k===child)return en?'THE CHILD THIS CONVERSATION IS ABOUT':'ENFANT CONCERNÉ PAR CETTE CONVERSATION';
+    const older=new Date(k.birthDate)<new Date(child.birthDate);const g=k.gender==='girl';
+    const r=en?(g?(older?'older sister':'younger sister'):(older?'older brother':'younger brother'))
+              :(g?(older?'grande sœur':'petite sœur'):(older?'grand frère':'petit frère'));
+    const gap=fmtGapMonths(getGapMonths(child,k),en);
+    if(isUnborn(k))return en?`future ${r} of ${child.firstName}`:`futur·e ${r} de ${child.firstName}`;
+    return en?`${r} of ${child.firstName} (${gap} apart)`:`${r} de ${child.firstName} (${gap} d'écart)`;
+  };
+  const line=k=>{
+    const sex=en?(k.gender==='girl'?'girl':'boy'):(k.gender==='girl'?'fille':'garçon');
+    if(isUnborn(k)){
+      const dtu=getDaysUntilDue(k),gw=Math.max(5,getGestWeeks(k));
+      return en?`- ${k.firstName} — ${sex}, not born yet: due ${fdate(k)} (in ~${dtu} days, week ${gw}) — ${rel(k)}`
+               :`- ${k.firstName} — ${sex}, à naître : terme le ${fdate(k)} (dans ~${dtu} jours, ${gw} SA) — ${rel(k)}`;
+    }
+    const d=Math.floor((Date.now()-new Date(k.birthDate+'T12:00:00'))/86400000);
+    const age=getAgeLabel(d,k.birthDate),mo=Math.floor(d/30.44),rk=rank(k);
+    return en?`- ${k.firstName} — ${sex}, born ${fdate(k)}, ${age} (${mo} months)${rk?' — '+rk:''} — ${rel(k)}`
+             :`- ${k.firstName} — ${sex}, né${k.gender==='girl'?'e':''} le ${fdate(k)}, ${age} (${mo} mois)${rk?' — '+rk:''} — ${rel(k)}`;
+  };
+  let out=en
+    ?`## Family (from the parent's profile — this is reliable: never ask the parent for this information again)\nChildren registered in the app, oldest to youngest:\n${kids.map(line).join('\n')}\n- If the parent mentions one of these first names, use the data above (age, birth order, relationship). NEVER invent another child or a different birth order. An unborn baby is not yet a sibling in daily life — the transition is still to come.`
+    :`## Famille (issue du profil du parent — fiable : ne redemande jamais ces informations)\nEnfants enregistrés dans l'app, du plus âgé au plus jeune :\n${kids.map(line).join('\n')}\n- Si le parent cite l'un de ces prénoms, utilise les données ci-dessus (âge, rang, lien). N'invente JAMAIS un autre enfant ni un ordre de naissance différent. Un bébé à naître n'est pas encore un frère ou une sœur au quotidien — la transition est à venir.`;
+  if(!tracking)return out;
+  // Suivi dans l'app (étapes du parcours, observations, controverse du jour) pour chaque enfant né
+  const secs=['langage','motricite','caractere','activite'];
+  const trackLines=born.map(k=>{
+    const d=Math.floor((Date.now()-new Date(k.birthDate+'T12:00:00'))/86400000),mo=Math.floor(d/30.44);
+    const ms=getMilestones(k);
+    const parts=secs.map(sid=>{
+      const sec=ALL_SECTIONS.find(s=>s.id===sid);const lad=getLadder(sid);if(!lad.length)return'';
+      const lbl=en?(sec?.label_en||sec?.label):sec?.label;
+      const acq=lad.filter(x=>ms[x.mid]?.status==='done');
+      const f=getFocus(k,mo,sid);const ft=f?(en?(f.e.title_en||f.e.title):f.e.title):'';
+      const last=acq.slice(-2).map(x=>en?(x.e.title_en||x.e.title):x.e.title);
+      return en?`  · ${lbl}: ${acq.length}/${lad.length} confirmed${last.length?` (latest: ${last.join(', ')})`:''}${ft?` — current step: "${ft}"`:''}`
+               :`  · ${lbl} : ${acq.length}/${lad.length} confirmés${last.length?` (derniers : ${last.join(', ')})`:''}${ft?` — étape du moment : « ${ft} »`:''}`;
+    }).filter(Boolean);
+    const obs=getObservations(k).slice(0,3).map(o=>`« ${o.title||''} » (${obsRelTime(o.ts,en)})`);
+    const ctrv=getCtrvHistory().find(x=>x.childName===k.firstName&&x.date===ctrvDateStr());
+    return `- ${k.firstName} :\n${parts.join('\n')}`
+      +(obs.length?(en?`\n  · Recent observations noted by the parent: ${obs.join(' ; ')}`:`\n  · Observations récentes notées par le parent : ${obs.join(' ; ')}`):'')
+      +(ctrv?(en?`\n  · Today's debate shown: "${ctrv.question}"`:`\n  · Controverse du jour affichée : « ${ctrv.question} »`):'');
+  });
+  if(trackLines.length)out+=en
+    ?`\n\n## What the parent has recorded in the app\n${trackLines.join('\n')}\nUse this to personalise your answer (refer to what the child already does), without reciting it.`
+    :`\n\n## Ce que le parent a renseigné dans l'app\n${trackLines.join('\n')}\nSers-t'en pour personnaliser ta réponse (appuie-toi sur ce que l'enfant fait déjà), sans le réciter.`;
+  return out;
+}
 // Historique envoyé au modèle : sans les bulles d'erreur ni les messages vides, en alternance user/assistant stricte
 function chatHistoryForApi(){
   const out=[];
@@ -5365,7 +5392,10 @@ LYING: Before 5 years, lying is a sign of cognitive development (theory of mind)
 NIGHT FEARS: Validate the emotion without validating the threat. Staying in the room until sleep onset maintains the fear. Short ritual + comfort toy + nightlight, then leave.
 
 ## Child context
-${child.firstName}, ${child.gender==='girl'?"girl":"boy"}, ${data.ageLabel}.
+${child.firstName}, ${child.gender==='girl'?"girl":"boy"}, ${data.ageLabel}. Today's date: ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}.
+
+${familyContext(child,true)}
+
 Today's development: "${mFact}" — ${data.milestone?.details||''}
 Today's Caroline Goldman tip: "${carolineTopic}" — ${carolineCtx.tip}
 
@@ -5424,7 +5454,10 @@ PEURS NOCTURNES : Valider l'émotion sans valider la menace. Rester dans la cham
 
 ## Contexte de l'enfant
 
-${child.firstName}, ${child.gender==='girl'?"fille":"garçon"}, ${data.ageLabel}.
+${child.firstName}, ${child.gender==='girl'?"fille":"garçon"}, ${data.ageLabel}. Date du jour : ${new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}.
+
+${familyContext(child,false)}
+
 Développement du jour : "${data.milestone?.fact||'développement général'}" — ${data.milestone?.details||''}
 Conseil Caroline Goldman affiché aujourd'hui : "${carolineCtx.topic}" — ${carolineCtx.tip}
 
